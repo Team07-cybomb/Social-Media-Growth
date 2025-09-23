@@ -3,15 +3,15 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
- 
+
 interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
 }
- 
+
 export function Navbar({ currentPage, onNavigate }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
- 
+
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
@@ -21,7 +21,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
     { name: "Blog", href: "/blog" },
     { name: "Register", href: "/register" },
   ];
- 
+
   return (
     <>
       <style>
@@ -36,7 +36,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
               transform: translateY(0);
             }
           }
- 
+
           @keyframes fadeIn {
             from {
               opacity: 0;
@@ -45,7 +45,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
               opacity: 1;
             }
           }
- 
+
           @keyframes pulseGlow {
             0% {
               box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
@@ -57,7 +57,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
               box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
             }
           }
- 
+
           @keyframes underlineSlide {
             from {
               transform: scaleX(0);
@@ -66,24 +66,24 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
               transform: scaleX(1);
             }
           }
- 
+
           .navbar-sticky {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(226, 232, 240, 0.8);
             animation: slideDown 0.5s ease-out;
           }
- 
+
           .navbar-sticky.scrolled {
             background: rgba(255, 255, 255, 0.98);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           }
- 
+
           .logo-hover {
             position: relative;
             transition: all 0.3s ease;
           }
- 
+
           .logo-hover::before {
             content: '';
             position: absolute;
@@ -96,21 +96,21 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
             transform-origin: right;
             transition: transform 0.3s ease;
           }
- 
+
           .logo-hover:hover::before {
             transform: scaleX(1);
             transform-origin: left;
           }
- 
+
           .logo-hover:hover {
             transform: translateY(-1px);
           }
- 
+
           .nav-link {
             position: relative;
             transition: all 0.3s ease;
           }
- 
+
           .nav-link::after {
             content: '';
             position: absolute;
@@ -122,42 +122,42 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
             transition: all 0.3s ease;
             transform: translateX(-50%);
           }
- 
+
           .nav-link:hover::after {
             width: 80%;
           }
- 
+
           .nav-link.active::after {
             width: 80%;
             animation: underlineSlide 0.3s ease-out;
           }
- 
+
           .nav-link:hover {
             transform: translateY(-1px);
           }
- 
+
           .mobile-menu-slide {
             animation: slideDown 0.3s ease-out;
           }
- 
+
           .menu-button {
             transition: all 0.3s ease;
             border-radius: 8px;
           }
- 
+
           .menu-button:hover {
             background: rgba(59, 130, 246, 0.1);
             transform: scale(1.05);
           }
- 
+
           .menu-button:active {
             transform: scale(0.95);
           }
- 
+
           .pulse-once {
             animation: pulseGlow 2s ease-in-out;
           }
- 
+
           .register-special {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             color: white;
@@ -166,7 +166,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
             position: relative;
             overflow: hidden;
           }
- 
+
           .register-special::before {
             content: '';
             position: absolute;
@@ -177,18 +177,18 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s ease;
           }
- 
+
           .register-special:hover::before {
             left: 100%;
           }
- 
+
           .register-special:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
           }
         `}
       </style>
- 
+
       <nav className="navbar-sticky sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -201,7 +201,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 SocialGrowth
               </Link>
             </div>
- 
+
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-6">
                 {navItems.map((item) => (
@@ -224,7 +224,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
                 ))}
               </div>
             </div>
- 
+
             <div className="md:hidden">
               <Button
                 variant="ghost"
@@ -241,7 +241,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
             </div>
           </div>
         </div>
- 
+
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden mobile-menu-slide">
@@ -274,4 +274,3 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
     </>
   );
 }
- 

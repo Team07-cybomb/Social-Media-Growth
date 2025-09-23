@@ -6,7 +6,11 @@ interface FooterProps {
 
 export function Footer({ onNavigate }: FooterProps) {
   return (
+<<<<<<< HEAD
     <footer className="bg-muted border-t border-border">
+=======
+    <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 border-t border-blue-700/30">
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
