@@ -17,6 +17,16 @@ import {
   Rocket,
   Target,
 } from "lucide-react";
+<<<<<<< HEAD
+ 
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { useNavigate } from "react-router-dom";
+ 
+const AffiliatePage: React.FC = () => {
+  const navigate = useNavigate();
+ 
+=======
 
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -25,13 +35,18 @@ import { useNavigate } from "react-router-dom";
 const AffiliatePage: React.FC = () => {
   const navigate = useNavigate();
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const stats = [
     { number: "30%", label: "Commission Rate", icon: DollarSign },
     { number: "60", label: "Day Cookie Duration", icon: Clock },
     { number: "24h", label: "Payout Processing", icon: TrendingUp },
     { number: "$50", label: "Minimum Payout", icon: Shield },
   ];
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const benefits = [
     {
       icon: DollarSign,
@@ -58,7 +73,11 @@ const AffiliatePage: React.FC = () => {
         "Receive your earnings reliably every month through PayPal or bank transfer.",
     },
   ];
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const socialPlatforms = [
     {
       icon: Instagram,
@@ -96,7 +115,11 @@ const AffiliatePage: React.FC = () => {
       logoColor: "text-white",
     },
   ];
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const successStories = [
     {
       name: "Sarah Martinez",
@@ -123,7 +146,11 @@ const AffiliatePage: React.FC = () => {
       avatar: "👨‍💻",
     },
   ];
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const marketingMaterials = [
     {
       icon: Zap,
@@ -148,6 +175,17 @@ const AffiliatePage: React.FC = () => {
       description: "Track performance and optimize your campaigns effectively",
     },
   ];
+<<<<<<< HEAD
+ 
+  const handleJoinNow = () => {
+    navigate("/register");
+  };
+ 
+  const handleContactSupport = () => {
+    navigate("/contact");
+  };
+ 
+=======
 
   const handleJoinNow = () => {
     navigate("/register");
@@ -157,6 +195,7 @@ const AffiliatePage: React.FC = () => {
     navigate("/contact");
   };
 
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   return (
     <>
       <style>
@@ -881,8 +920,12 @@ const AffiliatePage: React.FC = () => {
               <span>EARN WITH SOCIAL MEDIA GROWTH</span>
             </div>
             <h1 className="affiliate-heading">
+<<<<<<< HEAD
+              Promote Social Media Growth & <span className="gradient-text">Earn 30% Commission</span>
+=======
               Promote Social Media Growth &{" "}
               <span className="gradient-text">Earn 30% Commission</span>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
             </h1>
             <p className="affiliate-subtitle">
               Join our affiliate program and earn generous commissions by
@@ -890,7 +933,14 @@ const AffiliatePage: React.FC = () => {
               influencers, marketers, and content creators.
             </p>
             <div className="affiliate-cta-buttons">
+<<<<<<< HEAD
+              <button
+                onClick={handleJoinNow}
+                className="affiliate-cta-primary"
+              >
+=======
               <button onClick={handleJoinNow} className="affiliate-cta-primary">
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 Join Affiliate Program
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -911,12 +961,17 @@ const AffiliatePage: React.FC = () => {
         <section id="affiliate-stats" className="affiliate-stats">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
+<<<<<<< HEAD
+              <h2 className="section-heading">Why Choose Our Affiliate Program?</h2>
+              <p className="section-subtitle">Industry-leading benefits designed for your success</p>
+=======
               <h2 className="section-heading">
                 Why Choose Our Affiliate Program?
               </h2>
               <p className="section-subtitle">
                 Industry-leading benefits designed for your success
               </p>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
             </div>
             <div className="stats-grid">
               {stats.map((stat, index) => {
@@ -941,12 +996,18 @@ const AffiliatePage: React.FC = () => {
         <section className="affiliate-platforms">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
+<<<<<<< HEAD
+              <h2 className="section-heading">Perfect for Every Social Platform</h2>
+              <p className="section-subtitle">
+                Promote growth strategies tailored to specific social media platforms
+=======
               <h2 className="section-heading">
                 Perfect for Every Social Platform
               </h2>
               <p className="section-subtitle">
                 Promote growth strategies tailored to specific social media
                 platforms
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
               </p>
             </div>
 
@@ -956,6 +1017,16 @@ const AffiliatePage: React.FC = () => {
                 return (
                   <div key={index} className="platform-card">
                     <div className="platform-content">
+<<<<<<< HEAD
+                      <div 
+                        className="platform-icon" 
+                        style={{ 
+                          background: platform.color.includes('pink') ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' :
+                                   platform.color.includes('red') ? 'linear-gradient(135deg, #ef4444, #dc2626)' :
+                                   platform.color.includes('blue') && platform.color.includes('500') ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                   platform.color.includes('blue') && platform.color.includes('600') ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' :
+                                   'linear-gradient(135deg, #000000, #374151)'
+=======
                       <div
                         className="platform-icon"
                         style={{
@@ -970,14 +1041,19 @@ const AffiliatePage: React.FC = () => {
                               platform.color.includes("600")
                             ? "linear-gradient(135deg, #2563eb, #1d4ed8)"
                             : "linear-gradient(135deg, #000000, #374151)",
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                         }}
                       >
                         <Icon className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="platform-name">{platform.name}</h3>
+<<<<<<< HEAD
+                      <p className="platform-description">{platform.description}</p>
+=======
                       <p className="platform-description">
                         {platform.description}
                       </p>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                     </div>
                   </div>
                 );
@@ -990,12 +1066,18 @@ const AffiliatePage: React.FC = () => {
         <section id="how-it-works" className="affiliate-process">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
+<<<<<<< HEAD
+              <h2 className="section-heading">Start Earning in 3 Simple Steps</h2>
+              <p className="section-subtitle">
+                Our straightforward process makes it easy to start generating commissions
+=======
               <h2 className="section-heading">
                 Start Earning in 3 Simple Steps
               </h2>
               <p className="section-subtitle">
                 Our straightforward process makes it easy to start generating
                 commissions
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
               </p>
             </div>
 
@@ -1004,20 +1086,32 @@ const AffiliatePage: React.FC = () => {
                 {
                   step: "1",
                   title: "Sign Up & Get Approved",
+<<<<<<< HEAD
+                  description: "Join our affiliate program and get instant access to marketing materials.",
+=======
                   description:
                     "Join our affiliate program and get instant access to marketing materials.",
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 },
                 {
                   step: "2",
                   title: "Promote on Your Platforms",
+<<<<<<< HEAD
+                  description: "Share your unique affiliate link across social media, blogs, or emails.",
+=======
                   description:
                     "Share your unique affiliate link across social media, blogs, or emails.",
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 },
                 {
                   step: "3",
                   title: "Earn Monthly Commissions",
+<<<<<<< HEAD
+                  description: "Get up to 30% commission on every sale. Payouts processed monthly.",
+=======
                   description:
                     "Get up to 30% commission on every sale. Payouts processed monthly.",
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 },
               ].map((step, index) => (
                 <div key={index} className="process-card">
@@ -1038,8 +1132,12 @@ const AffiliatePage: React.FC = () => {
             <div className="text-center mb-16">
               <h2 className="section-heading">Real Success Stories</h2>
               <p className="section-subtitle">
+<<<<<<< HEAD
+                See how other affiliates are earning significant income with our platform
+=======
                 See how other affiliates are earning significant income with our
                 platform
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
               </p>
             </div>
 
@@ -1065,8 +1163,12 @@ const AffiliatePage: React.FC = () => {
             <div className="text-center mb-16">
               <h2 className="section-heading">Powerful Marketing Resources</h2>
               <p className="section-subtitle">
+<<<<<<< HEAD
+                Everything you need to promote effectively and maximize your earnings
+=======
                 Everything you need to promote effectively and maximize your
                 earnings
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
               </p>
             </div>
 
@@ -1082,9 +1184,13 @@ const AffiliatePage: React.FC = () => {
                         </div>
                         <div className="material-text">
                           <h3 className="material-title">{material.title}</h3>
+<<<<<<< HEAD
+                          <p className="material-description">{material.description}</p>
+=======
                           <p className="material-description">
                             {material.description}
                           </p>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                         </div>
                       </div>
                     </div>
@@ -1117,9 +1223,13 @@ const AffiliatePage: React.FC = () => {
                         </div>
                         <div className="benefit-text">
                           <h3 className="benefit-title">{benefit.title}</h3>
+<<<<<<< HEAD
+                          <p className="benefit-description">{benefit.description}</p>
+=======
                           <p className="benefit-description">
                             {benefit.description}
                           </p>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                         </div>
                       </div>
                     </div>
@@ -1144,10 +1254,14 @@ const AffiliatePage: React.FC = () => {
                 Join Now - Get 30% Commission
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
+<<<<<<< HEAD
+              <button className="final-cta-secondary" onClick={handleContactSupport}>
+=======
               <button
                 className="final-cta-secondary"
                 onClick={() => (window.location.href = "/register")}
               >
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 Have Questions? Contact Us
               </button>
             </div>
@@ -1157,5 +1271,10 @@ const AffiliatePage: React.FC = () => {
     </>
   );
 };
+<<<<<<< HEAD
+ 
+export default AffiliatePage;
+=======
 
 export default AffiliatePage;
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76

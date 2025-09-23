@@ -134,6 +134,139 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
+<<<<<<< HEAD
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Enhanced Header */}
+      <header className="text-center mb-16 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Frequently Asked Questions
+          </h1>
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto mb-6"></div>
+          <p className="text-xl text-gray-600 leading-relaxed">
+            Find comprehensive answers to all your questions about our affiliate
+            program. Everything you need to know to start earning commissions is
+            right here.
+          </p>
+        </div>
+
+        {/* Quick Navigation */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {faqData.map((section) => (
+            <button
+              key={section.id}
+              onClick={() =>
+                scrollToSection(section.id as keyof typeof sectionRefs)
+              }
+              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                activeSection === section.id
+                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 border border-gray-200 hover:border-blue-300 shadow-md hover:shadow-lg"
+              }`}
+            >
+              <span>{section.icon}</span>
+              <span>{section.title}</span>
+            </button>
+          ))}
+        </div>
+      </header>
+
+      {/* Enhanced FAQ Sections */}
+      <section className="max-w-6xl w-full space-y-8">
+        {faqData.map((section) => (
+          <div
+            key={section.id}
+            ref={sectionRefs[section.id as keyof typeof sectionRefs]}
+            className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
+          >
+            {/* Section Header */}
+            <div className="px-8 py-6 border-b border-gray-100">
+              <div className="flex items-center space-x-4">
+                <span className="text-2xl">{section.icon}</span>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {section.title}
+                </h2>
+              </div>
+            </div>
+
+            {/* FAQ Items */}
+            <div className="divide-y divide-gray-100">
+              {section.items.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="group transition-all duration-300 hover:bg-blue-50/30"
+                >
+                  <button
+                    onClick={() => toggleItem(item.id)}
+                    className="w-full px-8 py-6 text-left flex justify-between items-center transition-all duration-300 hover:bg-blue-50/50 rounded-lg mx-2 my-1"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mt-1">
+                        {index + 1}
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-700 transition-colors text-left">
+                        {item.question}
+                      </h3>
+                    </div>
+                    <span
+                      className={`transform transition-transform duration-300 text-blue-600 ${
+                        openItems[item.id] ? "rotate-180" : ""
+                      }`}
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+
+                  <div
+                    className={`px-8 pb-6 transition-all duration-300 overflow-hidden ${
+                      openItems[item.id]
+                        ? "max-h-96 opacity-100"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="flex space-x-4">
+                      <div className="flex-shrink-0 w-8 flex justify-center">
+                        <div className="w-1 h-full bg-gradient-to-b from-blue-200 to-purple-200 rounded-full"></div>
+                      </div>
+                      <div className="bg-blue-50/50 rounded-lg p-4 border-l-4 border-blue-400 flex-1">
+                        <p className="text-gray-700 leading-relaxed">
+                          {item.answer}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Fixed Spacing Contact Section */}
+      <section className="mt-16 w-full max-w-4xl">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="px-6 py-8 sm:px-8 sm:py-10">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mb-3">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+=======
     <>
       <style>
         {`
@@ -629,6 +762,7 @@ const FAQPage: React.FC = () => {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 >
                   <path
                     strokeLinecap="round"
@@ -638,13 +772,134 @@ const FAQPage: React.FC = () => {
                   />
                 </svg>
               </div>
+<<<<<<< HEAD
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Still Have Questions?
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+=======
 
               <h2 className="contact-heading">Still Have Questions?</h2>
               <p className="contact-subtitle">
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 Our dedicated support team is ready to help you succeed. Get
                 personalized assistance and expert guidance whenever you need
                 it.
               </p>
+<<<<<<< HEAD
+            </div>
+
+            {/* Contact Box */}
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-6 border border-gray-200 max-w-2xl mx-auto">
+              <div className="flex items-start space-x-3">
+                {/* Checkbox */}
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-5 h-5 border-2 border-blue-500 rounded-md flex items-center justify-center bg-white">
+                    <svg
+                      className="w-3 h-3 text-blue-500 hidden"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Can't promote your services outside of my website?
+                  </h3>
+                  <p className="text-gray-700 mb-4 leading-relaxed text-sm">
+                    Absolutely! You can promote through social media, email
+                    marketing, videos, podcasts, paid ads, and more. We
+                    encourage diverse promotion strategies while adhering to our
+                    terms and conditions.
+                  </p>
+
+                  <div className="bg-white rounded-md p-3 border border-gray-300">
+                    <p className="text-gray-600 text-xs mb-3">
+                      Our dedicated support team is ready to help you succeed.
+                      Get personalized assistance and expert guidance whenever
+                      you need it.
+                    </p>
+
+                    {/* Contact Button */}
+                    <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2 px-4 rounded-md hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 text-sm">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>Contact Support Team</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional CTA */}
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-3 text-sm">
+                Prefer to explore on your own?
+              </p>
+              <a
+                href="/affiliate"
+                className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-300 text-sm"
+              >
+                <span>Visit our affiliate resources</span>
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Back to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-10"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </button>
+    </div>
+=======
 
               <div className="contact-box">
                 <p className="mb-4">
@@ -705,6 +960,7 @@ const FAQPage: React.FC = () => {
         </button>
       </div>
     </>
+>>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   );
 };
 
