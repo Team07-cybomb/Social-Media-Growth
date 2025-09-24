@@ -374,10 +374,24 @@ export function HomePage({ onNavigate }: HomePageProps) {
           border-color: #374151;
         }
 
-        /* Why Choose Us List */
+        /* Why Choose Us List - FIXED RESPONSIVE STYLES */
         .why-choose-us-list {
           display: grid;
           gap: 1rem;
+          grid-template-columns: 1fr;
+          width: 100%;
+        }
+
+        @media (min-width: 768px) {
+          .why-choose-us-list {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .why-choose-us-list {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          }
         }
 
         .why-choose-us-item {
@@ -528,6 +542,15 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
           .how-it-works-card {
             padding: 2rem 1.5rem;
+          }
+
+          .why-choose-us-item {
+            padding: 0.75rem;
+            gap: 0.75rem;
+          }
+
+          .why-choose-us-item span {
+            font-size: 0.9rem;
           }
         }
       `}</style>
@@ -863,7 +886,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
         <section className="homepage-section homepage-why-choose-us">
           <div className="homepage-centered-section">
             <div className="homepage-centered-content">
-              <div>
+              <div style={{ width: "100%" }}>
                 <h2 className="homepage-heading">What Makes Us Different</h2>
                 <p
                   className="homepage-subtitle"
@@ -877,7 +900,6 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   style={{
                     maxWidth: "48rem",
                     margin: "0 auto",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                   }}
                 >
                   {whyChooseUs.map((item, index) => (
@@ -924,7 +946,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   growth with our strategies.
                 </p>
                 <button
-                  onClick={() => onNavigate("register")}
+                  onClick={() => onNavigate("contact")}
                   style={{
                     background: "white",
                     color: "#2563eb",
@@ -943,7 +965,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     e.currentTarget.style.transform = "scale(1)";
                   }}
                 >
-                  Start Your Journey
+                  Contact Support Team
                 </button>
               </div>
             </div>
