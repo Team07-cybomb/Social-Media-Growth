@@ -97,11 +97,13 @@ export function Hero({ onNavigate }: HeroProps) {
               </p>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            {/* CTA Buttons - Adjusted spacing */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start py-2">
+              {" "}
+              {/* Added py-2 for vertical spacing */}
               <button
                 onClick={() => onNavigate("register")}
-                className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group"
+                className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group min-h-[60px] leading-relaxed"
                 style={{
                   background:
                     "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
@@ -109,11 +111,10 @@ export function Hero({ onNavigate }: HeroProps) {
                   boxShadow: "0 20px 40px rgba(37, 99, 235, 0.3)",
                 }}
               >
-                <Zap className="h-5 w-5" />
+                <Zap className="h-12 w-5 my-4" />
                 Start Growing Today
                 <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
-
               <button
                 onClick={() => onNavigate("services")}
                 className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border transition-all duration-300 hover:scale-105"
@@ -124,13 +125,15 @@ export function Hero({ onNavigate }: HeroProps) {
                   backdropFilter: "blur(10px)",
                 }}
               >
-                <Play className="h-5 w-5" />
-                Watch Demo
+                <Play className="h-12 w-5 my-4" />
+                View Services
               </button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-6">
+              {" "}
+              {/* Increased pt-4 to pt-6 */}
               <div className="flex items-center gap-3">
                 <span
                   className="text-sm font-medium"
@@ -139,7 +142,6 @@ export function Hero({ onNavigate }: HeroProps) {
                   Join 500+ successful brands
                 </span>
               </div>
-
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -160,7 +162,9 @@ export function Hero({ onNavigate }: HeroProps) {
             </div>
 
             {/* Features Grid - Reduced top padding */}
-            <div className="grid grid-cols-2 gap-4 pt-4 max-w-md mx-auto lg:mx-0">
+            <div className="grid grid-cols-2 gap-4 pt-8 max-w-md mx-auto lg:mx-0">
+              {" "}
+              {/* Increased pt-4 to pt-8 */}
               {[
                 { icon: Shield, text: "100% Organic Growth" },
                 { icon: Zap, text: "Real Results in 30 Days" },
