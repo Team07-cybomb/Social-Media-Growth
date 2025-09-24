@@ -12,11 +12,7 @@ import { Toaster } from "./components/ui/sonner";
 import AffiliatePage from "./components/AffiliatePage"; // Ensure this import
 import FAQPage from "./components/FAQPage";
 import RegisterPage from "./components/RegisterPage"; // Import RegisterPage component
-<<<<<<< HEAD
 import LoginPage from "./components/LoginPage";
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
 
@@ -24,8 +20,6 @@ export default function App() {
     setCurrentPage(page);
     // Scroll to top when navigating
     window.scrollTo({ top: 0, behavior: "smooth" });
-<<<<<<< HEAD
-=======
     if (page === "register") {
       window.location.href = "/register"; // Or use useNavigate hook if available
     }
@@ -35,7 +29,6 @@ export default function App() {
     if (page === "contact") {
       window.location.href = "/contact"; // Or use useNavigate hook if available
     }
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   };
 
   return (
@@ -65,11 +58,8 @@ export default function App() {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/register" element={<RegisterPage />} />{" "}
             {/* Add this route for the Register page */}
-<<<<<<< HEAD
             <Route path="/login" element={<LoginPage />} />
 
-=======
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           </Routes>
         </main>
 

@@ -11,20 +11,12 @@ export function ContactForm() {
     name: "",
     email: "",
     subject: "",
-<<<<<<< HEAD
     message: ""
-=======
-    message: "",
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all required fields");
@@ -33,17 +25,12 @@ export function ContactForm() {
 
     // Simulate form submission
     toast.success("Message sent successfully! We'll get back to you soon.");
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
     // Reset form
     setFormData({
       name: "",
       email: "",
       subject: "",
-<<<<<<< HEAD
       message: ""
     });
   };
@@ -52,18 +39,6 @@ export function ContactForm() {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
-=======
-      message: "",
-    });
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
     }));
   };
 
@@ -75,11 +50,7 @@ export function ContactForm() {
           Ready to grow your social media presence? Get in touch with our team.
         </p>
       </CardHeader>
-<<<<<<< HEAD
       
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -94,11 +65,7 @@ export function ContactForm() {
                 required
               />
             </div>
-<<<<<<< HEAD
             
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
             <div className="space-y-2">
               <Label htmlFor="email">Email *</Label>
               <Input
@@ -112,11 +79,7 @@ export function ContactForm() {
               />
             </div>
           </div>
-<<<<<<< HEAD
           
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
             <Input
@@ -127,11 +90,7 @@ export function ContactForm() {
               placeholder="What can we help you with?"
             />
           </div>
-<<<<<<< HEAD
           
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           <div className="space-y-2">
             <Label htmlFor="message">Message *</Label>
             <Textarea
@@ -144,11 +103,7 @@ export function ContactForm() {
               required
             />
           </div>
-<<<<<<< HEAD
           
-=======
-
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           <Button type="submit" className="w-full rounded-full">
             Send Message
           </Button>
@@ -156,8 +111,4 @@ export function ContactForm() {
       </CardContent>
     </Card>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
