@@ -1,12 +1,7 @@
 // src/components/RegisterPage.tsx
 import React, { useState } from "react";
-<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
 import LoginPage from "./LoginPage";
-=======
-import { Link } from "react-router-dom";
-import { HomePage } from "./HomePage";
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -15,11 +10,8 @@ const RegisterPage: React.FC = () => {
     confirmPassword: "",
   });
 
-<<<<<<< HEAD
   const navigate = useNavigate();
 
-=======
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -31,13 +23,10 @@ const RegisterPage: React.FC = () => {
     // Add your API call or validation logic here
   };
 
-<<<<<<< HEAD
   const handleLoginRedirect = () => {
     navigate("/login");
   };
 
-=======
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
   return (
     <>
       <style>
@@ -50,22 +39,12 @@ const RegisterPage: React.FC = () => {
             justify-content: center;
             padding: 5rem 1rem;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-container {
             max-width: 28rem;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-card {
             background: white;
             border-radius: 0.5rem;
@@ -74,20 +53,10 @@ const RegisterPage: React.FC = () => {
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .section-heading {
             font-size: 2.25rem;
             font-weight: 700;
@@ -95,32 +64,17 @@ const RegisterPage: React.FC = () => {
             margin-bottom: 2rem;
             text-align: center;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           @media (min-width: 768px) {
             .section-heading {
               font-size: 3rem;
             }
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .gradient-text {
             background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-label {
             display: block;
             color: #374151;
@@ -128,11 +82,6 @@ const RegisterPage: React.FC = () => {
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-input {
             width: 100%;
             padding: 1rem;
@@ -143,21 +92,11 @@ const RegisterPage: React.FC = () => {
             background: white;
             color: #1e293b;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-button {
             width: 100%;
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
@@ -171,126 +110,65 @@ const RegisterPage: React.FC = () => {
             transition: all 0.3s ease;
             margin-top: 1.5rem;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-link {
             text-align: center;
             margin-top: 1.5rem;
             color: #64748b;
             font-size: 0.875rem;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-link a {
             color: #3b82f6;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
-<<<<<<< HEAD
             cursor: pointer;
           }
 
-=======
-          }
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-link a:hover {
             color: #2563eb;
             text-decoration: underline;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           /* Form spacing */
           .space-y-6 > * + * {
             margin-top: 1.5rem;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           /* Global Overrides */
           body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           }
-<<<<<<< HEAD
 
           * {
             box-sizing: border-box;
           }
 
-=======
- 
-          * {
-            box-sizing: border-box;
-          }
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           /* Text Center Utility */
           .text-center {
             text-align: center;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .mx-auto {
             margin-left: auto;
             margin-right: auto;
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           /* Responsive Design */
           @media (max-width: 768px) {
             .register-page {
               padding: 3rem 1rem;
             }
-<<<<<<< HEAD
             
             .section-heading {
               font-size: 2rem;
             }
             
-=======
-           
-            .section-heading {
-              font-size: 2rem;
-            }
-           
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
             .register-card {
               padding: 1.5rem;
             }
           }
-<<<<<<< HEAD
-
-=======
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           /* Animation for form elements */
           @keyframes fadeInUp {
             from {
@@ -302,19 +180,11 @@ const RegisterPage: React.FC = () => {
               transform: translateY(0);
             }
           }
-<<<<<<< HEAD
 
           .register-card > * {
             animation: fadeInUp 0.6s ease-out;
           }
 
-=======
- 
-          .register-card > * {
-            animation: fadeInUp 0.6s ease-out;
-          }
- 
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
           .register-card > *:nth-child(1) { animation-delay: 0.1s; }
           .register-card > *:nth-child(2) { animation-delay: 0.2s; }
           .register-card > *:nth-child(3) { animation-delay: 0.3s; }
@@ -401,14 +271,10 @@ const RegisterPage: React.FC = () => {
               </div>
 
               {/* Register Button */}
-<<<<<<< HEAD
               <button
                 type="submit"
                 className="register-button"
               >
-=======
-              <button type="submit" className="register-button">
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
                 Register
               </button>
             </form>
@@ -416,14 +282,10 @@ const RegisterPage: React.FC = () => {
             {/* Login Link */}
             <div className="register-link">
               <p>
-<<<<<<< HEAD
                 Already have an account?{" "}
                 <Link to="/login" onClick={handleLoginRedirect}>
                   Login
                 </Link>
-=======
-                Already have an account? <Link to="/login">Login</Link>
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
               </p>
             </div>
           </div>
@@ -433,8 +295,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
 export default RegisterPage;
-=======
-export default RegisterPage;
->>>>>>> 7201db0e6bd271d98de5541bfb21099d8ac48f76
