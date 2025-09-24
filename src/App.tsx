@@ -29,6 +29,9 @@ export default function App() {
     if (page === "contact") {
       window.location.href = "/contact"; // Or use useNavigate hook if available
     }
+    if (page === "services") {
+      window.location.href = "/services"; // Or use useNavigate hook if available
+    }
   };
 
   return (
@@ -59,7 +62,6 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />{" "}
             {/* Add this route for the Register page */}
             <Route path="/login" element={<LoginPage />} />
-
           </Routes>
         </main>
 
