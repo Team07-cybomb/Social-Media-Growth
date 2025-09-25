@@ -204,7 +204,7 @@
   }
 
   img, svg, video, canvas, audio, iframe, embed, object {
-    vertical-align: middle;
+    /* vertical-align: middle; */
     display: block;
   }
 
@@ -2053,3 +2053,5 @@ html {
     opacity: .5;
   }
 }
+
+/* src/index.css */
