@@ -20,6 +20,7 @@ import SMMPage from "./components/SMMPage";
 import SocialMediaPage from "./components/SocialMediaPage";
 import BlogPost from "./components/BlogPost";
 import CategoryPage from "./components/CategoryPage";
+import React from "react";
 
 
 export default function App() {
@@ -76,8 +77,8 @@ export default function App() {
         <Route path="/social-media" element={<SocialMediaPage />} />
         <Route path="/best-practices" element={<BestPracticesPage />} />
         <Route path="/smm-page" element={<SMMPage />} />
-        <Route path="/BlogPost" element={<BlogPost/>}/>
-        <Route path="/categorypage" element={<CategoryPage/>}/>
+        {/* <Route path="/blog-post" element={<BlogPost/>}/>
+        <Route path="/categorypage" element={<CategoryPage/>}/> */}
 
           </Routes>
         </main>
