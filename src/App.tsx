@@ -7,12 +7,21 @@ import { HomePage } from "./components/HomePage";
 import { ServicesPage } from "./components/ServicesPage";
 import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
-import Blog from "./components/blog"; // Import the Blog component
+import Blog from "./components/BlogPage"; // Import the Blog component
 import { Toaster } from "./components/ui/sonner";
 import AffiliatePage from "./components/AffiliatePage"; // Ensure this import
 import FAQPage from "./components/FAQPage";
 import RegisterPage from "./components/RegisterPage"; // Import RegisterPage component
 import LoginPage from "./components/LoginPage";
+import DigitalStrategyPage from "./components/DigitalStrategyP";
+import BestPracticesPage from "./components/BestPracticesPage";
+import ContentMarketingPage from "./components/ContentMarketingPage";
+import SMMPage from "./components/SMMPage";
+import SocialMediaPage from "./components/SocialMediaPage";
+import BlogPost from "./components/BlogPost";
+import CategoryPage from "./components/CategoryPage";
+
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
 
@@ -62,6 +71,14 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />{" "}
             {/* Add this route for the Register page */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
+        <Route path="/content-marketing" element={<ContentMarketingPage />} />
+        <Route path="/social-media" element={<SocialMediaPage />} />
+        <Route path="/best-practices" element={<BestPracticesPage />} />
+        <Route path="/smm-page" element={<SMMPage />} />
+        <Route path="/BlogPost" element={<BlogPost/>}/>
+        <Route path="/categorypage" element={<CategoryPage/>}/>
+
           </Routes>
         </main>
 
