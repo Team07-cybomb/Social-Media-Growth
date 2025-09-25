@@ -1,90 +1,125 @@
 // src/App.tsx
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { HomePage } from "./components/HomePage";
 import { ServicesPage } from "./components/ServicesPage";
 import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
-import Blog from "./components/BlogPage"; // Import the Blog component
-import { Toaster } from "./components/ui/sonner";
-import AffiliatePage from "./components/AffiliatePage"; // Ensure this import
-import FAQPage from "./components/FAQPage";
-import RegisterPage from "./components/RegisterPage"; // Import RegisterPage component
-import LoginPage from "./components/LoginPage";
+import Blog from "./components/BlogPage";
+import ContentMarketingPage from "./components/ContentMarketingPage";
 import DigitalStrategyPage from "./components/DigitalStrategyP";
 import BestPracticesPage from "./components/BestPracticesPage";
-import ContentMarketingPage from "./components/ContentMarketingPage";
 import SMMPage from "./components/SMMPage";
 import SocialMediaPage from "./components/SocialMediaPage";
+import { Toaster } from "./components/ui/sonner";
+import AffiliatePage from "./components/AffiliatePage";
+import FAQPage from "./components/FAQPage";
+import RegisterPage from "./components/RegisterPage";
+import LoginPage from "./components/LoginPage";
 import BlogPost from "./components/BlogPost";
-import CategoryPage from "./components/CategoryPage";
+import { InstagramGrowthPage } from "./components/InstagramGrowthPage";
+import { TwitterGrowthPage } from "./components/TwitterGrowthPage";
+import { FacebookGrowthPage } from "./components/FacebookGrowthPage";
+import { LinkedInGrowthPage } from "./components/LinkedinGrowthPage";
+import { YouTubeGrowthPage } from "./components/YoutubeGrowthPage";
+import AdminRoutes from "./Admin/AdminRoutes";
+// import BlogPost from "./components/BlogPost";
 
+// Layout component to conditionally show navbar/footer
+function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return <div className="h-screen w-screen">{children}</div>;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar currentPage={location.pathname.slice(1) || 'home'} onNavigate={() => {}} />
+      <main className="flex-grow">
+        {children}
+      </main>
+      <Footer onNavigate={() => {}} />
+    </div>
+  );
+}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
-    // Scroll to top when navigating
     window.scrollTo({ top: 0, behavior: "smooth" });
-    if (page === "register") {
-      window.location.href = "/register"; // Or use useNavigate hook if available
-    }
-    if (page === "about") {
-      window.location.href = "/about"; // Or use useNavigate hook if available
-    }
-    if (page === "contact") {
-      window.location.href = "/contact"; // Or use useNavigate hook if available
-    }
-    if (page === "services") {
-      window.location.href = "/services"; // Or use useNavigate hook if available
+    
+    const pageRoutes: { [key: string]: string } = {
+      register: "/register",
+      about: "/about",
+      contact: "/contact",
+      services: "/services",
+      home: "/",
+      blog: "/blog",
+      affiliate: "/affiliate",
+      faq: "/faq",
+      login: "/login"
+    };
+    
+    if (pageRoutes[page]) {
+      window.location.href = pageRoutes[page];
     }
   };
 
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
-
-        <main className="flex-grow">
-          <Routes>
-            <Route
-              path="/"
-              element={<HomePage onNavigate={handleNavigate} />}
+      <Layout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
+          <Route path="/services" element={<ServicesPage onNavigate={handleNavigate} />} />
+          <Route path="/about" element={<AboutPage onNavigate={handleNavigate} />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/affiliate" element={<AffiliatePage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/content-marketing" element={<ContentMarketingPage />} />
+          <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
+          <Route path="/best-practices" element={<BestPracticesPage />} />
+          <Route path="/smm-page" element={<SMMPage />} />
+          <Route path="/social-media" element={<SocialMediaPage />} />
+          <Route path="/login" element={<LoginPage/>}/>
+          {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
+          <Route
+              path="/instagram-growth"
+              element={<InstagramGrowthPage onNavigate={handleNavigate} />}
             />
             <Route
-              path="/services"
-              element={<ServicesPage onNavigate={handleNavigate} />}
+              path="/twitter-growth"
+              element={<TwitterGrowthPage onNavigate={handleNavigate} />}
             />
             <Route
-              path="/about"
-              element={<AboutPage onNavigate={handleNavigate} />}
+              path="/facebook-growth"
+              element={<FacebookGrowthPage onNavigate={handleNavigate} />}
             />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/blog" element={<Blog />} />{" "}
-            {/* Add this route for the Blog page */}
-            <Route path="/affiliate" element={<AffiliatePage />} />{" "}
-            {/* Ensure the correct path */}
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/register" element={<RegisterPage />} />{" "}
-            {/* Add this route for the Register page */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
-        <Route path="/content-marketing" element={<ContentMarketingPage />} />
-        <Route path="/social-media" element={<SocialMediaPage />} />
-        <Route path="/best-practices" element={<BestPracticesPage />} />
-        <Route path="/smm-page" element={<SMMPage />} />
-        <Route path="/BlogPost" element={<BlogPost/>}/>
-        <Route path="/categorypage" element={<CategoryPage/>}/>
+            <Route
+              path="/linkedin-growth"
+              element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
+            />
+            <Route
+              path="/youtube-growth"
+              element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
+            />
+  
 
-          </Routes>
-        </main>
 
-        <Footer onNavigate={handleNavigate} />
-        <Toaster />
-      </div>
+          
+          {/* Admin Routes */}
+          <Route path="/admin/*" element={<AdminRoutes />} />
+        </Routes>
+      </Layout>
+      <Toaster />
     </Router>
   );
 }
