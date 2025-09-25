@@ -7,13 +7,25 @@ import { HomePage } from "./components/HomePage";
 import { ServicesPage } from "./components/ServicesPage";
 import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
-import Blog from "./components/blog";
+import Blog from "./components/BlogPage";
+import ContentMarketingPage from "./components/ContentMarketingPage";
+import DigitalStrategyPage from "./components/DigitalStrategyP";
+import BestPracticesPage from "./components/BestPracticesPage";
+import SMMPage from "./components/SMMPage";
+import SocialMediaPage from "./components/SocialMediaPage";
 import { Toaster } from "./components/ui/sonner";
 import AffiliatePage from "./components/AffiliatePage";
 import FAQPage from "./components/FAQPage";
 import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
+import BlogPost from "./components/BlogPost";
+import { InstagramGrowthPage } from "./components/InstagramGrowthPage";
+import { TwitterGrowthPage } from "./components/TwitterGrowthPage";
+import { FacebookGrowthPage } from "./components/FacebookGrowthPage";
+import { LinkedInGrowthPage } from "./components/LinkedinGrowthPage";
+import { YouTubeGrowthPage } from "./components/YoutubeGrowthPage";
 import AdminRoutes from "./Admin/AdminRoutes";
+// import BlogPost from "./components/BlogPost";
 
 // Layout component to conditionally show navbar/footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -72,7 +84,36 @@ export default function App() {
           <Route path="/affiliate" element={<AffiliatePage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/content-marketing" element={<ContentMarketingPage />} />
+          <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
+          <Route path="/best-practices" element={<BestPracticesPage />} />
+          <Route path="/smm-page" element={<SMMPage />} />
+          <Route path="/social-media" element={<SocialMediaPage />} />
+          <Route path="/login" element={<LoginPage/>}/>
+          {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
+          <Route
+              path="/instagram-growth"
+              element={<InstagramGrowthPage onNavigate={handleNavigate} />}
+            />
+            <Route
+              path="/twitter-growth"
+              element={<TwitterGrowthPage onNavigate={handleNavigate} />}
+            />
+            <Route
+              path="/facebook-growth"
+              element={<FacebookGrowthPage onNavigate={handleNavigate} />}
+            />
+            <Route
+              path="/linkedin-growth"
+              element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
+            />
+            <Route
+              path="/youtube-growth"
+              element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
+            />
+  
+
+
           
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
