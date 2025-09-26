@@ -1,8 +1,18 @@
 // src/components/LoginPage.tsx
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const LoginPage: React.FC = () => {
+  
+    const navigate = useNavigate(); // ⬅️ Create navigate instance
+  
+    const handleLogin = (e: React.FormEvent) => {
+      e.preventDefault(); // prevent page reload
+      // Here you can add login validation or API call logic
+  
+      // Redirect to Home page after successful login
+      navigate("/home"); // ⬅️ Navigate to Home page
+    };
   return (
     <>
       <style>
@@ -194,7 +204,8 @@ const LoginPage: React.FC = () => {
               Welcome <span className="gradient-text">Back</span>
             </h2>
 
-            <form className="space-y-6">
+            {/* Use handleLogin on form submit */}
+            <form className="space-y-6" onSubmit={handleLogin}>
               <div>
                 <label htmlFor="email" className="login-label">
                   Email Address
