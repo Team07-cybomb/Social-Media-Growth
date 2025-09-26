@@ -425,21 +425,47 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
             text-align: center;
           }
 
+          .linkedin-service-buttons {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+          }
+
           .linkedin-service-button {
             background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            flex: 1;
+            font-size: 0.9rem;
           }
 
           .linkedin-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
+          }
+
+          .linkedin-service-button-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+          }
+
+          .linkedin-service-button-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -875,6 +901,10 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
             .linkedin-process-grid {
               grid-template-columns: 1fr;
             }
+
+            .linkedin-service-buttons {
+              flex-direction: column;
+            }
           }
         `}
       </style>
@@ -985,12 +1015,20 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
                       <div className="linkedin-service-price">
                         {service.price}
                       </div>
-                      <button
-                        className="linkedin-service-button"
-                        onClick={() => onNavigate("register")}
-                      >
-                        Start Growing
-                      </button>
+                      <div className="linkedin-service-buttons">
+                        <button
+                          className="linkedin-service-button"
+                          onClick={() => onNavigate("register")}
+                        >
+                          Start Growing
+                        </button>
+                        <button
+                          className="linkedin-service-button-secondary"
+                          onClick={() => onNavigate("order")}
+                        >
+                          Order Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

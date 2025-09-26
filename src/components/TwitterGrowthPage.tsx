@@ -425,21 +425,46 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
             text-align: center;
           }
 
+          .twitter-service-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+          }
+
           .twitter-service-button {
             background: linear-gradient(135deg, #1D9BF0 0%, #00BA7C 100%);
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            flex: 1;
+            font-size: 0.9rem;
           }
 
           .twitter-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(29, 155, 240, 0.3);
+          }
+
+          .twitter-service-button-secondary {
+            background: transparent;
+            color: #1D9BF0;
+            border: 2px solid #1D9BF0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+          }
+
+          .twitter-service-button-secondary:hover {
+            background: rgba(29, 155, 240, 0.1);
+            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -875,6 +900,10 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
             .twitter-process-grid {
               grid-template-columns: 1fr;
             }
+
+            .twitter-service-buttons {
+              flex-direction: column;
+            }
           }
         `}
       </style>
@@ -981,12 +1010,20 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
                       <div className="twitter-service-price">
                         {service.price}
                       </div>
-                      <button
-                        className="twitter-service-button"
-                        onClick={() => onNavigate("register")}
-                      >
-                        Start Growing
-                      </button>
+                      <div className="twitter-service-buttons">
+                        <button
+                          className="twitter-service-button"
+                          onClick={() => onNavigate("register")}
+                        >
+                          Start Growing
+                        </button>
+                        <button
+                          className="twitter-service-button-secondary"
+                          onClick={() => onNavigate("order")}
+                        >
+                          Order Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

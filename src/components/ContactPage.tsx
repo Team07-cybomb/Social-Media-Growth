@@ -124,11 +124,7 @@ export function ContactPage() {
         }}
       >
         <CardHeader className="text-center pb-2">
-          <div className="mb-2">
-            <h1 className="text-2xl font-bold" style={{ color: "#000000" }}>
-              SocialGrowth
-            </h1>
-          </div>
+          <div className="mb-2"></div>
           <h2 className="text-xl font-semibold" style={{ color: "#374151" }}>
             Contact Us
           </h2>

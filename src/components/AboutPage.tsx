@@ -2,61 +2,66 @@ import { Target, Users, Award, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Rocket, Eye, Headphones } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-interface AboutPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export function AboutPage({ onNavigate }: AboutPageProps) {
+export function AboutPage() {
+  const navigate = useNavigate();
   const teamMembers = [
     {
       name: "Alex Johnson",
       role: "Founder & CEO",
       bio: "10+ years in digital marketing with expertise in social media growth strategies.",
-      image: "https://i.pinimg.com/1200x/45/17/9d/45179d43379464798e63c5006815ac41.jpg"
+      image:
+        "https://i.pinimg.com/1200x/45/17/9d/45179d43379464798e63c5006815ac41.jpg",
     },
     {
       name: "Sarah Chen",
       role: "Head of Strategy",
       bio: "Former social media manager for Fortune 500 companies, specializing in B2B growth.",
-      image: "https://i.pinimg.com/1200x/6e/d0/f3/6ed0f34f94a2ef29b776c99938468378.jpg"
+      image:
+        "https://i.pinimg.com/1200x/6e/d0/f3/6ed0f34f94a2ef29b776c99938468378.jpg",
     },
     {
       name: "Eve Rodriguez",
       role: "Content Director",
       bio: "Award-winning content creator with experience across all major social platforms.",
-      image: "https://i.pinimg.com/736x/0a/d1/93/0ad19309a59be71b028548801ac38353.jpg"
-    }
+      image:
+        "https://i.pinimg.com/736x/0a/d1/93/0ad19309a59be71b028548801ac38353.jpg",
+    },
   ];
 
   const values = [
     {
       icon: Target,
       title: "Results-Driven",
-      description: "We focus on delivering measurable growth and ROI for every client, using data-driven strategies that work."
+      description:
+        "We focus on delivering measurable growth and ROI for every client, using data-driven strategies that work.",
     },
     {
       icon: Users,
       title: "Authentic Growth",
-      description: "We believe in building genuine communities, not just follower counts. Quality engagement over quantity."
+      description:
+        "We believe in building genuine communities, not just follower counts. Quality engagement over quantity.",
     },
     {
       icon: Award,
       title: "Excellence",
-      description: "We maintain the highest standards in everything we do, from strategy development to client communication."
+      description:
+        "We maintain the highest standards in everything we do, from strategy development to client communication.",
     },
     {
       icon: TrendingUp,
       title: "Innovation",
-      description: "We stay ahead of social media trends and algorithm changes to keep our clients' growth consistent."
-    }
+      description:
+        "We stay ahead of social media trends and algorithm changes to keep our clients' growth consistent.",
+    },
   ];
 
   const stats = [
     { number: "500+", label: "Clients Served" },
     { number: "2M+", label: "Followers Generated" },
     { number: "95%", label: "Client Retention Rate" },
-    { number: "5", label: "Years Experience" }
+    { number: "5", label: "Years Experience" },
   ];
 
   return (
@@ -163,7 +168,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             object-fit: cover;
           }
 
-          /* Mission Section */
+          /* Mission Section - UPDATED: White background with #f9fafb cards */
           .about-mission {
             padding: 5rem 1rem;
             background: white;
@@ -234,7 +239,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           }
 
           .about-card {
-            background: white;
+            background: #f9fafb;
             text-align: center;
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -289,7 +294,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             font-weight: 700;
           }
 
-          /* Values Section */
+          /* Values Section - UPDATED: #f9fafb background with white cards */
           .about-values {
             padding: 5rem 1rem;
             background: #f9fafb;
@@ -376,7 +381,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             line-height: 1.5;
           }
 
-          /* Team Section */
+          /* Team Section - UPDATED: White background */
           .about-team {
             padding: 5rem 1rem;
             background: white;
@@ -545,6 +550,29 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             background: rgba(255, 255, 255, 0.2);
           }
 
+          /* Dark mode support for updated sections */
+          .dark .about-mission {
+            background: #1f2937;
+          }
+
+          .dark .about-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .about-values {
+            background: #111827;
+          }
+
+          .dark .about-value-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .about-team {
+            background: #1f2937;
+          }
+
           /* Animations */
           @keyframes fadeIn {
             from {
@@ -621,17 +649,25 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             <div className="about-hero-grid">
               <div>
                 <h1 className="about-hero-title">
-                  Hi! We're <br/><span className="gradient-text">The Social Media Growth!</span>
+                  Hi! We're <br />
+                  <span className="gradient-text">
+                    The Social Media Growth!
+                  </span>
                 </h1>
                 <p className="about-hero-text">
-                  We're a team of social media experts passionate about helping businesses 
-                  build authentic, engaged communities across all major platforms. Founded in 2019, 
-                  we've helped hundreds of companies transform their social media presence and 
-                  achieve remarkable growth.
+                  We're a team of social media experts passionate about helping
+                  businesses build authentic, engaged communities across all
+                  major platforms. Founded in 2019, we've helped hundreds of
+                  companies transform their social media presence and achieve
+                  remarkable growth.
                 </p>
                 <div className="about-stats-grid">
                   {stats.map((stat, index) => (
-                    <div key={index} className="about-stat animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div
+                      key={index}
+                      className="about-stat animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
                       <div className="about-stat-number">{stat.number}</div>
                       <div className="about-stat-label">{stat.label}</div>
                     </div>
@@ -639,7 +675,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
               </div>
 
-              <div className="about-hero-image animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <div
+                className="about-hero-image animate-fade-in"
+                style={{ animationDelay: "0.4s" }}
+              >
                 <ImageWithFallback
                   src="https://i.pinimg.com/1200x/db/0f/1a/db0f1abb02e1f9c0a531165b67a2366f.jpg"
                   alt="SocialGrowth team"
@@ -650,19 +689,20 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           </div>
         </section>
 
-        {/* Mission Section */}
+        {/* Mission Section - UPDATED: White background with #f9fafb cards */}
         <section className="about-mission">
           <div className="about-mission-container">
             <div className="about-mission-heading">
               <h2 className="section-heading">
-                Different So We Can Make A<br/> Difference
+                Different So We Can Make A<br /> Difference
               </h2>
               <div className="about-mission-divider"></div>
               <p className="section-subtitle">
-                Here at <span>The Social Media Growth</span>, 
-                we know how important it is for brands to have an audience that listens, engages, and cares. 
-                Our goal isn't just to inflate numbers — it's to expand your brand's awareness and following 
-                with wholehearted support from our committed team of professionals.
+                Here at <span>The Social Media Growth</span>, we know how
+                important it is for brands to have an audience that listens,
+                engages, and cares. Our goal isn't just to inflate numbers —
+                it's to expand your brand's awareness and following with
+                wholehearted support from our committed team of professionals.
               </p>
             </div>
 
@@ -674,10 +714,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
                 <h3 className="about-card-title">Our Mission</h3>
                 <p className="about-card-text">
-                  <span>The Social Media Growth</span> gives you the push you need
-                  to go viral on social media and compete with influencers and companies.
-                  We aim to boost your presence credibly and naturally, reflecting a trustworthy image
-                  in your community.
+                  <span>The Social Media Growth</span> gives you the push you
+                  need to go viral on social media and compete with influencers
+                  and companies. We aim to boost your presence credibly and
+                  naturally, reflecting a trustworthy image in your community.
                 </p>
               </div>
 
@@ -688,10 +728,11 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
                 <h3 className="about-card-title">Our Vision</h3>
                 <p className="about-card-text">
-                  We know that going viral on social media is not a walk in the park!
-                  That's why we created this engagement service and made it public.
-                  Whether you're a blogger, public figure, brand, or organization,
-                  we help you set the bar high and stand out online.
+                  We know that going viral on social media is not a walk in the
+                  park! That's why we created this engagement service and made
+                  it public. Whether you're a blogger, public figure, brand, or
+                  organization, we help you set the bar high and stand out
+                  online.
                 </p>
               </div>
 
@@ -702,18 +743,21 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
                 <h3 className="about-card-title">24/7 Support</h3>
                 <p className="about-card-text">
-                  At <span>The Social Media Growth</span>, 
-                  we're always ready to assist with our dedicated <strong>24/7 support</strong>. 
-                  Reach us via Ticket, Email, or WhatsApp — our expert team is on hand to 
-                  answer your questions and resolve issues within minutes.
+                  At <span>The Social Media Growth</span>, we're always ready to
+                  assist with our dedicated <strong>24/7 support</strong>. Reach
+                  us via Ticket, Email, or WhatsApp — our expert team is on hand
+                  to answer your questions and resolve issues within minutes.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Values Section */}
-        <section className="about-values animate-fade-in" style={{ animationDelay: '0.8s' }}>
+        {/* Values Section - UPDATED: #f9fafb background with white cards */}
+        <section
+          className="about-values animate-fade-in"
+          style={{ animationDelay: "0.8s" }}
+        >
           <div className="about-values-container">
             <div className="about-values-heading">
               <h2 className="section-heading">Our Values</h2>
@@ -724,7 +768,11 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
 
             <div className="about-values-grid">
               {values.map((value, index) => (
-                <div key={index} className="about-value-card animate-fade-in" style={{ animationDelay: `${1 + index * 0.1}s` }}>
+                <div
+                  key={index}
+                  className="about-value-card animate-fade-in"
+                  style={{ animationDelay: `${1 + index * 0.1}s` }}
+                >
                   <div className="about-value-content">
                     <div className="about-value-icon">
                       <value.icon className="w-8 h-8" />
@@ -738,8 +786,11 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="about-team animate-fade-in" style={{ animationDelay: '1.2s' }}>
+        {/* Team Section - UPDATED: White background */}
+        <section
+          className="about-team animate-fade-in"
+          style={{ animationDelay: "1.2s" }}
+        >
           <div className="about-team-container">
             <div className="about-team-heading">
               <h2 className="section-heading">Meet Our Team</h2>
@@ -750,7 +801,11 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
 
             <div className="about-team-grid">
               {teamMembers.map((member, index) => (
-                <div key={index} className="about-team-card animate-fade-in" style={{ animationDelay: `${1.4 + index * 0.1}s` }}>
+                <div
+                  key={index}
+                  className="about-team-card animate-fade-in"
+                  style={{ animationDelay: `${1.4 + index * 0.1}s` }}
+                >
                   <div className="about-team-image-container">
                     <ImageWithFallback
                       src={member.image}
@@ -770,24 +825,25 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
         </section>
 
         {/* CTA Section */}
-        <section className="about-cta animate-fade-in" style={{ animationDelay: '1.8s' }}>
+        <section
+          className="about-cta animate-fade-in"
+          style={{ animationDelay: "1.8s" }}
+        >
           <div className="about-cta-container">
-            <h2 className="final-cta-heading">
-              Ready to Work With Us?
-            </h2>
+            <h2 className="final-cta-heading">Ready to Work With Us?</h2>
             <p className="final-cta-subtitle">
-              Let's discuss how we can help you achieve your social media goals and 
-              build a thriving online community for your business.
+              Let's discuss how we can help you achieve your social media goals
+              and build a thriving online community for your business.
             </p>
             <div className="about-cta-buttons">
               <button
-                onClick={() => onNavigate("contact")}
+                onClick={() => navigate("/contact")}
                 className="final-cta-button"
               >
                 Get In Touch
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="final-cta-secondary"
               >
                 View Our Services
