@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import { Hero } from "./Hero";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-
+import { useNavigate } from "react-router-dom";
 interface HomePageProps {
   onNavigate: (page: string) => void;
 }
 
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage() {
+  const navigate = useNavigate();
   const howItWorks = [
     {
       icon: Target,
@@ -136,6 +137,37 @@ export function HomePage({ onNavigate }: HomePageProps) {
     "Competitor analysis and market positioning",
   ];
 
+  const statsData = [
+    {
+      number: "500+",
+      label: "Happy Clients",
+      description: "Satisfied businesses across various industries",
+      colorClass: "blue",
+      icon: "👥",
+    },
+    {
+      number: "2M+",
+      label: "Followers Gained",
+      description: "Organic growth across all social platforms",
+      colorClass: "green",
+      icon: "📈",
+    },
+    {
+      number: "95%",
+      label: "Success Rate",
+      description: "Clients achieving their growth targets",
+      colorClass: "amber",
+      icon: "🎯",
+    },
+    {
+      number: "24/7",
+      label: "Support",
+      description: "Round-the-clock dedicated assistance",
+      colorClass: "red",
+      icon: "⚡",
+    },
+  ];
+
   return (
     <>
       <style>{`
@@ -205,54 +237,60 @@ export function HomePage({ onNavigate }: HomePageProps) {
           margin-right: auto;
         }
 
-        .homepage-how-it-works {
-          background: linear-gradient(to bottom, var(--background) 0%, rgba(243, 244, 246, 0.8) 100%);
+        .homepage-subtitle-mb {
+          margin-bottom: 2rem;
         }
 
-        .dark .homepage-how-it-works {
-          background: linear-gradient(to bottom, var(--background) 0%, rgba(17, 24, 39, 0.8) 100%);
+        /* Section Background Colors - UPDATED */
+        .homepage-stats {
+          background: white;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .homepage-how-it-works {
+          background: #f9fafb;
+        }
+
+        .homepage-benefits {
+          background: white;
+        }
+
+        .homepage-why-choose-us {
+          background: #f9fafb;
         }
 
         .homepage-testimonials {
-          background: rgba(249, 250, 251, 0.9);
-        }
-
-        .dark .homepage-testimonials {
-          background: rgba(17, 24, 39, 0.5);
+          background: white;
         }
 
         .homepage-cta {
           background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(237, 233, 254, 0.9) 100%);
         }
 
-        .dark .homepage-cta {
-          background: linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(76, 29, 149, 0.2) 100%);
-        }
-
-        .homepage-stats {
-          background: white;
-          border-top: 1px solid #e2e8f0;
-        }
-
+        /* Dark mode support */
         .dark .homepage-stats {
           background: #1f2937;
           border-top: 1px solid #374151;
         }
 
-        .homepage-benefits {
-          background: linear-gradient(135deg, rgba(239, 246, 255, 0.6) 0%, rgba(255, 251, 235, 0.6) 100%);
+        .dark .homepage-how-it-works {
+          background: #111827;
         }
 
         .dark .homepage-benefits {
-          background: linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(120, 53, 15, 0.1) 100%);
-        }
-
-        .homepage-why-choose-us {
-          background: linear-gradient(135deg, rgba(236, 253, 245, 0.6) 0%, rgba(254, 242, 242, 0.6) 100%);
+          background: #1f2937;
         }
 
         .dark .homepage-why-choose-us {
-          background: linear-gradient(135deg, rgba(6, 78, 59, 0.1) 0%, rgba(127, 29, 29, 0.1) 100%);
+          background: #111827;
+        }
+
+        .dark .homepage-testimonials {
+          background: #1f2937;
+        }
+
+        .dark .homepage-cta {
+          background: linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(76, 29, 149, 0.2) 100%);
         }
 
         /* Card Styles from AffiliatePage */
@@ -380,6 +418,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
           gap: 1rem;
           grid-template-columns: 1fr;
           width: 100%;
+          max-width: 48rem;
+          margin: 0 auto;
         }
 
         @media (min-width: 768px) {
@@ -442,6 +482,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
           width: 100%;
           max-width: 36rem;
           border: none;
+        }
+
+        .homepage-centered-cta-title {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+        }
+
+        .homepage-centered-cta-text {
+          margin-bottom: 2rem;
+          opacity: 0.9;
+          font-size: 1.125rem;
         }
 
         /* Grid Layouts */
@@ -530,6 +582,264 @@ export function HomePage({ onNavigate }: HomePageProps) {
           font-weight: bold;
         }
 
+        /* Stats Card Styles - UPDATED WITH ICONS */
+        .stats-card {
+          text-align: center;
+          padding: 2rem 1.5rem;
+          position: relative;
+          overflow: hidden;
+          animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .stats-card-icon {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+          opacity: 0.8;
+          transform: scale(1);
+          transition: transform 0.3s ease;
+          position: relative;
+          z-index: 2;
+          display: block;
+        }
+
+        .stats-card:hover .stats-card-icon {
+          transform: scale(1.2);
+        }
+
+        .stats-card-number {
+          font-size: 2.5rem;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+          transition: transform 0.3s ease;
+          position: relative;
+          z-index: 2;
+        }
+
+        .stats-card:hover .stats-card-number {
+          transform: scale(1.1);
+        }
+
+        .stats-card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-bottom: 0.75rem;
+          color: var(--foreground);
+          position: relative;
+          z-index: 2;
+        }
+
+        .stats-card-description {
+          font-size: 0.875rem;
+          color: #6b7280;
+          line-height: 1.4;
+          margin: 0;
+          position: relative;
+          z-index: 2;
+        }
+
+        .stats-card-radial-bg {
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border-radius: 50%;
+        }
+
+        .stats-card:hover .stats-card-radial-bg {
+          opacity: 1;
+        }
+
+        /* Stats card color variations */
+        .stats-card-blue {
+          background: linear-gradient(135deg, #3B82F610 0%, #3B82F605 100%);
+          border: 1px solid #3B82F620;
+        }
+        .stats-card-blue .stats-card-number { color: #3B82F6; }
+        .stats-card-blue .stats-card-radial-bg { background: radial-gradient(circle, #3B82F615 0%, transparent 70%); }
+
+        .stats-card-green {
+          background: linear-gradient(135deg, #10B98110 0%, #10B98105 100%);
+          border: 1px solid #10B98120;
+        }
+        .stats-card-green .stats-card-number { color: #10B981; }
+        .stats-card-green .stats-card-radial-bg { background: radial-gradient(circle, #10B98115 0%, transparent 70%); }
+
+        .stats-card-amber {
+          background: linear-gradient(135deg, #F59E0B10 0%, #F59E0B05 100%);
+          border: 1px solid #F59E0B20;
+        }
+        .stats-card-amber .stats-card-number { color: #F59E0B; }
+        .stats-card-amber .stats-card-radial-bg { background: radial-gradient(circle, #F59E0B15 0%, transparent 70%); }
+
+        .stats-card-red {
+          background: linear-gradient(135deg, #EF444410 0%, #EF444405 100%);
+          border: 1px solid #EF444420;
+        }
+        .stats-card-red .stats-card-number { color: #EF4444; }
+        .stats-card-red .stats-card-radial-bg { background: radial-gradient(circle, #EF444415 0%, transparent 70%); }
+
+        /* How It Works Card Styles */
+        .how-it-works-step-header {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 1.5rem;
+        }
+
+        .how-it-works-icon-container {
+          width: 4rem;
+          height: 4rem;
+          border-radius: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .how-it-works-step-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: var(--foreground);
+          margin: 0 0 0.5rem 0;
+        }
+
+        .how-it-works-step-description {
+          color: #6b7280;
+          line-height: 1.6;
+          margin: 0;
+          font-size: 1rem;
+        }
+
+        /* Benefit Card Icon Styles */
+        .benefit-card-icon {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+
+        .benefit-card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          color: var(--foreground);
+        }
+
+        .benefit-card-description {
+          color: #6b7280;
+          line-height: 1.5;
+        }
+
+        /* Testimonial Card Styles */
+        .testimonial-rating {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .testimonial-quote {
+          width: 1.5rem;
+          height: 1.5rem;
+          color: #93c5fd;
+          margin-bottom: 1rem;
+        }
+
+        .testimonial-content {
+          color: #6b7280;
+          font-style: italic;
+          margin-bottom: 1.5rem;
+          line-height: 1.5;
+          font-size: 0.875rem;
+          flex-grow: 1;
+        }
+
+        .testimonial-author {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .testimonial-avatar {
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #93c5fd;
+        }
+
+        .testimonial-name {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--foreground);
+        }
+
+        .testimonial-company {
+          font-size: 0.75rem;
+          color: #6b7280;
+        }
+
+        /* CTA Button Styles */
+        .cta-button {
+          background: white;
+          color: #2563eb;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.75rem 2rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+          font-size: 1rem;
+        }
+
+        .cta-button:hover {
+          transform: scale(1.05);
+        }
+
+        /* Button Container Styles */
+        .button-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          justify-content: center;
+          align-items: center;
+          max-width: 20rem;
+          margin: 0 auto;
+        }
+
+        .button-full-width {
+          width: 100%;
+        }
+
+        /* Main Container Styles */
+        .homepage-main {
+          min-height: 100vh;
+          background-color: var(--background);
+          color: var(--foreground);
+        }
+
+        /* Full Width Content */
+        .full-width-content {
+          width: 100%;
+        }
+
+        /* Benefits Grid Margin */
+        .benefits-grid-margin {
+          margin-bottom: 3rem;
+        }
+
+        /* Text Center Alignment */
+        .text-center-align {
+          text-align: center;
+        }
+
+        /* Animation delays for stats cards */
+        .stats-card-delay-0 { animation-delay: 0s; }
+        .stats-card-delay-1 { animation-delay: 0.1s; }
+        .stats-card-delay-2 { animation-delay: 0.2s; }
+        .stats-card-delay-3 { animation-delay: 0.3s; }
+
         /* Responsive Design */
         @media (max-width: 768px) {
           .homepage-heading {
@@ -549,23 +859,25 @@ export function HomePage({ onNavigate }: HomePageProps) {
             gap: 0.75rem;
           }
 
-          .why-choose-us-item span {
-            font-size: 0.9rem;
+          .stats-card-number {
+            font-size: 2rem;
+          }
+
+          .stats-card-title {
+            font-size: 1.125rem;
+          }
+
+          .stats-card-icon {
+            font-size: 2rem;
           }
         }
       `}</style>
 
-      <div
-        style={{
-          minHeight: "100vh",
-          backgroundColor: "var(--background)",
-          color: "var(--foreground)",
-        }}
-      >
+      <div className="homepage-main">
         {/* Hero Section */}
-        <Hero onNavigate={onNavigate} />
+        <Hero />
 
-        {/* Our Impact - At a Glance Section */}
+        {/* Our Impact - At a Glance Section - WHITE BACKGROUND */}
         <section className="homepage-section homepage-stats">
           <div className="homepage-container">
             <div className="text-center mb-16">
@@ -577,154 +889,23 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </div>
 
             <div className="homepage-grid homepage-grid-4">
-              {[
-                {
-                  number: "500+",
-                  label: "Happy Clients",
-                  icon: "👥",
-                  description: "Satisfied businesses across various industries",
-                  color: "#3B82F6",
-                },
-                {
-                  number: "2M+",
-                  label: "Followers Gained",
-                  icon: "📈",
-                  description: "Organic growth across all social platforms",
-                  color: "#10B981",
-                },
-                {
-                  number: "95%",
-                  label: "Success Rate",
-                  icon: "🎯",
-                  description: "Clients achieving their growth targets",
-                  color: "#F59E0B",
-                },
-                {
-                  number: "24/7",
-                  label: "Support",
-                  icon: "⚡",
-                  description: "Round-the-clock dedicated assistance",
-                  color: "#EF4444",
-                },
-              ].map((stat, index) => (
+              {statsData.map((stat, index) => (
                 <div
                   key={index}
-                  className="homepage-testimonial-card"
-                  style={{
-                    textAlign: "center",
-                    padding: "2rem 1.5rem",
-                    position: "relative",
-                    overflow: "hidden",
-                    background: `linear-gradient(135deg, ${stat.color}10 0%, ${stat.color}05 100%)`,
-                    border: `1px solid ${stat.color}20`,
-                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                      "translateY(-8px) scale(1.02)";
-                    e.currentTarget.style.background = `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}10 100%)`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0) scale(1)";
-                    e.currentTarget.style.background = `linear-gradient(135deg, ${stat.color}10 0%, ${stat.color}05 100%)`;
-                  }}
+                  className={`homepage-testimonial-card stats-card stats-card-${stat.colorClass} stats-card-delay-${index}`}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "-50%",
-                      right: "-50%",
-                      width: "100%",
-                      height: "100%",
-                      background: `radial-gradient(circle, ${stat.color}15 0%, transparent 70%)`,
-                      opacity: "0",
-                      transition: "opacity 0.3s ease",
-                      borderRadius: "50%",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.opacity = "1";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.opacity = "0";
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      fontSize: "3rem",
-                      marginBottom: "0.5rem",
-                      opacity: "0.8",
-                      transform: "scale(1)",
-                      transition: "transform 0.3s ease",
-                      position: "relative",
-                      zIndex: "2",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.2)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    {stat.icon}
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: "2.5rem",
-                      fontWeight: "bold",
-                      color: stat.color,
-                      marginBottom: "0.5rem",
-                      background: `linear-gradient(135deg, ${stat.color} 0%, ${stat.color}AA 100%)`,
-                      backgroundClip: "text",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      transition: "transform 0.3s ease",
-                      position: "relative",
-                      zIndex: "2",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    {stat.number}
-                  </div>
-
-                  <h3
-                    style={{
-                      fontSize: "1.25rem",
-                      fontWeight: "600",
-                      marginBottom: "0.75rem",
-                      color: "var(--foreground)",
-                      position: "relative",
-                      zIndex: "2",
-                    }}
-                  >
-                    {stat.label}
-                  </h3>
-
-                  <p
-                    style={{
-                      fontSize: "0.875rem",
-                      color: "#6b7280",
-                      lineHeight: "1.4",
-                      margin: "0",
-                      position: "relative",
-                      zIndex: "2",
-                    }}
-                  >
-                    {stat.description}
-                  </p>
+                  <div className="stats-card-radial-bg" />
+                  <div className="stats-card-icon">{stat.icon}</div>
+                  <div className="stats-card-number">{stat.number}</div>
+                  <h3 className="stats-card-title">{stat.label}</h3>
+                  <p className="stats-card-description">{stat.description}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* How It Works Section */}
+        {/* How It Works Section - #f9fafb BACKGROUND */}
         <section className="homepage-section homepage-how-it-works">
           <div className="homepage-container">
             <div className="text-center mb-16">
@@ -740,36 +921,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <div
                   key={index}
                   className="how-it-works-card"
-                  style={{
-                    borderLeft: `4px solid ${step.color}`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderLeftWidth = "6px";
-                    e.currentTarget.style.transform = "translateX(4px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderLeftWidth = "4px";
-                    e.currentTarget.style.transform = "translateX(0)";
-                  }}
+                  style={{ borderLeft: `4px solid ${step.color}` }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      marginBottom: "1.5rem",
-                    }}
-                  >
+                  <div className="how-it-works-step-header">
                     <div
+                      className="how-it-works-icon-container"
                       style={{
-                        width: "4rem",
-                        height: "4rem",
-                        borderRadius: "0.75rem",
                         background: `linear-gradient(135deg, ${step.color}20 0%, ${step.color}10 100%)`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: "1.5rem",
-                        flexShrink: "0",
                       }}
                     >
                       <step.icon
@@ -781,24 +939,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                       />
                     </div>
                     <div>
-                      <h3
-                        style={{
-                          fontSize: "1.5rem",
-                          fontWeight: "600",
-                          color: "var(--foreground)",
-                          margin: "0 0 0.5rem 0",
-                        }}
-                      >
-                        {step.title}
-                      </h3>
-                      <p
-                        style={{
-                          color: "#6b7280",
-                          lineHeight: "1.6",
-                          margin: 0,
-                          fontSize: "1rem",
-                        }}
-                      >
+                      <h3 className="how-it-works-step-title">{step.title}</h3>
+                      <p className="how-it-works-step-description">
                         {step.description}
                       </p>
                     </div>
@@ -808,15 +950,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     {step.details.map((detail, detailIndex) => (
                       <div key={detailIndex} className="checklist-item">
                         <div className="checkmark" />
-                        <span
-                          style={{
-                            color: "var(--foreground)",
-                            fontSize: "0.95rem",
-                            lineHeight: "1.4",
-                          }}
-                        >
-                          {detail}
-                        </span>
+                        <span>{detail}</span>
                       </div>
                     ))}
                   </div>
@@ -826,7 +960,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </section>
 
-        {/* Benefits Section */}
+        {/* Benefits Section - WHITE BACKGROUND */}
         <section className="homepage-section homepage-benefits">
           <div className="homepage-container">
             <div className="text-center mb-16">
@@ -837,19 +971,10 @@ export function HomePage({ onNavigate }: HomePageProps) {
               </p>
             </div>
 
-            <div
-              className="homepage-grid homepage-grid-4"
-              style={{ marginBottom: "3rem" }}
-            >
+            <div className="homepage-grid homepage-grid-4 benefits-grid-margin">
               {benefits.map((benefit, index) => (
                 <div key={index} className="benefit-card">
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      marginBottom: "1rem",
-                    }}
-                  >
+                  <div className="benefit-card-icon">
                     <benefit.icon
                       style={{
                         width: "3rem",
@@ -858,22 +983,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                       }}
                     />
                   </div>
-                  <h3
-                    style={{
-                      fontSize: "1.25rem",
-                      fontWeight: "600",
-                      marginBottom: "1rem",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    {benefit.title}
-                  </h3>
-                  <p
-                    style={{
-                      color: "#6b7280",
-                      lineHeight: "1.5",
-                    }}
-                  >
+                  <h3 className="benefit-card-title">{benefit.title}</h3>
+                  <p className="benefit-card-description">
                     {benefit.description}
                   </p>
                 </div>
@@ -882,26 +993,17 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </section>
 
-        {/* Why Choose Us Section - CENTERED */}
+        {/* Why Choose Us Section - #f9fafb BACKGROUND */}
         <section className="homepage-section homepage-why-choose-us">
           <div className="homepage-centered-section">
             <div className="homepage-centered-content">
-              <div style={{ width: "100%" }}>
+              <div className="full-width-content">
                 <h2 className="homepage-heading">What Makes Us Different</h2>
-                <p
-                  className="homepage-subtitle"
-                  style={{ marginBottom: "2rem" }}
-                >
+                <p className="homepage-subtitle homepage-subtitle-mb">
                   We don't just manage social media - we build sustainable
                   growth engines that drive real business results.
                 </p>
-                <div
-                  className="why-choose-us-list"
-                  style={{
-                    maxWidth: "48rem",
-                    margin: "0 auto",
-                  }}
-                >
+                <div className="why-choose-us-list">
                   {whyChooseUs.map((item, index) => (
                     <div key={index} className="why-choose-us-item">
                       <CheckCircle
@@ -912,58 +1014,23 @@ export function HomePage({ onNavigate }: HomePageProps) {
                           flexShrink: "0",
                         }}
                       />
-                      <span
-                        style={{
-                          color: "var(--foreground)",
-                          textAlign: "left",
-                        }}
-                      >
-                        {item}
-                      </span>
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="homepage-centered-cta">
-                <h3
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    marginBottom: "1rem",
-                  }}
-                >
+                <h3 className="homepage-centered-cta-title">
                   Ready to Transform Your Social Media?
                 </h3>
-                <p
-                  style={{
-                    marginBottom: "2rem",
-                    opacity: "0.9",
-                    fontSize: "1.125rem",
-                  }}
-                >
+                <p className="homepage-centered-cta-text">
                   Join the hundreds of businesses that have achieved remarkable
                   growth with our strategies.
                 </p>
                 <button
-                  onClick={() => onNavigate("contact")}
-                  style={{
-                    background: "white",
-                    color: "#2563eb",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 2rem",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    transition: "transform 0.3s ease",
-                    fontSize: "1rem",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "scale(1)";
-                  }}
+                  onClick={() => navigate("contact")}
+                  className="cta-button"
                 >
                   Contact Support Team
                 </button>
@@ -972,7 +1039,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           </div>
         </section>
 
-        {/* Testimonials */}
+        {/* Testimonials Section - WHITE BACKGROUND */}
         <section className="homepage-section homepage-testimonials">
           <div className="homepage-container">
             <div className="text-center mb-16">
@@ -985,13 +1052,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <div className="homepage-grid homepage-grid-3">
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="homepage-testimonial-card">
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "1rem",
-                    }}
-                  >
+                  <div className="testimonial-rating">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star
                         key={i}
@@ -1005,57 +1066,19 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     ))}
                   </div>
 
-                  <Quote
-                    style={{
-                      width: "1.5rem",
-                      height: "1.5rem",
-                      color: "#93c5fd",
-                      marginBottom: "1rem",
-                    }}
-                  />
+                  <Quote className="testimonial-quote" />
 
-                  <p
-                    style={{
-                      color: "#6b7280",
-                      fontStyle: "italic",
-                      marginBottom: "1.5rem",
-                      lineHeight: "1.5",
-                      fontSize: "0.875rem",
-                      flexGrow: 1,
-                    }}
-                  >
-                    "{testimonial.content}"
-                  </p>
+                  <p className="testimonial-content">"{testimonial.content}"</p>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                    }}
-                  >
+                  <div className="testimonial-author">
                     <ImageWithFallback
                       src={testimonial.avatar}
                       alt={testimonial.name}
-                      style={{
-                        width: "2.5rem",
-                        height: "2.5rem",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        border: "2px solid #93c5fd",
-                      }}
+                      className="testimonial-avatar"
                     />
                     <div>
-                      <div
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "var(--foreground)",
-                        }}
-                      >
-                        {testimonial.name}
-                      </div>
-                      <div style={{ fontSize: "0.75rem", color: "#6b7280" }}>
+                      <div className="testimonial-name">{testimonial.name}</div>
+                      <div className="testimonial-company">
                         {testimonial.company}
                       </div>
                     </div>
@@ -1068,36 +1091,24 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
         {/* Final CTA Section */}
         <section className="homepage-section homepage-cta">
-          <div className="homepage-container" style={{ textAlign: "center" }}>
+          <div className="homepage-container text-center-align">
             <h2 className="homepage-heading">
               Ready to Grow Your Social Media?
             </h2>
-            <p className="homepage-subtitle" style={{ marginBottom: "2rem" }}>
+            <p className="homepage-subtitle homepage-subtitle-mb">
               Join hundreds of businesses that have transformed their social
               media presence with our proven strategies.
             </p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                justifyContent: "center",
-                alignItems: "center",
-                maxWidth: "20rem",
-                margin: "0 auto",
-              }}
-            >
+            <div className="button-container">
               <button
-                onClick={() => onNavigate("register")}
-                className="homepage-button-primary"
-                style={{ width: "100%" }}
+                onClick={() => navigate("register")}
+                className="homepage-button-primary button-full-width"
               >
                 Get Started Today
               </button>
               <button
-                onClick={() => onNavigate("about")}
-                className="homepage-button-secondary"
-                style={{ width: "100%" }}
+                onClick={() => navigate("about")}
+                className="homepage-button-secondary button-full-width"
               >
                 Learn More About Us
               </button>

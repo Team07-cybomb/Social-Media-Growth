@@ -1,17 +1,18 @@
 import { Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
-
-
+import { useNavigate } from "react-router-dom";
 interface ServicesPageProps {
   onNavigate: (page: string) => void;
 }
 
-export function ServicesPage({ onNavigate }: ServicesPageProps) {
+export function ServicesPage() {
+  const navigate = useNavigate();
   const services = [
     {
       icon: Instagram,
       title: "Instagram Growth",
       description:
         "Boost your Instagram presence with authentic followers, increased engagement, and strategic content optimization.",
+      route: "instagram-growth",
       features: [
         "Organic follower growth strategies",
         "Content creation and curation",
@@ -26,6 +27,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
       title: "LinkedIn Growth",
       description:
         "Build your professional network, establish thought leadership, and generate quality B2B leads through strategic LinkedIn growth.",
+      route: "linkedin-growth",
       features: [
         "Professional network expansion",
         "Content strategy for thought leadership",
@@ -40,6 +42,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
       title: "Facebook Growth",
       description:
         "Expand your Facebook reach with targeted audience growth, engaging content, and effective community building strategies.",
+      route: "facebook-growth",
       features: [
         "Targeted audience development",
         "Facebook page optimization",
@@ -54,6 +57,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
       title: "X (Twitter) Growth",
       description:
         "Amplify your voice on X with strategic tweeting, trending topic participation, and authentic follower acquisition.",
+      route: "twitter-growth",
       features: [
         "Tweet strategy and timing",
         "Trending hashtag participation",
@@ -68,6 +72,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
       title: "YouTube Growth",
       description:
         "Grow your YouTube channel with optimized content, improved discoverability, and increased subscriber engagement.",
+      route: "youtube-growth",
       features: [
         "Video SEO optimization",
         "Thumbnail design strategy",
@@ -148,10 +153,10 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
             line-height: 1.75;
           }
 
-          /* Services Grid Section - Same as Affiliate Platforms */
+          /* Services Grid Section - UPDATED TO WHITE BACKGROUND */
           .services-grid-section {
             padding: 5rem 1rem;
-            background: #f9fafb;
+            background: white;
           }
 
           .services-container {
@@ -256,10 +261,10 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
             box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
           }
 
-          /* Process Section - Same as Affiliate Process */
+          /* Process Section - UPDATED TO #f9fafb BACKGROUND */
           .services-process {
             padding: 5rem 1rem;
-            background: #f8fafc;
+            background: #f9fafb;
           }
 
           .services-process-container {
@@ -355,10 +360,10 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
             flex-grow: 1;
           }
 
-          /* FAQ Section - Same as Affiliate Benefits */
+          /* FAQ Section - UPDATED TO WHITE BACKGROUND */
           .services-faq {
             padding: 5rem 1rem;
-            background: #f9fafb;
+            background: white;
           }
 
           .faq-container {
@@ -526,6 +531,58 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
           .mb-8 { margin-bottom: 2rem; }
           .mb-16 { margin-bottom: 4rem; }
 
+          /* Dark mode support for updated sections */
+          .dark .services-grid-section {
+            background: #1f2937;
+          }
+
+          .dark .services-process {
+            background: #111827;
+          }
+
+          .dark .services-faq {
+            background: #1f2937;
+          }
+
+          .dark .service-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .service-title {
+            color: #f9fafb;
+          }
+
+          .dark .service-description {
+            color: #d1d5db;
+          }
+
+          .dark .process-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .process-title {
+            color: #f9fafb;
+          }
+
+          .dark .process-description {
+            color: #d1d5db;
+          }
+
+          .dark .faq-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .faq-question {
+            color: #f9fafb;
+          }
+
+          .dark .faq-answer {
+            color: #d1d5db;
+          }
+
           /* Responsive Design - Same as Affiliate */
           @media (max-width: 768px) {
             .services-hero,
@@ -580,7 +637,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
           </div>
         </section>
 
-        {/* Services Grid Section - Same light gray background as Affiliate Platforms */}
+        {/* Services Grid Section - UPDATED TO WHITE BACKGROUND */}
         <section className="services-grid-section">
           <div className="services-container">
             <div className="text-center mb-16">
@@ -611,7 +668,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
                       </ul>
                       <button
                         className="service-button"
-                        onClick={() => onNavigate("register")}
+                        onClick={() => navigate(`/${service.route}`)}
                       >
                         Get Started
                       </button>
@@ -623,7 +680,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
           </div>
         </section>
 
-        {/* Process Section - Same background as Affiliate Process */}
+        {/* Process Section - UPDATED TO #f9fafb BACKGROUND */}
         <section className="services-process">
           <div className="services-process-container">
             <div className="text-center mb-16">
@@ -672,7 +729,7 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
           </div>
         </section>
 
-        {/* FAQ Section - Same background as Affiliate Benefits */}
+        {/* FAQ Section - UPDATED TO WHITE BACKGROUND */}
         <section className="services-faq">
           <div className="faq-container">
             <div className="text-center mb-16">
@@ -729,15 +786,12 @@ export function ServicesPage({ onNavigate }: ServicesPageProps) {
             </p>
             <div className="cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => navigate("/register")}
                 className="cta-primary"
               >
                 Get Started Today
               </button>
-              <button
-                onClick={() => onNavigate("about")}
-                className="cta-secondary"
-              >
+              <button onClick={() => navigate("/")} className="cta-secondary">
                 Back to Home
               </button>
             </div>

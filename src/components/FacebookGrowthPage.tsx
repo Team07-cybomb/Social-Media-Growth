@@ -422,21 +422,46 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
             text-align: center;
           }
 
+          .facebook-service-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+          }
+
           .facebook-service-button {
             background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            flex: 1;
+            font-size: 0.9rem;
           }
 
           .facebook-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(24, 119, 242, 0.3);
+          }
+
+          .facebook-service-button-secondary {
+            background: transparent;
+            color: #1877F2;
+            border: 2px solid #1877F2;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+          }
+
+          .facebook-service-button-secondary:hover {
+            background: rgba(24, 119, 242, 0.1);
+            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -872,6 +897,10 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
             .facebook-process-grid {
               grid-template-columns: 1fr;
             }
+
+            .facebook-service-buttons {
+              flex-direction: column;
+            }
           }
         `}
       </style>
@@ -981,12 +1010,20 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
                       <div className="facebook-service-price">
                         {service.price}
                       </div>
-                      <button
-                        className="facebook-service-button"
-                        onClick={() => onNavigate("register")}
-                      >
-                        Start Growing
-                      </button>
+                      <div className="facebook-service-buttons">
+                        <button
+                          className="facebook-service-button"
+                          onClick={() => onNavigate("register")}
+                        >
+                          Start Growing
+                        </button>
+                        <button
+                          className="facebook-service-button-secondary"
+                          onClick={() => onNavigate("order")}
+                        >
+                          Order Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

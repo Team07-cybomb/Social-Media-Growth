@@ -1,4 +1,5 @@
 import { ArrowRight, Play, Star, Shield, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
@@ -6,7 +7,8 @@ interface HeroProps {
   onNavigate: (page: string) => void;
 }
 
-export function Hero({ onNavigate }: HeroProps) {
+export function Hero() {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -102,7 +104,7 @@ export function Hero({ onNavigate }: HeroProps) {
               {" "}
               {/* Added py-2 for vertical spacing */}
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => navigate("affiliate")}
                 className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group min-h-[60px] leading-relaxed"
                 style={{
                   background:
@@ -116,7 +118,7 @@ export function Hero({ onNavigate }: HeroProps) {
                 <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("services")}
                 className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border transition-all duration-300 hover:scale-105"
                 style={{
                   borderColor: "rgba(255, 255, 255, 0.3)",
