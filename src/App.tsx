@@ -120,7 +120,7 @@ export default function App() {
     <Router>
 
       <ScrollToTop />
-      <Layout>
+      
 
       <Layout 
         isLoggedIn={isLoggedIn} 
@@ -146,7 +146,7 @@ export default function App() {
 
           <Route path="/blog-post" element={<BlogPost />} />
 
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/login" element={<LoginPage />} />
           
           <Route
             path="/instagram-growth"
