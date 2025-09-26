@@ -1,8 +1,52 @@
 // src/components/LoginPage.tsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful - save token and user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data));
+        alert('Login successful!');
+        navigate('/dashboard');
+      } else {
+        alert(data.message || 'Login failed!');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Network error. Please try again.');
+    }
+  };
+
   return (
     <>
       <style>
@@ -194,7 +238,7 @@ const LoginPage: React.FC = () => {
               Welcome <span className="gradient-text">Back</span>
             </h2>
 
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="login-label">
                   Email Address
@@ -203,6 +247,8 @@ const LoginPage: React.FC = () => {
                   type="email"
                   id="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="login-input"
                   placeholder="Enter your email"
                   required
@@ -217,6 +263,8 @@ const LoginPage: React.FC = () => {
                   type="password"
                   id="password"
                   name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="login-input"
                   placeholder="Enter your password"
                   required
