@@ -25,10 +25,15 @@ import { FacebookGrowthPage } from "./components/FacebookGrowthPage";
 import { LinkedInGrowthPage } from "./components/LinkedinGrowthPage";
 import { YouTubeGrowthPage } from "./components/YoutubeGrowthPage";
 import AdminRoutes from "./Admin/AdminRoutes";
-// import BlogPost from "./components/BlogPost";
+import React from "react";
 
 // Layout component to conditionally show navbar/footer
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({ children, isLoggedIn, user, onLogout }: { 
+  children: React.ReactNode;
+  isLoggedIn: boolean;
+  user: { name: string; email: string } | null;
+  onLogout: () => void;
+}) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -38,7 +43,13 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar currentPage={location.pathname.slice(1) || 'home'} onNavigate={() => {}} />
+      <Navbar 
+        currentPage={location.pathname.slice(1) || 'home'} 
+        onNavigate={() => {}} 
+        isLoggedIn={isLoggedIn}
+        user={user}
+        onLogout={onLogout}
+      />
       <main className="flex-grow">
         {children}
       </main>
@@ -49,6 +60,18 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+
+  const handleLogin = (userData: { name: string; email: string }) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+  };
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
@@ -73,7 +96,11 @@ export default function App() {
 
   return (
     <Router>
-      <Layout>
+      <Layout 
+        isLoggedIn={isLoggedIn} 
+        user={user} 
+        onLogout={handleLogout}
+      >
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
@@ -89,34 +116,32 @@ export default function App() {
           <Route path="/best-practices" element={<BestPracticesPage />} />
           <Route path="/smm-page" element={<SMMPage />} />
           <Route path="/social-media" element={<SocialMediaPage />} />
-          <Route path="/login" element={<LoginPage/>}/>
-          {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
-          <Route
-              path="/instagram-growth"
-              element={<InstagramGrowthPage onNavigate={handleNavigate} />}
-            />
-            <Route
-              path="/twitter-growth"
-              element={<TwitterGrowthPage onNavigate={handleNavigate} />}
-            />
-            <Route
-              path="/facebook-growth"
-              element={<FacebookGrowthPage onNavigate={handleNavigate} />}
-            />
-            <Route
-              path="/linkedin-growth"
-              element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
-            />
-            <Route
-              path="/youtube-growth"
-              element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
-            />
-  
-
-
+          <Route path="/login" element={<LoginPage/>} />
           
+          <Route
+            path="/instagram-growth"
+            element={<InstagramGrowthPage onNavigate={handleNavigate} />}
+          />
+          <Route
+            path="/twitter-growth"
+            element={<TwitterGrowthPage onNavigate={handleNavigate} />}
+          />
+          <Route
+            path="/facebook-growth"
+            element={<FacebookGrowthPage onNavigate={handleNavigate} />}
+          />
+          <Route
+            path="/linkedin-growth"
+            element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
+          />
+          <Route
+            path="/youtube-growth"
+            element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
+          />
+
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/home" element={<HomePage onNavigate={handleNavigate} />} />
         </Routes>
       </Layout>
       <Toaster />
