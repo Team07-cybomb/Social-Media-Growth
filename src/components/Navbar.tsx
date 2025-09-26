@@ -1,4 +1,5 @@
 // src/components/Navbar.tsx
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -278,7 +279,7 @@ export function Navbar({ currentPage, onNavigate, isLoggedIn, user, onLogout }: 
             <div className="flex-shrink-0">
               <Link
                 to="/"
-                className="logo-hover text-lg font-bold text-gray-900"
+                className="logo-hover font-medium text-primary text-lg font-bold"
                 onClick={() => onNavigate("home")}
               >
                 SocialGrowth
@@ -292,11 +293,14 @@ export function Navbar({ currentPage, onNavigate, isLoggedIn, user, onLogout }: 
                   <Link
                     key={item.href}
                     to={item.href}
-                    onClick={() => onNavigate(item.href)}
-                    className={`nav-link px-3 py-2 text-sm font-medium transition-all duration-300 ${
-                      currentPage === item.href || location.pathname === item.href
-                        ? "text-blue-600 font-semibold"
-                        : "text-gray-600 hover:text-blue-600"
+                    className={`nav-link px-3 py-2 transition-all duration-300 ${
+                      location.pathname === item.href
+                        ? "active text-primary font-semibold"
+                        : "text-muted-foreground hover:text-primary"
+                    } ${
+                      item.name === "Register"
+                        ? "register-special ml-4 px-4 py-2"
+                        : ""
                     }`}
                   >
                     {item.name}
@@ -397,14 +401,15 @@ export function Navbar({ currentPage, onNavigate, isLoggedIn, user, onLogout }: 
                 <Link
                   key={item.href}
                   to={item.href}
-                  onClick={() => {
-                    onNavigate(item.href);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
-                    currentPage === item.href || location.pathname === item.href
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block px-4 py-3 w-full text-left transition-all duration-300 rounded-lg ${
+                    location.pathname === item.href
+                      ? "text-primary bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-primary shadow-sm"
+                      : "text-muted-foreground hover:text-primary hover:bg-gray-50"
+                  } ${
+                    item.name === "Register"
+                      ? "register-special bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 mt-2"
+                      : ""
                   }`}
                 >
                   {item.name}

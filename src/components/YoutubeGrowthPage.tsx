@@ -435,21 +435,46 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
             text-align: center;
           }
 
+          .youtube-service-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: auto;
+          }
+
           .youtube-service-button {
             background: #c91d1d;
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            flex: 1;
+            font-size: 0.9rem;
           }
 
           .youtube-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(201, 29, 29, 0.3);
+          }
+
+          .youtube-service-button-secondary {
+            background: transparent;
+            color: #c91d1d;
+            border: 2px solid #c91d1d;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+          }
+
+          .youtube-service-button-secondary:hover {
+            background: rgba(201, 29, 29, 0.1);
+            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -882,6 +907,10 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
             .youtube-process-grid {
               grid-template-columns: 1fr;
             }
+
+            .youtube-service-buttons {
+              flex-direction: column;
+            }
           }
         `}
       </style>
@@ -987,12 +1016,20 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
                       <div className="youtube-service-price">
                         {service.price}
                       </div>
-                      <button
-                        className="youtube-service-button"
-                        onClick={() => onNavigate("register")}
-                      >
-                        Start Growing
-                      </button>
+                      <div className="youtube-service-buttons">
+                        <button
+                          className="youtube-service-button"
+                          onClick={() => onNavigate("register")}
+                        >
+                          Start Growing
+                        </button>
+                        <button
+                          className="youtube-service-button-secondary"
+                          onClick={() => onNavigate("order")}
+                        >
+                          Order Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

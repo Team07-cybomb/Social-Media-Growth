@@ -299,10 +299,10 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             opacity: 0.8;
           }
 
-          /* Services Section - Updated to use success stories background */
+          /* Services Section - Updated to #f9fafb */
           .instagram-services {
             padding: 5rem 1rem;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background: #f9fafb;
           }
 
           .instagram-container {
@@ -421,21 +421,47 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             text-align: center;
           }
 
+          .instagram-service-buttons {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+          }
+
           .instagram-service-button {
             background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
+            flex: 1;
+            font-size: 0.9rem;
           }
 
           .instagram-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
+          }
+
+          .instagram-service-button-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+          }
+
+          .instagram-service-button-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
           }
 
           /* Process Section - Updated with box design */
@@ -583,7 +609,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             border-color: rgba(255, 255, 255, 0.5);
           }
 
-          /* New: Why Choose Us Section - Updated to white background */
+          /* Why Choose Us Section */
           .why-choose-us {
             padding: 5rem 1rem;
             background: white;
@@ -620,7 +646,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(192, 38, 211, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(192, 38, 211, 0.05), transparent);
             transition: left 0.6s ease;
           }
 
@@ -643,7 +669,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background: #f9fafb;
             transition: all 0.3s ease;
           }
 
@@ -669,10 +695,10 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             font-size: 1rem;
           }
 
-          /* New: Success Stories Section - Kept as it is */
+          /* Success Stories Section - Updated to #f9fafb */
           .success-stories {
             padding: 5rem 1rem;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background: #f9fafb;
           }
 
           .stories-container {
@@ -709,7 +735,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             top: 1rem;
             right: 2rem;
             font-size: 4rem;
-            color: #fce7f3;
+            color: #f1f5f9;
             font-family: serif;
             line-height: 1;
           }
@@ -756,7 +782,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           }
 
           .story-results {
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background: #f9fafb;
             padding: 1rem;
             border-radius: 0.75rem;
             margin: 1.5rem 0;
@@ -777,7 +803,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             z-index: 2;
           }
 
-          /* New: Features List Section - Updated to white background */
+          /* Features List Section */
           .instagram-features {
             padding: 4rem 1rem;
             background: white;
@@ -813,7 +839,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 0.75rem;
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background: #f9fafb;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -871,6 +897,10 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             .instagram-process-grid {
               grid-template-columns: 1fr;
             }
+
+            .instagram-service-buttons {
+              flex-direction: column;
+            }
           }
         `}
       </style>
@@ -904,7 +934,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           </div>
         </section>
 
-        {/* New: Why Choose Us Section - Now with white background */}
+        {/* Why Choose Us Section */}
         <section className="why-choose-us">
           <div className="why-choose-container">
             <div className="text-center mb-16">
@@ -939,7 +969,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           </div>
         </section>
 
-        {/* Services Grid Section - Now with success stories background */}
+        {/* Services Grid Section */}
         <section className="instagram-services">
           <div className="instagram-container">
             <div className="text-center mb-16">
@@ -979,12 +1009,20 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
                       <div className="instagram-service-price">
                         {service.price}
                       </div>
-                      <button
-                        className="instagram-service-button"
-                        onClick={() => onNavigate("register")}
-                      >
-                        Start Growing
-                      </button>
+                      <div className="instagram-service-buttons">
+                        <button
+                          className="instagram-service-button"
+                          onClick={() => onNavigate("register")}
+                        >
+                          Start Growing
+                        </button>
+                        <button
+                          className="instagram-service-button-secondary"
+                          onClick={() => onNavigate("order")}
+                        >
+                          Order Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -993,7 +1031,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           </div>
         </section>
 
-        {/* New: Features List Section - Now with white background */}
+        {/* Features List Section */}
         <section className="instagram-features">
           <div className="features-container">
             <div className="text-center mb-12">
@@ -1019,7 +1057,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           </div>
         </section>
 
-        {/* New: Success Stories Section - Kept as it is */}
+        {/* Success Stories Section */}
         <section className="success-stories">
           <div className="stories-container">
             <div className="text-center mb-16">
@@ -1061,7 +1099,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           </div>
         </section>
 
-        {/* Process Section - Now with beautiful boxes */}
+        {/* Process Section */}
         <section className="instagram-process">
           <div className="instagram-process-container">
             <div className="text-center mb-16">

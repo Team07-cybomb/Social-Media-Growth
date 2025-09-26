@@ -31,7 +31,7 @@ const AffiliatePage: React.FC = () => {
     { number: "24h", label: "Payout Processing", icon: TrendingUp },
     { number: "$50", label: "Minimum Payout", icon: Shield },
   ];
- 
+
   const benefits = [
     {
       icon: DollarSign,
@@ -58,7 +58,7 @@ const AffiliatePage: React.FC = () => {
         "Receive your earnings reliably every month through PayPal or bank transfer.",
     },
   ];
- 
+
   const socialPlatforms = [
     {
       icon: Instagram,
@@ -96,7 +96,7 @@ const AffiliatePage: React.FC = () => {
       logoColor: "text-white",
     },
   ];
- 
+
   const successStories = [
     {
       name: "Sarah Martinez",
@@ -123,7 +123,7 @@ const AffiliatePage: React.FC = () => {
       avatar: "👨‍💻",
     },
   ];
- 
+
   const marketingMaterials = [
     {
       icon: Zap,
@@ -272,7 +272,7 @@ const AffiliatePage: React.FC = () => {
             border-color: rgba(255, 255, 255, 0.5);
           }
 
-          /* Stats Section */
+          /* Stats Section - UPDATED: White background with #f9fafb cards */
           .affiliate-stats {
             padding: 5rem 1rem;
             background: white;
@@ -326,7 +326,7 @@ const AffiliatePage: React.FC = () => {
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             height: 100%;
-            background: white;
+            background: #f9fafb;
           }
 
           .affiliate-stat-card:hover {
@@ -371,7 +371,7 @@ const AffiliatePage: React.FC = () => {
             color: #64748b;
           }
 
-          /* Platforms Section */
+          /* Platforms Section - UPDATED: #f9fafb background */
           .affiliate-platforms {
             padding: 5rem 1rem;
             background: #f9fafb;
@@ -449,10 +449,10 @@ const AffiliatePage: React.FC = () => {
             flex-grow: 1;
           }
 
-          /* Process Section */
+          /* Process Section - UPDATED: White background with #f9fafb cards */
           .affiliate-process {
             padding: 5rem 1rem;
-            background: #f8fafc;
+            background: white;
           }
 
           .process-grid {
@@ -472,7 +472,7 @@ const AffiliatePage: React.FC = () => {
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             height: 100%;
-            background: white;
+            background: #f9fafb;
             text-align: center;
             position: relative;
             border: 1px solid #e2e8f0;
@@ -523,10 +523,10 @@ const AffiliatePage: React.FC = () => {
             flex-grow: 1;
           }
 
-          /* Success Stories */
+          /* Success Stories - UPDATED: #f9fafb background */
           .affiliate-success {
             padding: 5rem 1rem;
-            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            background: #f9fafb;
           }
 
           .success-grid {
@@ -593,7 +593,7 @@ const AffiliatePage: React.FC = () => {
             flex-grow: 1;
           }
 
-          /* Marketing Materials */
+          /* Marketing Materials - UPDATED: White background with #f9fafb cards */
           .affiliate-materials {
             padding: 5rem 1rem;
             background: white;
@@ -615,7 +615,7 @@ const AffiliatePage: React.FC = () => {
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             height: 100%;
-            background: white;
+            background: #f9fafb;
             border: 1px solid #e2e8f0;
           }
 
@@ -672,7 +672,7 @@ const AffiliatePage: React.FC = () => {
             color: #64748b;
           }
 
-          /* Benefits Section */
+          /* Benefits Section - UPDATED: #f9fafb background */
           .affiliate-benefits {
             padding: 5rem 1rem;
             background: #f9fafb;
@@ -825,6 +825,46 @@ const AffiliatePage: React.FC = () => {
             background: rgba(255, 255, 255, 0.2);
           }
 
+          /* Dark mode support for updated sections */
+          .dark .affiliate-stats {
+            background: #1f2937;
+          }
+
+          .dark .affiliate-stat-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .affiliate-platforms {
+            background: #111827;
+          }
+
+          .dark .affiliate-process {
+            background: #1f2937;
+          }
+
+          .dark .process-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .affiliate-success {
+            background: #111827;
+          }
+
+          .dark .affiliate-materials {
+            background: #1f2937;
+          }
+
+          .dark .material-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .affiliate-benefits {
+            background: #111827;
+          }
+
           /* Global Overrides */
           body {
             margin: 0;
@@ -881,7 +921,8 @@ const AffiliatePage: React.FC = () => {
               <span>EARN WITH SOCIAL MEDIA GROWTH</span>
             </div>
             <h1 className="affiliate-heading">
-              Promote Social Media Growth & <span className="gradient-text">Earn 30% Commission</span>
+              Promote Social Media Growth &{" "}
+              <span className="gradient-text">Earn 30% Commission</span>
             </h1>
             <p className="affiliate-subtitle">
               Join our affiliate program and earn generous commissions by
@@ -889,10 +930,7 @@ const AffiliatePage: React.FC = () => {
               influencers, marketers, and content creators.
             </p>
             <div className="affiliate-cta-buttons">
-              <button
-                onClick={handleJoinNow}
-                className="affiliate-cta-primary"
-              >
+              <button onClick={handleJoinNow} className="affiliate-cta-primary">
                 Join Affiliate Program
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -909,12 +947,16 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Stats Section */}
+        {/* Stats Section - UPDATED: White background with #f9fafb cards */}
         <section id="affiliate-stats" className="affiliate-stats">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
-              <h2 className="section-heading">Why Choose Our Affiliate Program?</h2>
-              <p className="section-subtitle">Industry-leading benefits designed for your success</p>
+              <h2 className="section-heading">
+                Why Choose Our Affiliate Program?
+              </h2>
+              <p className="section-subtitle">
+                Industry-leading benefits designed for your success
+              </p>
             </div>
             <div className="stats-grid">
               {stats.map((stat, index) => {
@@ -935,13 +977,16 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Platform-Specific Section */}
+        {/* Platform-Specific Section - UPDATED: #f9fafb background */}
         <section className="affiliate-platforms">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
-              <h2 className="section-heading">Perfect for Every Social Platform</h2>
+              <h2 className="section-heading">
+                Perfect for Every Social Platform
+              </h2>
               <p className="section-subtitle">
-                Promote growth strategies tailored to specific social media platforms
+                Promote growth strategies tailored to specific social media
+                platforms
               </p>
             </div>
 
@@ -951,20 +996,28 @@ const AffiliatePage: React.FC = () => {
                 return (
                   <div key={index} className="platform-card">
                     <div className="platform-content">
-                      <div 
-                        className="platform-icon" 
-                        style={{ 
-                          background: platform.color.includes('pink') ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' :
-                                   platform.color.includes('red') ? 'linear-gradient(135deg, #ef4444, #dc2626)' :
-                                   platform.color.includes('blue') && platform.color.includes('500') ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
-                                   platform.color.includes('blue') && platform.color.includes('600') ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' :
-                                   'linear-gradient(135deg, #000000, #374151)'
+                      <div
+                        className="platform-icon"
+                        style={{
+                          background: platform.color.includes("pink")
+                            ? "linear-gradient(135deg, #ec4899, #8b5cf6)"
+                            : platform.color.includes("red")
+                            ? "linear-gradient(135deg, #ef4444, #dc2626)"
+                            : platform.color.includes("blue") &&
+                              platform.color.includes("500")
+                            ? "linear-gradient(135deg, #3b82f6, #2563eb)"
+                            : platform.color.includes("blue") &&
+                              platform.color.includes("600")
+                            ? "linear-gradient(135deg, #2563eb, #1d4ed8)"
+                            : "linear-gradient(135deg, #000000, #374151)",
                         }}
                       >
                         <Icon className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="platform-name">{platform.name}</h3>
-                      <p className="platform-description">{platform.description}</p>
+                      <p className="platform-description">
+                        {platform.description}
+                      </p>
                     </div>
                   </div>
                 );
@@ -973,13 +1026,16 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* How It Works Section */}
+        {/* How It Works Section - UPDATED: White background with #f9fafb cards */}
         <section id="how-it-works" className="affiliate-process">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
-              <h2 className="section-heading">Start Earning in 3 Simple Steps</h2>
+              <h2 className="section-heading">
+                Start Earning in 3 Simple Steps
+              </h2>
               <p className="section-subtitle">
-                Our straightforward process makes it easy to start generating commissions
+                Our straightforward process makes it easy to start generating
+                commissions
               </p>
             </div>
 
@@ -988,17 +1044,20 @@ const AffiliatePage: React.FC = () => {
                 {
                   step: "1",
                   title: "Sign Up & Get Approved",
-                  description: "Join our affiliate program and get instant access to marketing materials.",
+                  description:
+                    "Join our affiliate program and get instant access to marketing materials.",
                 },
                 {
                   step: "2",
                   title: "Promote on Your Platforms",
-                  description: "Share your unique affiliate link across social media, blogs, or emails.",
+                  description:
+                    "Share your unique affiliate link across social media, blogs, or emails.",
                 },
                 {
                   step: "3",
                   title: "Earn Monthly Commissions",
-                  description: "Get up to 30% commission on every sale. Payouts processed monthly.",
+                  description:
+                    "Get up to 30% commission on every sale. Payouts processed monthly.",
                 },
               ].map((step, index) => (
                 <div key={index} className="process-card">
@@ -1013,13 +1072,14 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Success Stories Section */}
+        {/* Success Stories Section - UPDATED: #f9fafb background */}
         <section className="affiliate-success">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
               <h2 className="section-heading">Real Success Stories</h2>
               <p className="section-subtitle">
-                See how other affiliates are earning significant income with our platform
+                See how other affiliates are earning significant income with our
+                platform
               </p>
             </div>
 
@@ -1039,13 +1099,14 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Marketing Materials Section */}
+        {/* Marketing Materials Section - UPDATED: White background with #f9fafb cards */}
         <section className="affiliate-materials">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
               <h2 className="section-heading">Powerful Marketing Resources</h2>
               <p className="section-subtitle">
-                Everything you need to promote effectively and maximize your earnings
+                Everything you need to promote effectively and maximize your
+                earnings
               </p>
             </div>
 
@@ -1061,7 +1122,9 @@ const AffiliatePage: React.FC = () => {
                         </div>
                         <div className="material-text">
                           <h3 className="material-title">{material.title}</h3>
-                          <p className="material-description">{material.description}</p>
+                          <p className="material-description">
+                            {material.description}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1072,7 +1135,7 @@ const AffiliatePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Benefits Section */}
+        {/* Benefits Section - UPDATED: #f9fafb background */}
         <section className="affiliate-benefits">
           <div className="affiliate-stats-container">
             <div className="text-center mb-16">
@@ -1094,7 +1157,9 @@ const AffiliatePage: React.FC = () => {
                         </div>
                         <div className="benefit-text">
                           <h3 className="benefit-title">{benefit.title}</h3>
-                          <p className="benefit-description">{benefit.description}</p>
+                          <p className="benefit-description">
+                            {benefit.description}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1119,7 +1184,10 @@ const AffiliatePage: React.FC = () => {
                 Join Now - Get 30% Commission
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="final-cta-secondary" onClick={handleContactSupport}>
+              <button
+                className="final-cta-secondary"
+                onClick={() => (window.location.href = "/contact")}
+              >
                 Have Questions? Contact Us
               </button>
             </div>
@@ -1129,5 +1197,5 @@ const AffiliatePage: React.FC = () => {
     </>
   );
 };
- 
+
 export default AffiliatePage;
