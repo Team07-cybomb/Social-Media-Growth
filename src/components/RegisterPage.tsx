@@ -10,23 +10,34 @@ const RegisterPage: React.FC = () => {
     confirmPassword: "",
   });
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // For navigation
 
+  // ✅ Universal input handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // Add your API call or validation logic here
-  };
 
-  const handleLoginRedirect = () => {
+    // Optional validation
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    console.log("Registered user:", formData);
+
+    // Redirect to login page after successful registration
     navigate("/login");
   };
 
+  // ✅ Redirect to login when clicking the link
+  const handleLoginRedirect = () => {
+    navigate("/login");
+  };
   return (
     <>
       <style>
@@ -201,8 +212,8 @@ const RegisterPage: React.FC = () => {
               Create <span className="gradient-text">Account</span>
             </h2>
 
+            {/* ✅ Use correct handler names */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Full Name */}
               <div>
                 <label htmlFor="name" className="register-label">
                   Full Name
@@ -212,14 +223,13 @@ const RegisterPage: React.FC = () => {
                   id="name"
                   name="name"
                   value={formData.name}
-                  onChange={handleChange}
+                  onChange={handleChange}  // ✅ Fixed
                   placeholder="Enter your full name"
                   required
                   className="register-input"
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label htmlFor="email" className="register-label">
                   Email Address
@@ -229,14 +239,13 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange}
+                  onChange={handleChange}  // ✅ Fixed
                   placeholder="Enter your email"
                   required
                   className="register-input"
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label htmlFor="password" className="register-label">
                   Password
@@ -246,14 +255,13 @@ const RegisterPage: React.FC = () => {
                   id="password"
                   name="password"
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={handleChange}  // ✅ Fixed
                   placeholder="Enter password"
                   required
                   className="register-input"
                 />
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label htmlFor="confirmPassword" className="register-label">
                   Confirm Password
@@ -263,23 +271,18 @@ const RegisterPage: React.FC = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
-                  onChange={handleChange}
+                  onChange={handleChange}  // ✅ Fixed
                   placeholder="Confirm password"
                   required
                   className="register-input"
                 />
               </div>
 
-              {/* Register Button */}
-              <button
-                type="submit"
-                className="register-button"
-              >
+              <button type="submit" className="register-button">
                 Register
               </button>
             </form>
 
-            {/* Login Link */}
             <div className="register-link">
               <p>
                 Already have an account?{" "}

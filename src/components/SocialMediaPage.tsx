@@ -146,43 +146,44 @@ const SocialMediaPage: React.FC = () => {
 
           .benefits-section {
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            padding: 5rem 2rem;
-            margin: 4rem 0;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
             text-align: center;
             color: white;
             width: 100%;
           }
 
           .benefits-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
           }
 
           .benefits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 2rem;
           }
 
           .benefit-item {
             text-align: center;
-            padding: 1.5rem;
+            padding: 1rem;
           }
 
           .benefit-number {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             color: white;
           }
 
           .benefit-text {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0.95;
+            line-height: 1.4;
           }
 
           .cta-section {
@@ -291,7 +292,17 @@ const SocialMediaPage: React.FC = () => {
             }
 
             .benefit-number {
-              font-size: 2.5rem;
+              font-size: 2rem;
+            }
+
+            .benefits-section {
+              padding: 2rem 1rem;
+              margin: 2rem 0;
+            }
+
+            .benefits-title {
+              font-size: 1.75rem;
+              margin-bottom: 1.5rem;
             }
           }
 
@@ -305,7 +316,15 @@ const SocialMediaPage: React.FC = () => {
             }
             
             .strategy-title, .benefits-title, .cta-title {
-              font-size: 2rem;
+              font-size: 1.75rem;
+            }
+
+            .benefit-number {
+              font-size: 1.75rem;
+            }
+
+            .benefit-text {
+              font-size: 1rem;
             }
           }
 
@@ -429,7 +448,7 @@ const SocialMediaPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Benefits Section */}
+          {/* Benefits Section - Reduced Height */}
           <div className="full-width-section benefits-section">
             <h3 className="benefits-title">Measurable Results</h3>
             <div className="benefits-grid">
@@ -453,7 +472,7 @@ const SocialMediaPage: React.FC = () => {
           </div>
 
           {/* Final Content */}
-          <div style={{textAlign: 'center', margin: '4rem 0', padding: '0 2rem'}}>
+          <div style={{textAlign: 'center', margin: '3rem 0', padding: '0 2rem'}}>
             <p className="content-text">
               Whether you're looking to launch a new brand presence or optimize your existing social media efforts, 
               our data-driven approach ensures you get the best return on your investment. We combine creative content 
