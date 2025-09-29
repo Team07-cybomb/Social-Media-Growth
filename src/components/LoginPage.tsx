@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data));
         alert('Login successful!');
-        navigate('/dashboard');
+        navigate('/home');
       } else {
         alert(data.message || 'Login failed!');
       }
