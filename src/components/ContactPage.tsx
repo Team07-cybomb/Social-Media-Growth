@@ -13,6 +13,7 @@ export function ContactPage() {
     phone: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,25 +25,54 @@ export function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all required fields");
+      setIsSubmitting(false);
       return;
     }
 
-    // Simulate form submission
-    toast.success("Message sent successfully! We'll get back to you soon.");
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please provide a valid email address");
+      setIsSubmitting(false);
+      return;
+    }
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/contact/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message);
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+      } else {
+        toast.error(data.message || "Failed to send message");
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error("Network error. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const fields = [
@@ -148,6 +178,7 @@ export function ContactPage() {
                     e.target.style.borderColor = "#d1d5db";
                     e.target.style.boxShadow = "none";
                   }}
+                  disabled={isSubmitting}
                 />
               </div>
             ))}
@@ -162,28 +193,35 @@ export function ContactPage() {
 
             <Button
               type="submit"
+              disabled={isSubmitting}
               className="w-full font-medium py-2.5 px-4 rounded-md transition-all duration-300 ease-in-out"
               style={{
-                background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
+                background: isSubmitting 
+                  ? "#9ca3af" 
+                  : "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
                 color: "white",
                 fontSize: "14px",
                 fontWeight: "600",
                 border: "none",
-                cursor: "pointer",
+                cursor: isSubmitting ? "not-allowed" : "pointer",
                 borderRadius: "0.5rem",
                 padding: "1rem 2rem",
               }}
               onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 20px 40px rgba(59, 130, 246, 0.3)";
+                if (!isSubmitting) {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 20px 40px rgba(59, 130, 246, 0.3)";
+                }
               }}
               onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
+                if (!isSubmitting) {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
               }}
             >
-              Send Message
+              {isSubmitting ? "Sending..." : "Send Message"}
             </Button>
           </form>
 
@@ -208,6 +246,12 @@ export function ContactPage() {
             
             input::placeholder, textarea::placeholder {
               color: #9ca3af;
+            }
+            
+            input:disabled, textarea:disabled {
+              background-color: #f3f4f6;
+              cursor: not-allowed;
+              opacity: 0.7;
             }
             
             label {

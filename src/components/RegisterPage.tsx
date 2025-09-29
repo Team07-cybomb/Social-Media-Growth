@@ -1,11 +1,12 @@
 // src/components/RegisterPage.tsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import LoginPage from "./LoginPage";
+
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -18,23 +19,51 @@ const RegisterPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle form submit
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Optional validation
+    
+    // Basic validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      alert("Passwords don't match!");
       return;
     }
 
-    console.log("Registered user:", formData);
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters long!");
+      return;
+    }
 
-    // Redirect to login page after successful registration
-    navigate("/login");
+    // Phone number validation
+    const phoneRegex = /^\+?[\d\s-()]{10,}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Please enter a valid phone number!");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Registration successful:', data);
+        alert('Registration successful!');
+        navigate('/login');
+      } else {
+        alert(data.message || 'Registration failed!');
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      alert('Network error. Please try again.');
+    }
   };
 
-  // ✅ Redirect to login when clicking the link
   const handleLoginRedirect = () => {
     navigate("/login");
   };
@@ -138,27 +167,21 @@ const RegisterPage: React.FC = () => {
             transition: color 0.3s ease;
             cursor: pointer;
           }
-
           .register-link a:hover {
             color: #2563eb;
             text-decoration: underline;
           }
-          /* Form spacing */
           .space-y-6 > * + * {
             margin-top: 1.5rem;
           }
-          /* Global Overrides */
           body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           }
-
           * {
             box-sizing: border-box;
           }
-
-          /* Text Center Utility */
           .text-center {
             text-align: center;
           }
@@ -166,21 +189,17 @@ const RegisterPage: React.FC = () => {
             margin-left: auto;
             margin-right: auto;
           }
-          /* Responsive Design */
           @media (max-width: 768px) {
             .register-page {
               padding: 3rem 1rem;
             }
-            
             .section-heading {
               font-size: 2rem;
             }
-            
             .register-card {
               padding: 1.5rem;
             }
           }
-          /* Animation for form elements */
           @keyframes fadeInUp {
             from {
               opacity: 0;
@@ -191,17 +210,16 @@ const RegisterPage: React.FC = () => {
               transform: translateY(0);
             }
           }
-
           .register-card > * {
             animation: fadeInUp 0.6s ease-out;
           }
-
           .register-card > *:nth-child(1) { animation-delay: 0.1s; }
           .register-card > *:nth-child(2) { animation-delay: 0.2s; }
           .register-card > *:nth-child(3) { animation-delay: 0.3s; }
           .register-card > *:nth-child(4) { animation-delay: 0.4s; }
           .register-card > *:nth-child(5) { animation-delay: 0.5s; }
           .register-card > *:nth-child(6) { animation-delay: 0.6s; }
+          .register-card > *:nth-child(7) { animation-delay: 0.7s; }
         `}
       </style>
 
@@ -246,6 +264,24 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
 
+              {/* Phone Number */}
+              <div>
+                <label htmlFor="phone" className="register-label">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  required
+                  className="register-input"
+                />
+              </div>
+
+              {/* Password */}
               <div>
                 <label htmlFor="password" className="register-label">
                   Password

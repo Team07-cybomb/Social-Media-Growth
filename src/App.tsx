@@ -66,8 +66,12 @@ function Layout({
       <Navbar
         currentPage={location.pathname.slice(1) || "home"}
         onNavigate={() => {}}
+        isLoggedIn={isLoggedIn}
+        user={user}
+        onLogout={onLogout}
       />
       <main className="flex-grow">{children}</main>
+
       <Footer onNavigate={() => {}} />
     </div>
   );
@@ -114,7 +118,8 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Layout>
+
+      <Layout isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
@@ -130,6 +135,11 @@ export default function App() {
           <Route path="/best-practices" element={<BestPracticesPage />} />
           <Route path="/smm-page" element={<SMMPage />} />
           <Route path="/social-media" element={<SocialMediaPage />} />
+
+          <Route path="/blog-post" element={<BlogPost />} />
+
+          <Route path="/login" element={<LoginPage />} />
+
           <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
           <Route

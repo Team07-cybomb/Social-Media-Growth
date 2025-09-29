@@ -1,75 +1,83 @@
-/* src/Admin/Login/login.css */
 .admin-login-container {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  width: 100vw;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
+  padding: 20px;
 }
 
 .admin-login-form {
   background: white;
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 400px;
-  margin: 0 auto;
 }
 
 .admin-login-form h2 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #333;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
 }
 
 .admin-input-group {
   margin-bottom: 1rem;
 }
 
-.admin-login-form input {
+.admin-input-group input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1rem;
+  transition: border-color 0.3s ease;
   box-sizing: border-box;
 }
 
-.admin-login-form input:focus {
+.admin-input-group input:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.admin-input-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
 }
 
 .admin-login-button {
   width: 100%;
-  padding: 0.75rem;
-  background: #667eea;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.admin-login-button:hover {
-  background: #5a6fd8;
+.admin-login-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.admin-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .admin-login-error {
-  color: #e74c3c;
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: #ffeaea;
+  background-color: #fee;
+  color: #c33;
+  padding: 10px;
   border-radius: 5px;
-  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  border: 1px solid #fcc;
 }

@@ -4,8 +4,24 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
 
-export function Navbar() {
+interface NavbarProps {
+  currentPage: string;
+  onNavigate: (page: string) => void;
+  isLoggedIn: boolean;
+  user: { name: string; email: string } | null;
+  onLogout: () => void;
+}
+
+export function Navbar({
+  currentPage,
+  onNavigate,
+  isLoggedIn,
+  user,
+  onLogout,
+}: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
   const navItems = [
@@ -192,6 +208,7 @@ export function Navbar() {
               <Link
                 to="/"
                 className="logo-hover font-medium text-primary text-lg font-bold"
+                onClick={() => onNavigate("home")}
               >
                 SocialGrowth
               </Link>
