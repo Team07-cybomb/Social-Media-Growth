@@ -3,10 +3,11 @@ import BlogPost from "./BlogPost";
 
 const blogPosts = [
   // Content Marketing
+
   {
     title: "Content Marketing Hacks",
     date: "2025-09-22",
-    content: "Discover tips to boost your content reach...",
+    content: "Understand what your audience loves, needs, and engages with the most. Tailor your posts to speak directly to their interests.",
     readTime: "3 min read",
     category: "Content Marketing",
     image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -14,7 +15,7 @@ const blogPosts = [
   {
     title: "Content That Converts",
     date: "2025-09-23",
-    content: "How to write content that engages and sells...",
+    content: "Learn how to craft powerful content that captivates your audience and drives real sales. Master the art of blending storytelling with strategy to turn readers into loyal customers.",
     readTime: "6 min read",
     category: "Content Marketing",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -23,7 +24,7 @@ const blogPosts = [
   {
     title: "Best Practices for Developers",
     date: "2025-09-25",
-    content: "Explore coding standards and industry practices...",
+    content: "Explore coding standards and industry best practices to write clean, maintainable, and efficient code. Master techniques that improve quality, collaboration, and long-term project success.",
     readTime: "4 min read",
     category: "Best Practices",
     image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -31,7 +32,7 @@ const blogPosts = [
   {
     title: "Agile Best Practices",
     date: "2025-09-26",
-    content: "Agile workflows that maximize efficiency...",
+    content: "Adopt Agile workflows to streamline processes, enhance collaboration, and deliver value faster. Focus on iterative progress, clear priorities, and continuous improvement for maximum efficiency.",
     readTime: "5 min read",
     category: "Best Practices",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -40,7 +41,7 @@ const blogPosts = [
   {
     title: "Mastering Digital Strategy",
     date: "2025-09-20",
-    content: "Learn strategies for digital transformation and growth...",
+    content: "Discover effective strategies for digital transformation to modernize operations and drive innovation. Unlock growth by leveraging technology, data, and agile processes to stay ahead in a competitive market.",
     readTime: "5 min read",
     category: "Digital Strategy",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -48,7 +49,7 @@ const blogPosts = [
   {
     title: "Future of Digital Strategy",
     date: "2025-09-28",
-    content: "AI and automation in shaping strategies...",
+    content: "Explore how AI and automation are transforming business strategies for smarter, faster decision-making. Harness technology to optimize processes, improve efficiency, and drive sustainable growth.",
     readTime: "7 min read",
     category: "Digital Strategy",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -57,7 +58,7 @@ const blogPosts = [
   {
     title: "SMM Basics",
     date: "2025-09-24",
-    content: "Everything you need to know about social media marketing...",
+    content: "Discover everything you need to know about social media marketing to grow your brand and engage your audience. Learn strategies, tips, and tools to boost reach, drive engagement, and convert followers into customers.",
     readTime: "4 min read",
     category: "SMM Page",
     image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -65,7 +66,7 @@ const blogPosts = [
   {
     title: "Advanced SMM Tactics",
     date: "2025-09-29",
-    content: "Level up your SMM campaigns with pro tips...",
+    content: "Level up your social media marketing campaigns with expert tips and proven strategies. Boost engagement, increase reach, and turn your content into measurable results.",
     readTime: "6 min read",
     category: "SMM Page",
     image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -74,7 +75,7 @@ const blogPosts = [
   {
     title: "Growing with Social Media",
     date: "2025-09-27",
-    content: "Techniques to grow your brand online...",
+    content: "Discover effective techniques to grow your brand online and stand out in a crowded digital space. Leverage content, social media, SEO, and engagement strategies to attract and retain loyal customers.",
     readTime: "3 min read",
     category: "Social Media",
     image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -82,7 +83,7 @@ const blogPosts = [
   {
     title: "Social Media Trends 2025",
     date: "2025-09-30",
-    content: "Stay updated with the latest trends...",
+    content: "Stay updated with the latest trends to keep your strategies relevant and ahead of the competition. Leverage new insights, tools, and innovations to make informed decisions and drive growth.",
     readTime: "5 min read",
     category: "Social Media",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -90,7 +91,7 @@ const blogPosts = [
   {
     title: "Influencer Marketing",
     date: "2025-10-01",
-    content: "How influencers impact brand growth...",
+    content: "Learn how influencers can accelerate brand growth by reaching targeted audiences and building trust. Their authentic endorsements boost visibility, engagement, and customer loyalty.",
     readTime: "4 min read",
     category: "Social Media",
     image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",
@@ -98,7 +99,7 @@ const blogPosts = [
   {
     title: "Building a Social Media Calendar",
     date: "2025-10-02",
-    content: "Plan posts effectively for maximum reach...",
+    content: "Plan your posts strategically to maximize reach and engagement across platforms. Optimize timing, content type, and audience targeting for the best results.",
     readTime: "5 min read",
     category: "Social Media",
     image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250&q=80",

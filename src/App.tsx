@@ -30,23 +30,26 @@ import { FacebookGrowthPage } from "./components/FacebookGrowthPage";
 import { LinkedInGrowthPage } from "./components/LinkedinGrowthPage";
 import { YouTubeGrowthPage } from "./components/YoutubeGrowthPage";
 import AdminRoutes from "./Admin/AdminRoutes";
+import SettingsPage from "./components/SettingsPage";
+import ProfilePage from "./components/ProfilePage";
+import React from "react";
 
-
+/* Scroll to top on route change */
 function ScrollToTop() {
   const { pathname } = useLocation();
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
   return null;
 }
 
-import React from "react";
-
-
-// Layout component to conditionally show navbar/footer
-function Layout({ children, isLoggedIn, user, onLogout }: { 
+/* Layout with Navbar & Footer except for admin routes */
+function Layout({
+  children,
+  isLoggedIn,
+  user,
+  onLogout,
+}: {
   children: React.ReactNode;
   isLoggedIn: boolean;
   user: { name: string; email: string } | null;
@@ -61,20 +64,14 @@ function Layout({ children, isLoggedIn, user, onLogout }: {
 
   return (
     <div className="min-h-screen flex flex-col">
-
-
-
-      <Navbar 
-        currentPage={location.pathname.slice(1) || 'home'} 
-        onNavigate={() => {}} 
+      <Navbar
+        currentPage={location.pathname.slice(1) || "home"}
+        onNavigate={() => {}}
         isLoggedIn={isLoggedIn}
         user={user}
         onLogout={onLogout}
       />
-      <main className="flex-grow">
-        {children}
-      </main>
-
+      <main className="flex-grow">{children}</main>
       <Footer onNavigate={() => {}} />
     </div>
   );
@@ -85,14 +82,27 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
+  /* ✅ Load login state from localStorage on first load */
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  /* ✅ Login handler */
   const handleLogin = (userData: { name: string; email: string }) => {
     setIsLoggedIn(true);
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
+  /* ✅ Logout handler */
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    localStorage.removeItem("user");
   };
 
   const handleNavigate = (page: string) => {
@@ -118,16 +128,9 @@ export default function App() {
 
   return (
     <Router>
-
       <ScrollToTop />
-      
 
-      <Layout 
-        isLoggedIn={isLoggedIn} 
-        user={user} 
-        onLogout={handleLogout}
-      >
-
+      <Layout isLoggedIn={isLoggedIn} user={user} onLogout={handleLogout}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
@@ -138,16 +141,8 @@ export default function App() {
           <Route path="/affiliate" element={<AffiliatePage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/content-marketing" element={<ContentMarketingPage />} />
-          <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
-          <Route path="/best-practices" element={<BestPracticesPage />} />
-          <Route path="/smm-page" element={<SMMPage />} />
-          <Route path="/social-media" element={<SocialMediaPage />} />
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 
-          <Route path="/blog-post" element={<BlogPost />} />
-
-          <Route path="/login" element={<LoginPage />} />
-          
           <Route
             path="/instagram-growth"
             element={<InstagramGrowthPage onNavigate={handleNavigate} />}
@@ -168,11 +163,25 @@ export default function App() {
             path="/youtube-growth"
             element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
           />
+          <Route
+            path="/content-marketing"
+            element={<ContentMarketingPage />}
+          />
+          <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
+          <Route path="/best-practices" element={<BestPracticesPage />} />
+          <Route path="/smm-page" element={<SMMPage />} />
+          <Route path="/social-media" element={<SocialMediaPage />} />
+          <Route path="/blog-post" element={<BlogPost />} />
+
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/home" element={<HomePage onNavigate={handleNavigate} />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+
         </Routes>
       </Layout>
+
       <Toaster />
     </Router>
   );
