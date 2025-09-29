@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
-
+import { Menu, X, User, LogOut, Settings, LayoutDashboard } from "lucide-react";
 interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
