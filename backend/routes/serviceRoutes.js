@@ -67,7 +67,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const {
-      name,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice,
       minQuantity,
@@ -82,7 +85,7 @@ router.post('/', async (req, res) => {
     } = req.body;
 
     // Validation
-    if (!name || !platform || !basePrice || !minQuantity || !maxQuantity || !deliveryTime || !description || !category) {
+    if (!serviceName || !username || !email || !phoneNumber || !platform || !basePrice || !minQuantity || !maxQuantity || !deliveryTime || !description || !category) {
       return res.status(400).json({
         success: false,
         msg: 'Please provide all required fields'
@@ -96,8 +99,20 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        msg: 'Please provide a valid email address'
+      });
+    }
+
     const service = new Service({
-      name,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice: parseFloat(basePrice),
       minQuantity: parseInt(minQuantity),
@@ -139,7 +154,10 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const {
-      name,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice,
       minQuantity,
@@ -160,8 +178,22 @@ router.put('/:id', async (req, res) => {
       });
     }
 
+    // Email validation if email is being updated
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          success: false,
+          msg: 'Please provide a valid email address'
+        });
+      }
+    }
+
     const updateData = {};
-    if (name) updateData.name = name;
+    if (serviceName) updateData.serviceName = serviceName;
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
     if (platform) updateData.platform = platform;
     if (basePrice) updateData.basePrice = parseFloat(basePrice);
     if (minQuantity) updateData.minQuantity = parseInt(minQuantity);

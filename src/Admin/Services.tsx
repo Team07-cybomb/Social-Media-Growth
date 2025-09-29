@@ -1,83 +1,57 @@
 // src/Admin/Services.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Type definitions
-interface Service {
-  id: number;
-  name: string;
-  platform: string;
-  basePrice: string;
-  minQuantity: number;
-  maxQuantity: number;
-  deliveryTime: string;
+// Simplified Type definitions for Customer
+interface Customer {
+  _id: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
   status: string;
-  description: string;
+  createdAt: string;
 }
 
 const Services = () => {
-  const [services, setServices] = useState<Service[]>([
-    {
-      id: 1,
-      name: "YouTube Subscribers",
-      platform: "YouTube",
-      basePrice: "$50",
-      minQuantity: 100,
-      maxQuantity: 10000,
-      deliveryTime: "3-7 days",
-      status: "active",
-      description: "Organic YouTube subscribers with real engagement"
-    },
-    {
-      id: 2,
-      name: "Instagram Followers",
-      platform: "Instagram",
-      basePrice: "$30",
-      minQuantity: 100,
-      maxQuantity: 5000,
-      deliveryTime: "2-5 days",
-      status: "active",
-      description: "High-quality Instagram followers"
-    },
-    {
-      id: 3,
-      name: "Facebook Page Likes",
-      platform: "Facebook",
-      basePrice: "$40",
-      minQuantity: 100,
-      maxQuantity: 10000,
-      deliveryTime: "3-7 days",
-      status: "active",
-      description: "Real Facebook page likes from active users"
-    },
-    {
-      id: 4,
-      name: "Twitter Followers",
-      platform: "Twitter",
-      basePrice: "$25",
-      minQuantity: 100,
-      maxQuantity: 5000,
-      deliveryTime: "2-4 days",
-      status: "inactive",
-      description: "Active Twitter followers"
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>("all");
+
+  // Fetch customers from API
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:5000/api/services');
+      const result = await response.json();
+      
+      if (result.success) {
+        setCustomers(result.data);
+      } else {
+        setError(result.msg || 'Failed to fetch customers');
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setError('Failed to connect to server');
+    } finally {
+      setLoading(false);
     }
-  ]);
-
-  const [showForm, setShowForm] = useState<boolean>(false);
-  const [editingService, setEditingService] = useState<Service | null>(null);
-
-  const toggleServiceStatus = (id: number) => {
-    setServices(services.map(service =>
-      service.id === id 
-        ? { ...service, status: service.status === 'active' ? 'inactive' : 'active' }
-        : service
-    ));
   };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const filteredCustomers = customers.filter(customer => 
+    filter === "all" || customer.status === filter
+  );
 
   const styles = {
     pageContainer: {
       padding: '2rem',
-      maxWidth: '1400px',
+      maxWidth: '1200px',
       margin: '0 auto',
+      background: '#f8fafc',
+      minHeight: '100vh',
     },
     pageHeader: {
       display: 'flex',
@@ -86,135 +60,113 @@ const Services = () => {
       marginBottom: '2rem',
     },
     pageTitle: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
       fontWeight: '700',
       color: '#1a202c',
       marginBottom: '0.5rem',
     },
     pageSubtitle: {
-      fontSize: '1.2rem',
+      fontSize: '1rem',
       color: '#718096',
     },
-    btnPrimary: {
+    filters: {
+      display: 'flex',
+      gap: '1rem',
+      marginBottom: '2rem',
+      flexWrap: 'wrap' as const,
+    },
+    filterBtn: {
+      padding: '0.5rem 1rem',
+      border: '1px solid #e2e8f0',
+      background: 'white',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+    },
+    filterBtnActive: {
       background: '#4f46e5',
       color: 'white',
-      border: 'none',
-      padding: '0.75rem 1.5rem',
-      borderRadius: '8px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
+      borderColor: '#4f46e5',
     },
-    servicesGrid: {
+    statsGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '1.5rem',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1rem',
+      marginBottom: '2rem',
     },
-    serviceCard: {
+    statCard: {
       background: 'white',
       padding: '1.5rem',
       borderRadius: '12px',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      textAlign: 'center' as const,
       border: '1px solid #e2e8f0',
     },
-    serviceHeader: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: '1rem',
-    },
-    serviceName: {
-      fontSize: '1.25rem',
-      fontWeight: '600',
+    statValue: {
+      fontSize: '2rem',
+      fontWeight: '700',
       marginBottom: '0.5rem',
     },
-    servicePlatform: {
-      color: '#6b7280',
+    statLabel: {
+      color: '#718096',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+    },
+    tableContainer: {
+      background: 'white',
+      borderRadius: '12px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      overflow: 'hidden',
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse' as const,
+    },
+    tableHeader: {
+      background: '#f8fafc',
+      borderBottom: '1px solid #e2e8f0',
+    },
+    tableHeaderCell: {
+      padding: '1rem',
+      textAlign: 'left' as const,
+      fontWeight: '600',
+      color: '#374151',
       fontSize: '0.875rem',
     },
-    serviceStatus: {
+    tableRow: {
+      borderBottom: '1px solid #e2e8f0',
+      transition: 'background 0.3s ease',
+    },
+    tableRowHover: {
+      background: '#f8fafc',
+    },
+    tableCell: {
+      padding: '1rem',
+      fontSize: '0.875rem',
+      color: '#6b7280',
+    },
+    statusBadge: {
       padding: '0.25rem 0.75rem',
       borderRadius: '20px',
       fontSize: '0.75rem',
       fontWeight: '600',
+      display: 'inline-block',
     },
-    serviceDetails: {
-      marginBottom: '1rem',
-    },
-    detailItem: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginBottom: '0.5rem',
-      fontSize: '0.875rem',
-    },
-    detailLabel: {
+    loadingState: {
+      textAlign: 'center' as const,
+      padding: '3rem',
       color: '#6b7280',
     },
-    detailValue: {
-      fontWeight: '600',
-    },
-    serviceDescription: {
-      color: '#6b7280',
-      fontSize: '0.875rem',
-      marginBottom: '1rem',
-    },
-    actionButtons: {
-      display: 'flex',
-      gap: '0.5rem',
-    },
-    btnSecondary: {
-      background: '#f1f5f9',
-      color: '#475569',
-      border: 'none',
-      padding: '0.5rem 1rem',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-    },
-    btnDanger: {
-      background: '#fef2f2',
-      color: '#dc2626',
-      border: 'none',
-      padding: '0.5rem 1rem',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-    },
-    formOverlay: {
-      position: 'fixed' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-    },
-    formContent: {
-      background: 'white',
+    errorState: {
+      textAlign: 'center' as const,
       padding: '2rem',
-      borderRadius: '12px',
-      width: '90%',
-      maxWidth: '500px',
-    },
-    formGroup: {
-      marginBottom: '1rem',
-    },
-    formLabel: {
-      display: 'block',
-      marginBottom: '0.5rem',
-      fontWeight: '600',
-    },
-    formInput: {
-      width: '100%',
-      padding: '0.75rem',
-      border: '1px solid #e2e8f0',
-      borderRadius: '6px',
-      fontSize: '1rem',
+      background: '#fef2f2',
+      border: '1px solid #fecaca',
+      borderRadius: '8px',
+      color: '#dc2626',
+      marginBottom: '2rem',
     },
   };
 
@@ -222,123 +174,113 @@ const Services = () => {
     <div style={styles.pageContainer}>
       <div style={styles.pageHeader}>
         <div>
-          <h1 style={styles.pageTitle}>Services Management</h1>
-          <p style={styles.pageSubtitle}>Configure and manage promotion services</p>
+          <h1 style={styles.pageTitle}>Customer Management</h1>
+          <p style={styles.pageSubtitle}>View customer accounts and information</p>
         </div>
+      </div>
+
+      {error && (
+        <div style={styles.errorState}>
+          <strong>Error:</strong> {error}
+          <button 
+            onClick={() => setError(null)}
+            style={{ marginLeft: '1rem', background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer' }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      <div style={styles.statsGrid}>
+        <div style={styles.statCard}>
+          <div style={{...styles.statValue, color: '#3b82f6'}}>{customers.length}</div>
+          <div style={styles.statLabel}>Total Customers</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{...styles.statValue, color: '#10b981'}}>
+            {customers.filter(c => c.status === 'active').length}
+          </div>
+          <div style={styles.statLabel}>Active Customers</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{...styles.statValue, color: '#f59e0b'}}>
+            {customers.filter(c => c.status === 'inactive').length}
+          </div>
+          <div style={styles.statLabel}>Inactive Customers</div>
+        </div>
+      </div>
+
+      <div style={styles.filters}>
         <button 
-          style={styles.btnPrimary}
-          onClick={() => setShowForm(true)}
+          style={{
+            ...styles.filterBtn, 
+            ...(filter === 'all' ? styles.filterBtnActive : {})
+          }}
+          onClick={() => setFilter('all')}
         >
-          + Add New Service
+          All Customers
+        </button>
+        <button 
+          style={{
+            ...styles.filterBtn, 
+            ...(filter === 'active' ? styles.filterBtnActive : {})
+          }}
+          onClick={() => setFilter('active')}
+        >
+          Active
+        </button>
+        <button 
+          style={{
+            ...styles.filterBtn, 
+            ...(filter === 'inactive' ? styles.filterBtnActive : {})
+          }}
+          onClick={() => setFilter('inactive')}
+        >
+          Inactive
         </button>
       </div>
 
-      <div style={styles.servicesGrid}>
-        {services.map((service) => (
-          <div key={service.id} style={styles.serviceCard}>
-            <div style={styles.serviceHeader}>
-              <div>
-                <h3 style={styles.serviceName}>{service.name}</h3>
-                <span style={styles.servicePlatform}>{service.platform}</span>
-              </div>
-              <span style={{
-                ...styles.serviceStatus,
-                background: service.status === 'active' ? '#d1fae5' : '#fef3c7',
-                color: service.status === 'active' ? '#065f46' : '#92400e'
-              }}>
-                {service.status}
-              </span>
-            </div>
-            
-            <div style={styles.serviceDetails}>
-              <div style={styles.detailItem}>
-                <span style={styles.detailLabel}>Base Price:</span>
-                <span style={styles.detailValue}>{service.basePrice}</span>
-              </div>
-              <div style={styles.detailItem}>
-                <span style={styles.detailLabel}>Quantity Range:</span>
-                <span style={styles.detailValue}>{service.minQuantity} - {service.maxQuantity}</span>
-              </div>
-              <div style={styles.detailItem}>
-                <span style={styles.detailLabel}>Delivery Time:</span>
-                <span style={styles.detailValue}>{service.deliveryTime}</span>
-              </div>
-            </div>
-            
-            <p style={styles.serviceDescription}>{service.description}</p>
-            
-            <div style={styles.actionButtons}>
-              <button 
-                style={styles.btnSecondary}
-                onClick={() => {
-                  setEditingService(service);
-                  setShowForm(true);
-                }}
-              >
-                Edit
-              </button>
-              <button 
-                style={{
-                  ...styles.btnSecondary,
-                  background: service.status === 'active' ? '#fef3c7' : '#d1fae5',
-                  color: service.status === 'active' ? '#92400e' : '#065f46'
-                }}
-                onClick={() => toggleServiceStatus(service.id)}
-              >
-                {service.status === 'active' ? 'Deactivate' : 'Activate'}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {showForm && (
-        <div style={styles.formOverlay} onClick={() => setShowForm(false)}>
-          <div style={styles.formContent} onClick={(e) => e.stopPropagation()}>
-            <h2>{editingService ? 'Edit Service' : 'Add New Service'}</h2>
-            <div style={styles.formGroup}>
-              <label style={styles.formLabel}>Service Name</label>
-              <input 
-                type="text" 
-                style={styles.formInput}
-                defaultValue={editingService?.name || ''}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.formLabel}>Platform</label>
-              <input 
-                type="text" 
-                style={styles.formInput}
-                defaultValue={editingService?.platform || ''}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.formLabel}>Base Price</label>
-              <input 
-                type="text" 
-                style={styles.formInput}
-                defaultValue={editingService?.basePrice || ''}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.formLabel}>Description</label>
-              <textarea 
-                style={{...styles.formInput, minHeight: '100px'}}
-                defaultValue={editingService?.description || ''}
-              />
-            </div>
-            <div style={{display: 'flex', gap: '1rem', marginTop: '2rem'}}>
-              <button style={styles.btnPrimary}>
-                {editingService ? 'Update Service' : 'Add Service'}
-              </button>
-              <button 
-                style={styles.btnSecondary}
-                onClick={() => setShowForm(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+      {loading ? (
+        <div style={styles.loadingState}>
+          <div>Loading customers...</div>
+        </div>
+      ) : (
+        <div style={styles.tableContainer}>
+          <table style={styles.table}>
+            <thead style={styles.tableHeader}>
+              <tr>
+                <th style={styles.tableHeaderCell}>Username</th>
+                <th style={styles.tableHeaderCell}>Email</th>
+                <th style={styles.tableHeaderCell}>Phone Number</th>
+                <th style={styles.tableHeaderCell}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCustomers.map((customer) => (
+                <tr 
+                  key={customer._id} 
+                  style={styles.tableRow}
+                  onMouseOver={(e) => e.currentTarget.style.background = styles.tableRowHover.background}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={styles.tableCell}>
+                    <strong style={{ color: '#1a202c' }}>{customer.username}</strong>
+                  </td>
+                  <td style={styles.tableCell}>{customer.email}</td>
+                  <td style={styles.tableCell}>{customer.phoneNumber}</td>
+                  <td style={styles.tableCell}>
+                    <span style={{
+                      ...styles.statusBadge,
+                      background: customer.status === 'active' ? '#d1fae5' : '#fef3c7',
+                      color: customer.status === 'active' ? '#065f46' : '#92400e'
+                    }}>
+                      {customer.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
