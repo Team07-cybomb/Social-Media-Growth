@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Twitter,
   Star,
@@ -19,10 +20,8 @@ import {
   List,
   Calendar,
 } from "lucide-react";
-
-interface TwitterGrowthPageProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from "react-router-dom";
+import { OrderNowModal } from "./OrderNowModal";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -58,7 +57,21 @@ interface Feature {
   text: string;
 }
 
-export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
+export const TwitterGrowthPage = () => {
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleOrderNowClick = (serviceTitle: string = "") => {
+    setSelectedService(serviceTitle);
+    setIsOrderModalOpen(true);
+  };
+
+  const closeOrderModal = () => {
+    setIsOrderModalOpen(false);
+    setSelectedService("");
+  };
+
   const twitterServices: Service[] = [
     {
       icon: Users,
@@ -261,7 +274,7 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
           }
 
           .twitter-heading {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -324,7 +337,7 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
           }
 
           .section-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1rem;
@@ -561,7 +574,7 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
           }
 
           .twitter-cta-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
           }
@@ -882,7 +895,7 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
 
           @media (max-width: 768px) {
             .twitter-heading {
-              font-size: 2.5rem;
+              font-size: 2rem;
             }
             
             .twitter-cta-heading {
@@ -1013,13 +1026,13 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
                       <div className="twitter-service-buttons">
                         <button
                           className="twitter-service-button"
-                          onClick={() => onNavigate("register")}
+                          onClick={() => navigate("/services")}
                         >
-                          Start Growing
+                          View All Services
                         </button>
                         <button
                           className="twitter-service-button-secondary"
-                          onClick={() => onNavigate("order")}
+                          onClick={() => handleOrderNowClick(service.title)}
                         >
                           Order Now
                         </button>
@@ -1167,13 +1180,13 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
             </p>
             <div className="twitter-cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => handleOrderNowClick("Twitter Growth Service")}
                 className="twitter-cta-primary"
               >
                 Start Your Twitter Growth
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="twitter-cta-secondary"
               >
                 View All Services
@@ -1181,7 +1194,15 @@ export function TwitterGrowthPage({ onNavigate }: TwitterGrowthPageProps) {
             </div>
           </div>
         </section>
+
+        {/* Order Now Modal */}
+        <OrderNowModal
+          isOpen={isOrderModalOpen}
+          onClose={closeOrderModal}
+          defaultPlatform="X (Twitter)"
+          defaultService={selectedService}
+        />
       </div>
     </>
   );
-}
+};

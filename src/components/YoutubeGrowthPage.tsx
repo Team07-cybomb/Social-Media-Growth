@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Youtube,
   Star,
@@ -24,10 +25,8 @@ import {
   Edit3,
   Lightbulb,
 } from "lucide-react";
-
-interface YouTubeGrowthPageProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from "react-router-dom";
+import { OrderNowModal } from "./OrderNowModal";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -63,7 +62,21 @@ interface Feature {
   text: string;
 }
 
-export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
+export const YouTubeGrowthPage = () => {
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleOrderNowClick = (serviceTitle: string = "") => {
+    setSelectedService(serviceTitle);
+    setIsOrderModalOpen(true);
+  };
+
+  const closeOrderModal = () => {
+    setIsOrderModalOpen(false);
+    setSelectedService("");
+  };
+
   const youtubeServices: Service[] = [
     {
       icon: Users,
@@ -271,7 +284,7 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
           }
 
           .youtube-heading {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -334,7 +347,7 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
           }
 
           .section-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1rem;
@@ -571,7 +584,7 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
           }
 
           .youtube-cta-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
           }
@@ -889,7 +902,7 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
 
           @media (max-width: 768px) {
             .youtube-heading {
-              font-size: 2.5rem;
+              font-size: 2rem;
             }
             
             .youtube-cta-heading {
@@ -1019,13 +1032,13 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
                       <div className="youtube-service-buttons">
                         <button
                           className="youtube-service-button"
-                          onClick={() => onNavigate("register")}
+                          onClick={() => navigate("/services")}
                         >
-                          Start Growing
+                          View All Services
                         </button>
                         <button
                           className="youtube-service-button-secondary"
-                          onClick={() => onNavigate("order")}
+                          onClick={() => handleOrderNowClick(service.title)}
                         >
                           Order Now
                         </button>
@@ -1170,13 +1183,13 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
             </p>
             <div className="youtube-cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => handleOrderNowClick("YouTube Growth Service")}
                 className="youtube-cta-primary"
               >
                 Start Your YouTube Growth
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="youtube-cta-secondary"
               >
                 View All Services
@@ -1184,7 +1197,15 @@ export function YouTubeGrowthPage({ onNavigate }: YouTubeGrowthPageProps) {
             </div>
           </div>
         </section>
+
+        {/* Order Now Modal */}
+        <OrderNowModal
+          isOpen={isOrderModalOpen}
+          onClose={closeOrderModal}
+          defaultPlatform="YouTube"
+          defaultService={selectedService}
+        />
       </div>
     </>
   );
-}
+};

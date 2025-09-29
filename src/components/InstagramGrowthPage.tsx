@@ -15,10 +15,9 @@ import {
   MessageCircle,
   Heart,
 } from "lucide-react";
-
-interface InstagramGrowthPageProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from "react-router-dom";
+import { useState } from "react"; // ✅ added
+import { OrderNowModal } from "./OrderNowModal"; // ✅ added
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -54,7 +53,11 @@ interface Feature {
   text: string;
 }
 
-export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
+export const InstagramGrowthPage = () => {
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false); // ✅ added
+  const [selectedService, setSelectedService] = useState(""); // ✅ added
+
   const instagramServices: Service[] = [
     {
       icon: Users,
@@ -221,6 +224,12 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
     { icon: CheckCircle, text: "IGTV strategy development" },
   ];
 
+  // ✅ added function to handle Order Now button click
+  const handleOrderNowClick = (serviceTitle: string = "") => {
+    setSelectedService(serviceTitle);
+    setIsOrderModalOpen(true);
+  };
+
   return (
     <>
       <style>
@@ -257,7 +266,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           }
 
           .instagram-heading {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -320,7 +329,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           }
 
           .section-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1rem;
@@ -558,7 +567,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
           }
 
           .instagram-cta-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
           }
@@ -879,7 +888,7 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
 
           @media (max-width: 768px) {
             .instagram-heading {
-              font-size: 2.5rem;
+              font-size: 2rem;
             }
             
             .instagram-cta-heading {
@@ -1012,13 +1021,13 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
                       <div className="instagram-service-buttons">
                         <button
                           className="instagram-service-button"
-                          onClick={() => onNavigate("register")}
+                          onClick={() => navigate("/services")}
                         >
-                          Start Growing
+                          View All Services
                         </button>
                         <button
                           className="instagram-service-button-secondary"
-                          onClick={() => onNavigate("order")}
+                          onClick={() => handleOrderNowClick(service.title)} // ✅ updated
                         >
                           Order Now
                         </button>
@@ -1165,13 +1174,13 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             </p>
             <div className="instagram-cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => handleOrderNowClick("Instagram Growth Package")} // ✅ updated
                 className="instagram-cta-primary"
               >
                 Start Your Instagram Growth
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="instagram-cta-secondary"
               >
                 View All Services
@@ -1179,7 +1188,15 @@ export function InstagramGrowthPage({ onNavigate }: InstagramGrowthPageProps) {
             </div>
           </div>
         </section>
+
+        {/* ✅ Order Now Modal */}
+        <OrderNowModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          defaultPlatform="Instagram"
+          defaultService={selectedService}
+        />
       </div>
     </>
   );
-}
+};

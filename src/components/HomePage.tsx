@@ -224,7 +224,7 @@ export function HomePage() {
 
         @media (min-width: 768px) {
           .homepage-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
           }
         }
 
@@ -485,7 +485,7 @@ export function HomePage() {
         }
 
         .homepage-centered-cta-title {
-          font-size: 1.5rem;
+          font-size: 2rem;
           font-weight: bold;
           margin-bottom: 1rem;
         }
@@ -1101,7 +1101,7 @@ export function HomePage() {
             </p>
             <div className="button-container">
               <button
-                onClick={() => navigate("register")}
+                onClick={() => navigate("/services")}
                 className="homepage-button-primary button-full-width"
               >
                 Get Started Today
