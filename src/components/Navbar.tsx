@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Menu, X, User, LogOut, Settings, LayoutDashboard } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
   currentPage: string;
@@ -58,7 +58,7 @@ export function Navbar({
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
+            animation: slideDown 0.5s ease-out;
           }
           .navbar-sticky.scrolled {
             background: rgba(255, 255, 255, 0.98);
@@ -110,6 +110,7 @@ export function Navbar({
           .nav-link:hover::after,
           .nav-link.active::after {
             width: 80%;
+            animation: underlineSlide 0.3s ease-out;
           }
 
           /* Register button */
@@ -283,10 +284,13 @@ export function Navbar({
         `}
       </style>
 
-      <nav className={`navbar-sticky sticky top-0 z-50 ${scrolled ? "scrolled" : ""}`}>
+      <nav
+        className={`navbar-sticky sticky top-0 z-50 ${
+          scrolled ? "scrolled" : ""
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <div className="flex-shrink-0">
               <Link
                 to="/"
@@ -299,7 +303,7 @@ export function Navbar({
 
             {/* Desktop Nav */}
             <div className="hidden md:block">
-              <div className="ml-10 flex items-center space-x-6">
+              <div className="ml-10 flex items-baseline space-x-6">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
@@ -318,7 +322,9 @@ export function Navbar({
                   <div className="profile-dropdown">
                     <button
                       className="profile-button"
-                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      onClick={() =>
+                        setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                      }
                     >
                       <User size={20} />
                     </button>
@@ -330,8 +336,12 @@ export function Navbar({
                         />
                         <div className="dropdown-menu">
                           <div className="user-info">
-                            <div className="user-name">{user?.name || "User"}</div>
-                            <div className="user-email">{user?.email || "user@example.com"}</div>
+                            <div className="user-name">
+                              {user?.name || "User"}
+                            </div>
+                            <div className="user-email">
+                              {user?.email || "user@example.com"}
+                            </div>
                           </div>
                           <Link to="/dashboard" className="dropdown-item">
                             <LayoutDashboard size={16} /> Dashboard
@@ -342,7 +352,10 @@ export function Navbar({
                           <Link to="/settings" className="dropdown-item">
                             <Settings size={16} /> Settings
                           </Link>
-                          <button className="dropdown-item logout" onClick={handleLogout}>
+                          <button
+                            className="dropdown-item logout"
+                            onClick={handleLogout}
+                          >
                             <LogOut size={16} /> Logout
                           </button>
                         </div>
@@ -361,24 +374,27 @@ export function Navbar({
               </div>
             </div>
 
-            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <Button
                 variant="ghost"
                 size="sm"
-                className="menu-button p-2"
+                className="menu-button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMenuOpen ? (
+                  <X className="h-5 w-5 transition-transform duration-300 rotate-90" />
+                ) : (
+                  <Menu className="h-5 w-5 transition-transform duration-300" />
+                )}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden mobile-menu-slide">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-b border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3 bg-white border-b border-border backdrop-blur-lg bg-white/95">
               {navItems.map((item) => (
                 <Link
                   key={item.href}

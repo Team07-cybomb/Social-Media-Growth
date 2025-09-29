@@ -194,7 +194,7 @@ export function AboutPage() {
 
           @media (min-width: 768px) {
             .section-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -492,7 +492,7 @@ export function AboutPage() {
 
           @media (min-width: 768px) {
             .final-cta-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 

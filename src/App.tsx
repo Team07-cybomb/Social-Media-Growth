@@ -80,7 +80,9 @@ function Layout({
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
 
   /* ✅ Load login state from localStorage on first load */
   useEffect(() => {
@@ -143,30 +145,12 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
 
-          <Route
-            path="/instagram-growth"
-            element={<InstagramGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/twitter-growth"
-            element={<TwitterGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/facebook-growth"
-            element={<FacebookGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/linkedin-growth"
-            element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/youtube-growth"
-            element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/content-marketing"
-            element={<ContentMarketingPage />}
-          />
+          <Route path="/instagram-growth" element={<InstagramGrowthPage />} />
+          <Route path="/twitter-growth" element={<TwitterGrowthPage />} />
+          <Route path="/facebook-growth" element={<FacebookGrowthPage />} />
+          <Route path="/linkedin-growth" element={<LinkedInGrowthPage />} />
+          <Route path="/youtube-growth" element={<YouTubeGrowthPage />} />
+          <Route path="/content-marketing" element={<ContentMarketingPage />} />
           <Route path="/digital-strategy" element={<DigitalStrategyPage />} />
           <Route path="/best-practices" element={<BestPracticesPage />} />
           <Route path="/smm-page" element={<SMMPage />} />
@@ -175,10 +159,12 @@ export default function App() {
 
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/home" element={<HomePage onNavigate={handleNavigate} />} />
+          <Route
+            path="/home"
+            element={<HomePage onNavigate={handleNavigate} />}
+          />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-
         </Routes>
       </Layout>
 

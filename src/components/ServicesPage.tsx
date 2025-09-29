@@ -1,6 +1,5 @@
 import { Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import React from "react";
 interface ServicesPageProps {
   onNavigate: (page: string) => void;
 }
@@ -283,7 +282,7 @@ export function ServicesPage() {
 
           @media (min-width: 768px) {
             .section-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -460,7 +459,7 @@ export function ServicesPage() {
 
           @media (min-width: 768px) {
             .cta-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -787,10 +786,10 @@ export function ServicesPage() {
             </p>
             <div className="cta-buttons">
               <button
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/contact")}
                 className="cta-primary"
               >
-                Get Started Today
+                Contact Our Team
               </button>
               <button onClick={() => navigate("/")} className="cta-secondary">
                 Back to Home

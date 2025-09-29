@@ -18,10 +18,9 @@ import {
   Network,
   Calendar,
 } from "lucide-react";
-
-interface LinkedInGrowthPageProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from "react-router-dom";
+import { OrderNowModal } from "./OrderNowModal"; // Import the modal
+import { useState } from "react"; // Import useState
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -57,7 +56,22 @@ interface Feature {
   text: string;
 }
 
-export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
+export const LinkedInGrowthPage = () => {
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("LinkedIn");
+  const [selectedService, setSelectedService] = useState("");
+
+  const handleOrderNowClick = (serviceTitle: string = "") => {
+    setSelectedService(serviceTitle);
+    setIsOrderModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOrderModalOpen(false);
+    setSelectedService("");
+  };
+
   const linkedinServices: Service[] = [
     {
       icon: Users,
@@ -261,7 +275,7 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
           }
 
           .linkedin-heading {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -324,7 +338,7 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
           }
 
           .section-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1rem;
@@ -562,7 +576,7 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
           }
 
           .linkedin-cta-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
           }
@@ -883,7 +897,7 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
 
           @media (max-width: 768px) {
             .linkedin-heading {
-              font-size: 2.5rem;
+              font-size: 2rem;
             }
             
             .linkedin-cta-heading {
@@ -1018,13 +1032,13 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
                       <div className="linkedin-service-buttons">
                         <button
                           className="linkedin-service-button"
-                          onClick={() => onNavigate("register")}
+                          onClick={() => navigate("/services")}
                         >
-                          Start Growing
+                          View All Services
                         </button>
                         <button
                           className="linkedin-service-button-secondary"
-                          onClick={() => onNavigate("order")}
+                          onClick={() => handleOrderNowClick(service.title)}
                         >
                           Order Now
                         </button>
@@ -1172,13 +1186,13 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
             </p>
             <div className="linkedin-cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => handleOrderNowClick("LinkedIn Growth Package")}
                 className="linkedin-cta-primary"
               >
                 Start Your LinkedIn Growth
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="linkedin-cta-secondary"
               >
                 View All Services
@@ -1187,6 +1201,14 @@ export function LinkedInGrowthPage({ onNavigate }: LinkedInGrowthPageProps) {
           </div>
         </section>
       </div>
+
+      {/* Order Now Modal */}
+      <OrderNowModal
+        isOpen={isOrderModalOpen}
+        onClose={handleCloseModal}
+        defaultPlatform="LinkedIn"
+        defaultService={selectedService}
+      />
     </>
   );
-}
+};
