@@ -30,6 +30,7 @@ import { FacebookGrowthPage } from "./components/FacebookGrowthPage";
 import { LinkedInGrowthPage } from "./components/LinkedinGrowthPage";
 import { YouTubeGrowthPage } from "./components/YoutubeGrowthPage";
 import AdminRoutes from "./Admin/AdminRoutes";
+import React from "react";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -42,7 +43,17 @@ function ScrollToTop() {
 }
 
 // Layout component to conditionally show navbar/footer
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({
+  children,
+  isLoggedIn,
+  user,
+  onLogout,
+}: {
+  children: React.ReactNode;
+  isLoggedIn: boolean;
+  user: { name: string; email: string } | null;
+  onLogout: () => void;
+}) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
@@ -64,6 +75,20 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
+
+  const handleLogin = (userData: { name: string; email: string }) => {
+    setIsLoggedIn(true);
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+  };
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
@@ -106,7 +131,7 @@ export default function App() {
           <Route path="/smm-page" element={<SMMPage />} />
           <Route path="/social-media" element={<SocialMediaPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/blog-post" element={<BlogPost />} />
+          {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
           <Route
             path="/instagram-growth"
             element={<InstagramGrowthPage onNavigate={handleNavigate} />}
@@ -127,6 +152,7 @@ export default function App() {
             path="/youtube-growth"
             element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
           />
+
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
         </Routes>

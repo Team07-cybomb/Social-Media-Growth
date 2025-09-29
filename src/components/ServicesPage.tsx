@@ -1,4 +1,6 @@
 import { Instagram, Linkedin, Facebook, Twitter, Youtube } from "lucide-react";
+import React from "react";
+
 import { useNavigate } from "react-router-dom";
 interface ServicesPageProps {
   onNavigate: (page: string) => void;
