@@ -85,19 +85,7 @@ router.post("/", async (req, res) => {
     } = req.body;
 
     // Validation
-    if (
-      !serviceName ||
-      !username ||
-      !email ||
-      !phoneNumber ||
-      !platform ||
-      !basePrice ||
-      !minQuantity ||
-      !maxQuantity ||
-      !deliveryTime ||
-      !description ||
-      !category
-    ) {
+    if (!serviceName || !username || !email || !phoneNumber || !platform || !basePrice || !minQuantity || !maxQuantity || !deliveryTime || !description || !category) {
       return res.status(400).json({
         success: false,
         msg: "Please provide all required fields",
@@ -107,7 +95,7 @@ router.post("/", async (req, res) => {
     if (minQuantity >= maxQuantity) {
       return res.status(400).json({
         success: false,
-        msg: "Minimum quantity must be less than maximum quantity",
+        msg: 'Minimum quantity must be less than maximum quantity'
       });
     }
 
@@ -116,11 +104,15 @@ router.post("/", async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        msg: "Please provide a valid email address",
+        msg: 'Please provide a valid email address'
       });
     }
 
     const service = new Service({
+      // serviceName,
+      // username,
+      // email,
+      // phoneNumber,
       serviceName,
       username,
       email,
@@ -188,7 +180,7 @@ router.put("/:id", async (req, res) => {
     if (minQuantity && maxQuantity && minQuantity >= maxQuantity) {
       return res.status(400).json({
         success: false,
-        msg: "Minimum quantity must be less than maximum quantity",
+        msg: 'Minimum quantity must be less than maximum quantity'
       });
     }
 
@@ -198,12 +190,16 @@ router.put("/:id", async (req, res) => {
       if (!emailRegex.test(email)) {
         return res.status(400).json({
           success: false,
-          msg: "Please provide a valid email address",
+          msg: 'Please provide a valid email address'
         });
       }
     }
 
     const updateData = {};
+    if (serviceName) updateData.serviceName = serviceName;
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
     if (serviceName) updateData.serviceName = serviceName;
     if (username) updateData.username = username;
     if (email) updateData.email = email;

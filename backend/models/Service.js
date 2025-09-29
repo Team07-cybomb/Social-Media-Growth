@@ -1,7 +1,34 @@
 const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
-  name: {
+  serviceName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  username: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true
+  },
+  phoneNumber: {
     type: String,
     required: true,
     trim: true,
@@ -54,16 +81,8 @@ const serviceSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: [
-      "Likes",
-      "Followers",
-      "Views",
-      "Comments",
-      "Shares",
-      "Subscribers",
-      "Other",
-    ],
-    trim: true,
+    enum: ['Likes', 'Followers', 'Views', 'Comments', 'Shares', 'Subscribers', 'Social Media', 'Other'],
+    trim: true
   },
   quality: {
     type: String,
