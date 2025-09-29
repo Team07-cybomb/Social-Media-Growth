@@ -72,7 +72,7 @@ function Layout({
       />
       <main className="flex-grow">{children}</main>
 
-      <Footer onNavigate={() => {}} />
+      <Footer />
     </div>
   );
 }
@@ -142,27 +142,11 @@ export default function App() {
 
           <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/blog-post" element={<BlogPost/>}/> */}
-          <Route
-            path="/instagram-growth"
-            element={<InstagramGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/twitter-growth"
-            element={<TwitterGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/facebook-growth"
-            element={<FacebookGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/linkedin-growth"
-            element={<LinkedInGrowthPage onNavigate={handleNavigate} />}
-          />
-          <Route
-            path="/youtube-growth"
-            element={<YouTubeGrowthPage onNavigate={handleNavigate} />}
-          />
-
+          <Route path="/instagram-growth" element={<InstagramGrowthPage />} />
+          <Route path="/twitter-growth" element={<TwitterGrowthPage />} />
+          <Route path="/facebook-growth" element={<FacebookGrowthPage />} />
+          <Route path="/linkedin-growth" element={<LinkedInGrowthPage />} />
+          <Route path="/youtube-growth" element={<YouTubeGrowthPage />} />
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
         </Routes>

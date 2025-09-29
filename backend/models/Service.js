@@ -1,81 +1,97 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   platform: {
     type: String,
     required: true,
-    enum: ['Facebook', 'Instagram', 'Twitter', 'YouTube', 'TikTok', 'LinkedIn', 'Other'],
-    trim: true
+    enum: [
+      "Facebook",
+      "Instagram",
+      "Twitter",
+      "YouTube",
+      "TikTok",
+      "LinkedIn",
+      "Other",
+    ],
+    trim: true,
   },
   basePrice: {
     type: Number,
     required: true,
-    min: 0
+    min: 0,
   },
   minQuantity: {
     type: Number,
     required: true,
-    min: 0
+    min: 0,
   },
   maxQuantity: {
     type: Number,
     required: true,
-    min: 0
+    min: 0,
   },
   deliveryTime: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   status: {
     type: String,
     required: true,
-    enum: ['active', 'inactive', 'out_of_stock'],
-    default: 'active'
+    enum: ["active", "inactive", "out_of_stock"],
+    default: "active",
   },
   description: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   category: {
     type: String,
     required: true,
-    enum: ['Likes', 'Followers', 'Views', 'Comments', 'Shares', 'Subscribers', 'Other'],
-    trim: true
+    enum: [
+      "Likes",
+      "Followers",
+      "Views",
+      "Comments",
+      "Shares",
+      "Subscribers",
+      "Other",
+    ],
+    trim: true,
   },
   quality: {
     type: String,
-    enum: ['premium', 'standard', 'economy'],
-    default: 'standard'
+    enum: ["premium", "standard", "economy"],
+    default: "standard",
   },
   refill: {
     type: Boolean,
-    default: false
+    default: false,
   },
   refillPeriod: {
     type: String,
-    trim: true
+    trim: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Update the updatedAt field before saving
-serviceSchema.pre('save', function(next) {
+serviceSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-module.exports = mongoose.model('Service', serviceSchema);
+module.exports = mongoose.model("Service", serviceSchema);
