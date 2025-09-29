@@ -51,7 +51,17 @@ const BlogPost: React.FC<BlogPostProps> = ({
       <p>
         <strong>{readTime}</strong> • {date}
       </p>
-      <p>{content}</p>
+      <p
+  style={{
+    display: "-webkit-box",
+    WebkitLineClamp: 2,   // show only 2 lines
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  }}
+>
+  {content}
+</p>
 
       <div style={{ marginTop: "1rem" }}>
         {categoryRoutes[category] ? (
