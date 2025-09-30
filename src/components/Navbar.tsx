@@ -9,7 +9,7 @@ interface NavbarProps {
   user: { name: string; email: string } | null;
   onLogout: () => void;
 }
-
+ 
 export function Navbar({
   currentPage,
   onNavigate,
@@ -21,7 +21,7 @@ export function Navbar({
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-
+ 
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
@@ -30,30 +30,30 @@ export function Navbar({
     { name: "About Us", href: "/about" },
     { name: "Blog", href: "/blog" },
   ];
-
+ 
   // Get user's first letter for profile button
   const getUserInitial = () => {
     if (!user?.name) return "U";
     return user.name.charAt(0).toUpperCase();
   };
-
+ 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+ 
   useEffect(() => {
     setIsMenuOpen(false);
     setIsProfileDropdownOpen(false);
   }, [location]);
-
+ 
   const handleLogout = () => {
     onLogout();
     setIsProfileDropdownOpen(false);
     setIsMenuOpen(false);
   };
-
+ 
   return (
     <>
       <style>
@@ -69,7 +69,7 @@ export function Navbar({
             background: rgba(255, 255, 255, 0.98);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           }
-
+ 
           /* Logo hover effect */
           .logo-hover {
             position: relative;
@@ -94,7 +94,7 @@ export function Navbar({
             transform: scaleX(1);
             transform-origin: left;
           }
-
+ 
           /* Desktop Nav Links */
           .nav-link {
             position: relative;
@@ -117,7 +117,7 @@ export function Navbar({
             width: 80%;
             animation: underlineSlide 0.3s ease-out;
           }
-
+ 
           /* Register button */
           .register-special {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -151,7 +151,7 @@ export function Navbar({
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
           }
-
+ 
           /* Mobile Menu Button */
           .menu-button {
             transition: all 0.3s ease;
@@ -161,7 +161,7 @@ export function Navbar({
             background: rgba(59, 130, 246, 0.1);
             transform: scale(1.05);
           }
-
+ 
           /* Mobile menu animation */
           .mobile-menu-slide {
             animation: slideDown 0.3s ease-out;
@@ -176,7 +176,7 @@ export function Navbar({
               transform: translateY(0);
             }
           }
-
+ 
           /* 🔹 Profile Icon and Dropdown */
           .profile-dropdown {
             position: relative;
@@ -201,7 +201,7 @@ export function Navbar({
             transform: scale(1.1);
             box-shadow: 0 5px 15px rgba(59, 130, 246, 0.35);
           }
-
+ 
           .dropdown-menu {
             position: absolute;
             top: 110%;
@@ -225,7 +225,7 @@ export function Navbar({
               transform: translateY(0);
             }
           }
-
+ 
           .user-info {
             padding: 12px 16px;
             background: #f9fafb;
@@ -241,7 +241,7 @@ export function Navbar({
             color: #6b7280;
             margin-top: 2px;
           }
-
+ 
           .dropdown-item {
             display: flex;
             align-items: center;
@@ -269,7 +269,7 @@ export function Navbar({
           .dropdown-item:hover svg {
             color: #3b82f6;
           }
-
+ 
           .dropdown-item.logout {
             color: #ef4444;
           }
@@ -280,7 +280,7 @@ export function Navbar({
             background: #fef2f2;
             color: #dc2626;
           }
-
+ 
           .dropdown-backdrop {
             position: fixed;
             inset: 0;
@@ -289,7 +289,7 @@ export function Navbar({
           }
         `}
       </style>
-
+ 
       <nav
         className={`navbar-sticky sticky top-0 z-50 ${
           scrolled ? "scrolled" : ""
@@ -306,7 +306,7 @@ export function Navbar({
                 SocialGrowth
               </Link>
             </div>
-
+ 
             {/* Desktop Nav */}
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-6">
@@ -323,7 +323,7 @@ export function Navbar({
                     {item.name}
                   </Link>
                 ))}
-
+ 
                 {isLoggedIn ? (
                   <div className="profile-dropdown">
                     <button
@@ -375,7 +375,7 @@ export function Navbar({
                 )}
               </div>
             </div>
-
+ 
             <div className="md:hidden">
               <Button
                 variant="ghost"
@@ -392,7 +392,7 @@ export function Navbar({
             </div>
           </div>
         </div>
-
+ 
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden mobile-menu-slide">
@@ -411,7 +411,7 @@ export function Navbar({
                   {item.name}
                 </Link>
               ))}
-
+ 
               {isLoggedIn ? (
                 <div className="border-t border-gray-200 pt-2 mt-2">
                   <div className="flex items-center px-4 py-3 mb-2 bg-gray-50 rounded-lg">
