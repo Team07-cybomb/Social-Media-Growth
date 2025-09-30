@@ -1,19 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-// Type definitions - updated to match your User model
+// Type definitions - matching your User model
 interface Customer {
   _id: string;
   name: string;
   email: string;
   phone: string;
-  joinDate: string;
-  totalRequests: number;
-  completedRequests: number;
-  totalSpent: string;
-  status: string;
-  role?: string;
-  createdAt?: string;
+  role: string;
+  createdAt: string;
+  status?: string;
 }
 
 const Customers = () => {
@@ -21,11 +16,8 @@ const Customers = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [contactMessage, setContactMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCustomers();
@@ -35,34 +27,21 @@ const Customers = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Get admin token from localStorage
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setError('Please login as admin first');
-        setLoading(false);
-        return;
-      }
 
-      const response = await fetch('http://localhost:5000/api/admin/customers', {
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Authentication failed. Please login again.');
-        }
         throw new Error(`Failed to fetch customers: ${response.statusText}`);
       }
 
       const data = await response.json();
       
       if (data.success) {
-        setCustomers(data.customers);
+        setCustomers(data.data); // Note: your API returns data in `data` property
       } else {
         throw new Error(data.message || 'Failed to load customers');
       }
@@ -85,70 +64,13 @@ const Customers = () => {
     setShowDetailsModal(true);
   };
 
-  const handleContact = (customer: Customer) => {
-    setSelectedCustomer(customer);
-    setContactMessage("");
-    setShowContactModal(true);
-  };
-
-  const handleSendMessage = async () => {
-    if (!selectedCustomer || !contactMessage.trim()) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/send-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          customerId: selectedCustomer._id,
-          message: contactMessage,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        alert('Message sent successfully!');
-        setShowContactModal(false);
-        setContactMessage("");
-      } else {
-        alert(data.message || 'Failed to send message.');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Error sending message. Please try again.');
-    }
-  };
-
-  const handleUpdateStatus = async (customerId: string, newStatus: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/customers/${customerId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setCustomers(customers.map(customer =>
-          customer._id === customerId ? { ...customer, status: newStatus } : customer
-        ));
-        alert('Status updated successfully!');
-      } else {
-        alert(data.message || 'Failed to update status.');
-      }
-    } catch (error) {
-      console.error('Error updating status:', error);
-      alert('Error updating status. Please try again.');
-    }
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   // Styles
@@ -192,6 +114,7 @@ const Customers = () => {
       borderRadius: '12px',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       textAlign: 'center' as const,
+      width: '250px',
     },
     statValue: {
       fontSize: '2rem',
@@ -227,14 +150,6 @@ const Customers = () => {
       padding: '1rem',
       borderBottom: '1px solid #f1f5f9',
     },
-    statusBadge: {
-      padding: '0.25rem 0.75rem',
-      borderRadius: '20px',
-      fontSize: '0.75rem',
-      fontWeight: '600' as const,
-      display: 'inline-block' as const,
-      cursor: 'pointer' as const,
-    },
     actionBtn: {
       padding: '0.5rem 1rem',
       border: 'none',
@@ -243,15 +158,8 @@ const Customers = () => {
       fontSize: '0.875rem',
       marginRight: '0.5rem',
       transition: 'all 0.3s ease',
-    },
-    viewBtn: {
       background: '#dbeafe',
       color: '#1e40af',
-    },
-    contactBtn: {
-      background: '#f0fdf4',
-      color: '#166534',
-      border: '1px solid #bbf7d0',
     },
     modalOverlay: {
       position: 'fixed' as const,
@@ -284,15 +192,6 @@ const Customers = () => {
       gap: '1rem',
       justifyContent: 'flex-end',
       marginTop: '2rem',
-    },
-    textArea: {
-      width: '100%',
-      padding: '0.75rem',
-      border: '1px solid #e2e8f0',
-      borderRadius: '8px',
-      minHeight: '100px',
-      resize: 'vertical' as const,
-      marginTop: '1rem',
     },
     loadingText: {
       textAlign: 'center' as const,
@@ -342,8 +241,8 @@ const Customers = () => {
   return (
     <div style={styles.pageContainer}>
       <div style={styles.pageHeader}>
-        <h1 style={styles.pageTitle}>Customer Management</h1>
-        <p style={styles.pageSubtitle}>Manage customer information and track their activity</p>
+        <h1 style={styles.pageTitle}>User Management</h1>
+        <p style={styles.pageSubtitle}>Manage User information and track their activity</p>
       </div>
 
       <input
@@ -357,25 +256,19 @@ const Customers = () => {
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
           <div style={{...styles.statValue, color: '#3b82f6'}}>{customers.length}</div>
-          <div style={styles.statLabel}>Total Customers</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={{...styles.statValue, color: '#10b981'}}>
-            {customers.filter(c => c.status === 'active' || c.status === 'premium').length}
-          </div>
-          <div style={styles.statLabel}>Active Customers</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={{...styles.statValue, color: '#8b5cf6'}}>
-            {customers.reduce((sum, c) => sum + c.totalRequests, 0)}
-          </div>
-          <div style={styles.statLabel}>Total Requests</div>
+          <div style={styles.statLabel}>Total Users</div>
         </div>
         {/* <div style={styles.statCard}>
-          <div style={{...styles.statValue, color: '#f59e0b'}}>
-            ${customers.reduce((sum, c) => sum + parseInt(c.totalSpent.replace('$', '') || '0'), 0)}
+          <div style={{...styles.statValue, color: '#10b981'}}>
+            {customers.filter(c => c.role === 'customer').length}
           </div>
-          <div style={styles.statLabel}>Total Revenue</div>
+          <div style={styles.statLabel}>Customers</div>
+        </div> */}
+        {/* <div style={styles.statCard}>
+          <div style={{...styles.statValue, color: '#8b5cf6'}}>
+            {customers.filter(c => c.role === 'admin').length}
+          </div>
+          <div style={styles.statLabel}>Admins</div>
         </div> */}
       </div>
 
@@ -383,21 +276,18 @@ const Customers = () => {
         <table style={styles.table}>
           <thead style={styles.tableHeader}>
             <tr>
-              <th style={styles.tableHeaderCell}>Customer</th>
+              <th style={styles.tableHeaderCell}>Name</th>
               <th style={styles.tableHeaderCell}>Contact</th>
+              <th style={styles.tableHeaderCell}>Role</th>
               <th style={styles.tableHeaderCell}>Join Date</th>
-              <th style={styles.tableHeaderCell}>Total Requests</th>
-              {/* <th style={styles.tableHeaderCell}>Completed</th>
-              <th style={styles.tableHeaderCell}>Total Spent</th>
-              <th style={styles.tableHeaderCell}>Status</th> */}
               <th style={styles.tableHeaderCell}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredCustomers.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{...styles.tableCell, textAlign: 'center'}}>
-                  {customers.length === 0 ? 'No customers found' : 'No customers match your search'}
+                <td colSpan={5} style={{...styles.tableCell, textAlign: 'center'}}>
+                  {customers.length === 0 ? 'No users found' : 'No users match your search'}
                 </td>
               </tr>
             ) : (
@@ -410,42 +300,31 @@ const Customers = () => {
                     <div>{customer.email}</div>
                     <div style={{fontSize: '0.875rem', color: '#6b7280'}}>{customer.phone}</div>
                   </td>
-                  <td style={styles.tableCell}>{customer.joinDate}</td>
-                  <td style={styles.tableCell}>{customer.totalRequests}</td>
-                  {/* <td style={styles.tableCell}>{customer.completedRequests}</td>
-                  <td style={styles.tableCell}>{customer.totalSpent}</td> */}
-                  {/* <td style={styles.tableCell}>
+                  <td style={styles.tableCell}>
                     <span 
                       style={{
-                        ...styles.statusBadge,
-                        background: customer.status === 'premium' ? '#fef3c7' : 
-                                   customer.status === 'inactive' ? '#fee2e2' : '#d1fae5',
-                        color: customer.status === 'premium' ? '#92400e' : 
-                              customer.status === 'inactive' ? '#dc2626' : '#065f46'
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '20px',
+                        fontSize: '0.75rem',
+                        fontWeight: '600' as const,
+                        display: 'inline-block' as const,
+                        background: customer.role === 'admin' ? '#fef3c7' : '#d1fae5',
+                        color: customer.role === 'admin' ? '#92400e' : '#065f46'
                       }}
-                      onClick={() => {
-                        const newStatus = customer.status === 'active' ? 'inactive' : 
-                                        customer.status === 'inactive' ? 'premium' : 'active';
-                        handleUpdateStatus(customer._id, newStatus);
-                      }}
-                      title="Click to change status"
                     >
-                      {customer.status.charAt(0).toUpperCase() + customer.status.slice(1)}
+                      {customer.role.charAt(0).toUpperCase() + customer.role.slice(1)}
                     </span>
-                  </td> */}
+                  </td>
+                  <td style={styles.tableCell}>
+                    {customer.createdAt ? formatDate(customer.createdAt) : 'N/A'}
+                  </td>
                   <td style={styles.tableCell}>
                     <button 
-                      style={{...styles.actionBtn, ...styles.viewBtn}}
+                      style={styles.actionBtn}
                       onClick={() => handleViewDetails(customer)}
                     >
                       View Details
                     </button>
-                    {/* <button 
-                      style={{...styles.actionBtn, ...styles.contactBtn}}
-                      onClick={() => handleContact(customer)}
-                    >
-                      Contact
-                    </button> */}
                   </td>
                 </tr>
               ))
@@ -458,17 +337,14 @@ const Customers = () => {
       {showDetailsModal && selectedCustomer && (
         <div style={styles.modalOverlay} onClick={() => setShowDetailsModal(false)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Customer Details</h3>
+            <h3 style={styles.modalTitle}>User Details</h3>
             <div>
               <p><strong>Name:</strong> {selectedCustomer.name}</p>
               <p><strong>Email:</strong> {selectedCustomer.email}</p>
               <p><strong>Phone:</strong> {selectedCustomer.phone}</p>
-              <p><strong>Join Date:</strong> {selectedCustomer.joinDate}</p>
-              <p><strong>Total Requests:</strong> {selectedCustomer.totalRequests}</p>
-              <p><strong>Completed Requests:</strong> {selectedCustomer.completedRequests}</p>
-              <p><strong>Total Spent:</strong> {selectedCustomer.totalSpent}</p>
-              <p><strong>Status:</strong> {selectedCustomer.status}</p>
-              {selectedCustomer.role && <p><strong>Role:</strong> {selectedCustomer.role}</p>}
+              <p><strong>Role:</strong> {selectedCustomer.role}</p>
+              <p><strong>Join Date:</strong> {selectedCustomer.createdAt ? formatDate(selectedCustomer.createdAt) : 'N/A'}</p>
+              <p><strong>User ID:</strong> {selectedCustomer._id}</p>
             </div>
             <div style={styles.modalActions}>
               <button 
@@ -476,37 +352,6 @@ const Customers = () => {
                 onClick={() => setShowDetailsModal(false)}
               >
                 Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Contact Modal */}
-      {showContactModal && selectedCustomer && (
-        <div style={styles.modalOverlay} onClick={() => setShowContactModal(false)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Contact {selectedCustomer.name}</h3>
-            <p><strong>To:</strong> {selectedCustomer.email} | {selectedCustomer.phone}</p>
-            <textarea
-              style={styles.textArea}
-              placeholder="Type your message here..."
-              value={contactMessage}
-              onChange={(e) => setContactMessage(e.target.value)}
-            />
-            <div style={styles.modalActions}>
-              <button 
-                style={{...styles.actionBtn, background: '#6b7280', color: 'white'}}
-                onClick={() => setShowContactModal(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                style={{...styles.actionBtn, background: '#10b981', color: 'white'}}
-                onClick={handleSendMessage}
-                disabled={!contactMessage.trim()}
-              >
-                Send Message
               </button>
             </div>
           </div>

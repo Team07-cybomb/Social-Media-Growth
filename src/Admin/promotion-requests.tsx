@@ -383,12 +383,7 @@ const PromotionRequests = () => {
           </div>
           <div style={styles.statLabel}>Inactive</div>
         </div>
-        <div style={styles.statCard}>
-          <div style={{...styles.statValue, color: '#ef4444'}}>
-            {services.filter(s => s.status === 'out_of_stock').length}
-          </div>
-          <div style={styles.statLabel}>Out of Stock</div>
-        </div>
+        
       </div>
 
       <div style={styles.filters}>
