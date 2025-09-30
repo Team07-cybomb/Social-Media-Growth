@@ -438,13 +438,13 @@ const Customers = () => {
         </div>
         
         <div style={styles.searchExportContainer}>
-          <input
+          {/* <input
             type="text"
             placeholder="Search users by name, email, or phone..."
             style={styles.searchBox}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          /> */}
           
           <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
             <button 
