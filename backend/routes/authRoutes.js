@@ -144,35 +144,51 @@ router.post('/login', async (req, res) => {
 });
 
 // Get user profile (protected route)
+// router.get('/profile', async (req, res) => {
+//   try {
+//     const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+//     if (!token) {
+//       return res.status(401).json({ 
+//         success: false,
+//         message: 'No token provided' 
+//       });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const user = await User.findById(decoded.id).select('-password');
+    
+//     if (!user) {
+//       return res.status(404).json({ 
+//         success: false,
+//         message: 'User not found' 
+//       });
+//     }
+
+//     res.json({
+//       success: true,
+//       data: user
+//     });
+//   } catch (error) {
+//     res.status(401).json({ 
+//       success: false,
+//       message: 'Invalid token' 
+//     });
+//   }
+// });
 router.get('/profile', async (req, res) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'No token provided' 
-      });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-password');
-    
-    if (!user) {
-      return res.status(404).json({ 
-        success: false,
-        message: 'User not found' 
-      });
-    }
-
+    const users = await User.find().select('-password'); // exclude passwords
+ 
     res.json({
       success: true,
-      data: user
+      data: users
     });
   } catch (error) {
-    res.status(401).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Invalid token' 
+      message: 'Server error',
+      error: error.message
     });
   }
 });

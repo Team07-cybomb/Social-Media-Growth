@@ -7,8 +7,9 @@ const Sidebar = () => {
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
     { path: "/admin/promotion-requests", label: "Promotion Requests", icon: "🚀" },
-    { path: "/admin/customers", label: "Log-in Users", icon: "👥" },
-    { path: "/admin/services", label: "Customers", icon: "👥" },
+    { path: "/admin/customer", label: "Customers", icon: "👥" },
+    { path: "/admin/user", label: "Users", icon: "👥" },
+
     // { path: "/admin/analytics", label: "Analytics", icon: "📈" },
     // { path: "/admin/settings", label: "Settings", icon: "⚙️" },
   ];

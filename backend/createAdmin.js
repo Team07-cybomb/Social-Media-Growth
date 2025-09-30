@@ -6,17 +6,17 @@ const createAdmin = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     
-    const adminExists = await Admin.findOne({ username: 'admin' });
+    const adminExists = await Admin.findOne({ username: 'admin2' });
     
     if (!adminExists) {
       const admin = new Admin({
-        username: 'admin',
+        username: 'admin2',
         password: 'admin123'
       });
       
       await admin.save();
       console.log('✅ Default admin created:');
-      console.log('Username: admin');
+      console.log('Username: admin2');
       console.log('Password: admin123');
     } else {
       console.log('ℹ️ Admin user already exists');
