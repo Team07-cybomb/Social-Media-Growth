@@ -1,5 +1,6 @@
 // src/Admin/Services.tsx
 import { useState, useEffect } from "react";
+import * as XLSX from 'xlsx';
 
 // Simplified Type definitions for Customer
 interface Customer {
@@ -41,6 +42,105 @@ const Services = () => {
     fetchCustomers();
   }, []);
 
+  // Export to Excel function
+  const exportToExcel = () => {
+    try {
+      // Prepare data for export
+      const exportData = customers.map(customer => ({
+        'Username': customer.username,
+        'Email': customer.email,
+        'Phone Number': customer.phoneNumber,
+        'Status': customer.status.charAt(0).toUpperCase() + customer.status.slice(1),
+        'Created Date': new Date(customer.createdAt).toLocaleDateString(),
+        'Created Time': new Date(customer.createdAt).toLocaleTimeString(),
+        'Account Age': getAccountAge(customer.createdAt)
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths for better formatting
+      const colWidths = [
+        { wch: 20 }, // Username
+        { wch: 30 }, // Email
+        { wch: 15 }, // Phone Number
+        { wch: 10 }, // Status
+        { wch: 12 }, // Created Date
+        { wch: 12 }, // Created Time
+        { wch: 15 }  // Account Age
+      ];
+      ws['!cols'] = colWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+
+      // Generate Excel file and trigger download
+      const fileName = `customers_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error exporting data to Excel');
+    }
+  };
+
+  // Export filtered customers to Excel
+  const exportFilteredToExcel = () => {
+    try {
+      const customersToExport = filter === "all" ? customers : filteredCustomers;
+      
+      const exportData = customersToExport.map(customer => ({
+        'Username': customer.username,
+        'Email': customer.email,
+        'Phone Number': customer.phoneNumber,
+        'Status': customer.status.charAt(0).toUpperCase() + customer.status.slice(1),
+        'Created Date': new Date(customer.createdAt).toLocaleDateString(),
+        'Created Time': new Date(customer.createdAt).toLocaleTimeString(),
+        'Account Age': getAccountAge(customer.createdAt)
+      }));
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths
+      const colWidths = [
+        { wch: 20 }, // Username
+        { wch: 30 }, // Email
+        { wch: 15 }, // Phone Number
+        { wch: 10 }, // Status
+        { wch: 12 }, // Created Date
+        { wch: 12 }, // Created Time
+        { wch: 15 }  // Account Age
+      ];
+      ws['!cols'] = colWidths;
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+
+      const fileName = `customers_${filter}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error exporting data to Excel');
+    }
+  };
+
+  // Calculate account age
+  const getAccountAge = (createdAt: string): string => {
+    const created = new Date(createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - created.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day';
+    if (diffDays < 30) return `${diffDays} days`;
+    if (diffDays < 60) return '1 month';
+    
+    const months = Math.floor(diffDays / 30);
+    return `${months} months`;
+  };
+
   const filteredCustomers = customers.filter(customer => 
     filter === "all" || customer.status === filter
   );
@@ -58,6 +158,8 @@ const Services = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: '2rem',
+      flexWrap: 'wrap' as const,
+      gap: '1rem',
     },
     pageTitle: {
       fontSize: '2rem',
@@ -68,6 +170,29 @@ const Services = () => {
     pageSubtitle: {
       fontSize: '1rem',
       color: '#718096',
+    },
+    headerActions: {
+      display: 'flex',
+      gap: '1rem',
+      flexWrap: 'wrap' as const,
+    },
+    exportBtn: {
+      background: '#10b981',
+      color: 'white',
+      border: 'none',
+      padding: '0.75rem 1.5rem',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      transition: 'all 0.3s ease',
+      fontSize: '0.875rem',
+    },
+    exportBtnHover: {
+      background: '#059669',
+      transform: 'translateY(-1px)',
     },
     filters: {
       display: 'flex',
@@ -177,6 +302,55 @@ const Services = () => {
           <h1 style={styles.pageTitle}>Customer Management</h1>
           <p style={styles.pageSubtitle}>View customer accounts and information</p>
         </div>
+        
+        <div style={styles.headerActions}>
+          <button 
+            style={styles.exportBtn}
+            onClick={exportToExcel}
+            title="Export all customers to Excel"
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = styles.exportBtnHover.background;
+              e.currentTarget.style.transform = styles.exportBtnHover.transform;
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = styles.exportBtn.background;
+              e.currentTarget.style.transform = 'none';
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export All to Excel
+          </button>
+          
+          {filter !== 'all' && (
+            <button 
+              style={{
+                ...styles.exportBtn,
+                background: '#f59e0b'
+              }}
+              onClick={exportFilteredToExcel}
+              title={`Export ${filter} customers to Excel`}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = '#d97706';
+                e.currentTarget.style.transform = styles.exportBtnHover.transform;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = '#f59e0b';
+                e.currentTarget.style.transform = 'none';
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -253,6 +427,7 @@ const Services = () => {
                 <th style={styles.tableHeaderCell}>Email</th>
                 <th style={styles.tableHeaderCell}>Phone Number</th>
                 <th style={styles.tableHeaderCell}>Status</th>
+                <th style={styles.tableHeaderCell}>Created At</th>
               </tr>
             </thead>
             <tbody>
@@ -276,6 +451,9 @@ const Services = () => {
                     }}>
                       {customer.status}
                     </span>
+                  </td>
+                  <td style={styles.tableCell}>
+                    {new Date(customer.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
