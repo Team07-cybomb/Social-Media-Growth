@@ -1,5 +1,6 @@
 // src/Admin/PromotionRequests.tsx
 import { useState, useEffect } from "react";
+import * as XLSX from 'xlsx';
 
 // Type definitions - Updated to match your Service model
 interface Service {
@@ -28,7 +29,6 @@ interface StatusColors {
   [key: string]: { bg: string; text: string };
   active: { bg: string; text: string };
   inactive: { bg: string; text: string };
-  out_of_stock: { bg: string; text: string };
 }
 
 // Type for urgency colors (we'll derive this from delivery time)
@@ -75,6 +75,85 @@ const PromotionRequests = () => {
     filter === "all" || service.status === filter
   );
 
+  // Export to Excel function
+  const exportToExcel = () => {
+    try {
+      // Prepare data for export
+      const exportData = services.map(service => ({
+        'Service Name': service.serviceName,
+        'Provider': service.username,
+        'Email': service.email,
+        'Phone': service.phoneNumber,
+        'Platform': service.platform,
+        'Category': service.category,
+        'Base Price': service.basePrice,
+        'Min Quantity': service.minQuantity,
+        'Max Quantity': service.maxQuantity,
+        'Delivery Time': service.deliveryTime,
+        'Status': service.status.charAt(0).toUpperCase() + service.status.slice(1),
+        'Quality': service.quality,
+        'Refill Available': service.refill ? 'Yes' : 'No',
+        'Refill Period': service.refillPeriod || 'N/A',
+        'Description': service.description,
+        'Created At': new Date(service.createdAt).toLocaleDateString(),
+        'Updated At': new Date(service.updatedAt).toLocaleDateString()
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Services');
+
+      // Generate Excel file and trigger download
+      const fileName = `services_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error exporting data to Excel');
+    }
+  };
+
+  // Export filtered services to Excel
+  const exportFilteredToExcel = () => {
+    try {
+      const servicesToExport = filter === "all" ? services : filteredServices;
+      
+      const exportData = servicesToExport.map(service => ({
+        'Service Name': service.serviceName,
+        'Provider': service.username,
+        'Email': service.email,
+        'Phone': service.phoneNumber,
+        'Platform': service.platform,
+        'Category': service.category,
+        'Base Price': service.basePrice,
+        'Min Quantity': service.minQuantity,
+        'Max Quantity': service.maxQuantity,
+        'Delivery Time': service.deliveryTime,
+        'Status': service.status.charAt(0).toUpperCase() + service.status.slice(1),
+        'Quality': service.quality,
+        'Refill Available': service.refill ? 'Yes' : 'No',
+        'Refill Period': service.refillPeriod || 'N/A',
+        'Description': service.description,
+        'Created At': new Date(service.createdAt).toLocaleDateString(),
+        'Updated At': new Date(service.updatedAt).toLocaleDateString()
+      }));
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.book_append_sheet(wb, ws, 'Services');
+
+      const fileName = `services_${filter}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error exporting data to Excel');
+    }
+  };
+
   // Determine urgency based on delivery time
   const getUrgency = (deliveryTime: string): string => {
     const time = deliveryTime.toLowerCase();
@@ -90,8 +169,7 @@ const PromotionRequests = () => {
   const getStatusColor = (status: string) => {
     const colors: StatusColors = {
       active: { bg: '#d1fae5', text: '#065f46' },
-      inactive: { bg: '#fef3c7', text: '#92400e' },
-      out_of_stock: { bg: '#fee2e2', text: '#991b1b' }
+      inactive: { bg: '#fef3c7', text: '#92400e' }
     };
     return colors[status] || colors.inactive;
   };
@@ -172,6 +250,27 @@ const PromotionRequests = () => {
       fontSize: '1.2rem',
       color: '#718096',
       marginBottom: '2rem',
+    } as React.CSSProperties,
+    headerActions: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '2rem',
+      flexWrap: 'wrap' as const,
+      gap: '1rem',
+    } as React.CSSProperties,
+    exportBtn: {
+      background: '#10b981',
+      color: 'white',
+      border: 'none',
+      padding: '0.75rem 1.5rem',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      transition: 'all 0.3s ease',
     } as React.CSSProperties,
     filters: {
       display: 'flex',
@@ -361,9 +460,44 @@ const PromotionRequests = () => {
 
   return (
     <div style={styles.pageContainer}>
-      <div style={styles.pageHeader}>
-        <h1 style={styles.pageTitle}>Service Management</h1>
-        <p style={styles.pageSubtitle}>Manage and track all social media services</p>
+      <div style={styles.headerActions}>
+        <div style={styles.pageHeader}>
+          <h1 style={styles.pageTitle}>Service Management</h1>
+          <p style={styles.pageSubtitle}>Manage and track all social media services</p>
+        </div>
+        
+        <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
+          <button 
+            style={styles.exportBtn}
+            onClick={exportToExcel}
+            title="Export all services to Excel"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export All to Excel
+          </button>
+          
+          {filter !== 'all' && (
+            <button 
+              style={{
+                ...styles.exportBtn,
+                background: '#f59e0b'
+              } as React.CSSProperties}
+              onClick={exportFilteredToExcel}
+              title={`Export ${filter} services to Excel`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            </button>
+          )}
+        </div>
       </div>
 
       <div style={styles.statsGrid}>
@@ -383,7 +517,6 @@ const PromotionRequests = () => {
           </div>
           <div style={styles.statLabel}>Inactive</div>
         </div>
-        
       </div>
 
       <div style={styles.filters}>
@@ -413,15 +546,6 @@ const PromotionRequests = () => {
           onClick={() => setFilter('inactive')}
         >
           Inactive
-        </button>
-        <button 
-          style={{
-            ...styles.filterBtn, 
-            ...(filter === 'out_of_stock' ? styles.filterBtnActive : {})
-          } as React.CSSProperties}
-          onClick={() => setFilter('out_of_stock')}
-        >
-          Out of Stock
         </button>
       </div>
 
@@ -506,7 +630,6 @@ const PromotionRequests = () => {
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
-                      <option value="out_of_stock">Out of Stock</option>
                     </select>
                     <button 
                       style={{...styles.actionBtn, ...styles.deleteBtn} as React.CSSProperties}
