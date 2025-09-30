@@ -31,6 +31,12 @@ export function Navbar({
     { name: "Blog", href: "/blog" },
   ];
 
+  // Get user's first letter for profile button
+  const getUserInitial = () => {
+    if (!user?.name) return "U";
+    return user.name.charAt(0).toUpperCase();
+  };
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -187,6 +193,7 @@ export function Navbar({
             border: none;
             cursor: pointer;
             font-size: 18px;
+            font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
           }
@@ -321,11 +328,10 @@ export function Navbar({
                   <div className="profile-dropdown">
                     <button
                       className="profile-button"
-                      onClick={() =>
-                        setIsProfileDropdownOpen(!isProfileDropdownOpen)
-                      }
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      title={user?.name || "User Profile"}
                     >
-                      <User size={20} />
+                      {getUserInitial()}
                     </button>
                     {isProfileDropdownOpen && (
                       <>
@@ -342,19 +348,16 @@ export function Navbar({
                               {user?.email || "user@example.com"}
                             </div>
                           </div>
-                          <Link to="/dashboard" className="dropdown-item">
+                          {/* <Link to="/dashboard" className="dropdown-item">
                             <LayoutDashboard size={16} /> Dashboard
-                          </Link>
+                          </Link> */}
                           <Link to="/profile" className="dropdown-item">
                             <User size={16} /> My Profile
                           </Link>
-                          <Link to="/settings" className="dropdown-item">
+                          {/* <Link to="/settings" className="dropdown-item">
                             <Settings size={16} /> Settings
-                          </Link>
-                          <button
-                            className="dropdown-item logout"
-                            onClick={handleLogout}
-                          >
+                          </Link> */}
+                          <button className="dropdown-item logout" onClick={handleLogout}>
                             <LogOut size={16} /> Logout
                           </button>
                         </div>
@@ -411,13 +414,22 @@ export function Navbar({
 
               {isLoggedIn ? (
                 <div className="border-t border-gray-200 pt-2 mt-2">
-                  <Link
+                  <div className="flex items-center px-4 py-3 mb-2 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold mr-3">
+                      {getUserInitial()}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">{user?.name || "User"}</div>
+                      <div className="text-sm text-gray-600">{user?.email || "user@example.com"}</div>
+                    </div>
+                  </div>
+                  {/* <Link
                     to="/dashboard"
                     onClick={() => setIsMenuOpen(false)}
                     className="block px-4 py-3"
                   >
                     Dashboard
-                  </Link>
+                  </Link> */}
                   <Link
                     to="/profile"
                     onClick={() => setIsMenuOpen(false)}
@@ -425,13 +437,13 @@ export function Navbar({
                   >
                     My Profile
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/settings"
                     onClick={() => setIsMenuOpen(false)}
                     className="block px-4 py-3"
                   >
                     Settings
-                  </Link>
+                  </Link> */}
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"

@@ -16,18 +16,35 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem("settings");
-    if (saved) setSettings(JSON.parse(saved));
+    if (saved) {
+      const savedSettings = JSON.parse(saved);
+      setSettings(savedSettings);
+      applyTheme(savedSettings.darkMode);
+    }
   }, []);
+
+  const applyTheme = (isDark: boolean) => {
+    if (isDark) {
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.style.setProperty('color-scheme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+      document.documentElement.style.setProperty('color-scheme', 'light');
+    }
+  };
 
   const saveSettings = (newSettings: Settings) => {
     setSettings(newSettings);
     localStorage.setItem("settings", JSON.stringify(newSettings));
+    applyTheme(newSettings.darkMode);
   };
 
   const handleDeleteAccount = () => {
     if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
       localStorage.removeItem("user");
       localStorage.removeItem("settings");
+      // Reset to light theme when account is deleted
+      applyTheme(false);
       navigate("/");
     }
   };
@@ -37,12 +54,42 @@ export default function SettingsPage() {
       {/* Enhanced Internal CSS */}
       <style>
         {`
+          :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1d23;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e1e8f0;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          }
+
+          .dark-theme {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 10px 25px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+          }
+
+          body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+          }
+
           .settings-container {
             max-width: 600px;
             margin: 2rem auto;
             padding: 0 1.5rem;
             font-family: "Inter", "SF Pro Display", -apple-system, sans-serif;
-            color: #1a1d23;
+            color: var(--text-primary);
           }
 
           .settings-title {
@@ -57,22 +104,18 @@ export default function SettingsPage() {
           }
 
           .settings-card {
-            background: #ffffff;
-            border: 1px solid #e1e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
-            box-shadow: 
-              0 4px 6px -1px rgba(0, 0, 0, 0.05),
-              0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
           }
 
           .settings-card:hover {
-            box-shadow: 
-              0 10px 25px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-hover);
             transform: translateY(-2px);
           }
 
@@ -82,13 +125,13 @@ export default function SettingsPage() {
             justify-content: space-between;
             padding: 1.25rem 0;
             font-size: 1.05rem;
-            color: #374151;
-            border-bottom: 1px solid #f3f4f6;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
             transition: all 0.2s ease;
           }
 
           .settings-option:hover {
-            background: linear-gradient(90deg, #f8fafc 0%, transparent 100%);
+            background: linear-gradient(90deg, var(--bg-secondary) 0%, transparent 100%);
             padding-left: 0.75rem;
             padding-right: 0.75rem;
             margin: 0 -0.75rem;
@@ -108,7 +151,7 @@ export default function SettingsPage() {
 
           .option-description {
             font-size: 0.875rem;
-            color: #6b7280;
+            color: var(--text-muted);
             font-weight: 400;
           }
 
@@ -137,6 +180,10 @@ export default function SettingsPage() {
             border-radius: 34px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid transparent;
+          }
+
+          .dark-theme .toggle-slider {
+            background: #475569;
           }
 
           .toggle-slider:before {
@@ -168,7 +215,12 @@ export default function SettingsPage() {
           /* Danger Zone */
           .danger-zone {
             border-color: #fecaca;
-            background: linear-gradient(135deg, #fef2f2, #fff);
+            background: linear-gradient(135deg, #fef2f2, var(--card-bg));
+          }
+
+          .dark-theme .danger-zone {
+            background: linear-gradient(135deg, #2c1a1a, var(--card-bg));
+            border-color: #7f1d1d;
           }
 
           .danger-zone-title {
@@ -195,6 +247,12 @@ export default function SettingsPage() {
             padding: 1rem;
             border-radius: 8px;
             border-left: 4px solid #dc2626;
+          }
+
+          .dark-theme .danger-description {
+            color: #fecaca;
+            background: #2c1a1a;
+            border-left-color: #dc2626;
           }
 
           .button-group {
@@ -235,16 +293,16 @@ export default function SettingsPage() {
           }
 
           .btn-secondary {
-            background: #f8fafc;
-            color: #475569;
-            border: 1.5px solid #e2e8f0;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border-color);
           }
 
           .btn-secondary:hover {
-            background: #f1f5f9;
+            background: var(--bg-primary);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #cbd5e1;
+            border-color: var(--border-color);
           }
 
           /* Responsive Design */
