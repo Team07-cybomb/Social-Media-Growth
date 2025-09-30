@@ -1,5 +1,6 @@
 // src/Admin/Dashboard.tsx
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 // Define types for our data
 interface PromotionRequest {
@@ -17,7 +18,7 @@ interface DashboardStats {
   totalRequests: number;
   pendingRequests: number;
   completedRequests: number;
-  totalCustomers: number;
+  totalUsers: number;
 }
 
 interface StatData {
@@ -45,16 +46,29 @@ interface ApiResponse<T> {
   };
 }
 
+// User interface matching your Customer component
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  createdAt: string;
+  status?: string;
+}
+
 // Define the display status type
 type DisplayStatus = 'pending' | 'in-progress' | 'completed' | 'rejected';
 
 const Dashboard = () => {
   const [promotionRequests, setPromotionRequests] = useState<PromotionRequest[]>([]);
+  const [recentRequests, setRecentRequests] = useState<PromotionRequest[]>([]); // Added state for recent requests
+  const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalRequests: 0,
     pendingRequests: 0,
     completedRequests: 0,
-    totalCustomers: 0
+    totalUsers: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +95,13 @@ const Dashboard = () => {
       
       if (result.success) {
         setPromotionRequests(result.data);
+        
+        // Get the 8 most recent requests by sorting by createdAt date
+        const sortedRequests = [...result.data].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setRecentRequests(sortedRequests.slice(0, 8)); // Store only first 8
+        
         return result.data;
       } else {
         throw new Error('Failed to fetch data');
@@ -88,6 +109,35 @@ const Dashboard = () => {
     } catch (err) {
       console.error('Error fetching promotion requests:', err);
       setError('Failed to load promotion requests');
+      return [];
+    }
+  };
+
+  // Fetch users from backend - Similar to your Customer component
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setUsers(result.data);
+        return result.data;
+      } else {
+        throw new Error(result.message || 'Failed to load users');
+      }
+    } catch (err) {
+      console.error('Error fetching users:', err);
       return [];
     }
   };
@@ -115,19 +165,17 @@ const Dashboard = () => {
   };
 
   // Calculate statistics from the data
-  const calculateStats = (requests: PromotionRequest[]) => {
+  const calculateStats = (requests: PromotionRequest[], users: User[]) => {
     const totalRequests = requests.length;
     const pendingRequests = requests.filter(req => req.status === 'active').length;
     const completedRequests = requests.filter(req => req.status === 'inactive').length;
-    
-    // For total customers, we'll count unique usernames/emails
-    const uniqueCustomers = new Set(requests.map(req => req.email)).size;
+    const totalUsers = users.length;
 
     return {
       totalRequests,
       pendingRequests,
       completedRequests,
-      totalCustomers: uniqueCustomers
+      totalUsers
     };
   };
 
@@ -137,8 +185,9 @@ const Dashboard = () => {
     setError(null);
     
     try {
-      const [requests, dashboardStats] = await Promise.all([
+      const [requests, usersData, dashboardStats] = await Promise.all([
         fetchPromotionRequests(),
+        fetchUsers(),
         fetchDashboardStats()
       ]);
 
@@ -148,11 +197,11 @@ const Dashboard = () => {
           totalRequests: dashboardStats.totalRequests,
           pendingRequests: dashboardStats.activeRequests,
           completedRequests: dashboardStats.inactiveRequests,
-          totalCustomers: dashboardStats.totalCustomers
+          totalUsers: dashboardStats.totalUsers || usersData.length
         });
       } else {
-        // Calculate stats from requests
-        const calculatedStats = calculateStats(requests);
+        // Calculate stats from requests and users
+        const calculatedStats = calculateStats(requests, usersData);
         setStats(calculatedStats);
       }
     } catch (err) {
@@ -215,8 +264,8 @@ const Dashboard = () => {
       color: "green" 
     },
     { 
-      value: stats.totalCustomers.toString(), 
-      label: "Total Customers", 
+      value: stats.totalUsers.toString(),
+      label: "Total Users", 
       change: "+5 new", 
       icon: "👥", 
       color: "purple" 
@@ -249,7 +298,7 @@ const Dashboard = () => {
     }
     
     return acc;
-  }, []).sort((a, b) => b.count - a.count).slice(0, 6); // Top 6 services
+  }, []).sort((a, b) => b.count - a.count).slice(0, 6);
 
   const getStatusColor = (status: DisplayStatus): string => {
     const colors: Record<DisplayStatus, string> = {
@@ -507,6 +556,11 @@ const Dashboard = () => {
     actionIcon: {
       fontSize: '2rem',
     },
+    emptyState: {
+      padding: '2rem',
+      textAlign: 'center' as const,
+      color: '#6b7280',
+    },
     '@media (max-width: 1024px)': {
       dashboardContent: {
         gridTemplateColumns: '1fr',
@@ -637,43 +691,50 @@ const Dashboard = () => {
         <div style={styles.contentCard}>
           <div style={styles.cardHeader}>
             <h2 style={styles.cardTitle}>Recent Promotion Requests</h2>
-            <button style={styles.textLink}>View All</button>
+           <Link to ="/admin/promotion-requests">
+            <button style={styles.textLink}>View All</button></Link>
           </div>
-          <table style={styles.table}>
-            <thead style={styles.tableHeader}>
-              <tr>
-                <th style={styles.tableHeaderCell}>Customer</th>
-                <th style={styles.tableHeaderCell}>Service</th>
-                <th style={styles.tableHeaderCell}>Status</th>
-                <th style={styles.tableHeaderCell}>Date</th>
-                <th style={styles.tableHeaderCell}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {promotionRequests.slice(0, 5).map((request) => {
-                const displayStatus = getDisplayStatus(request.status);
-                return (
-                  <tr key={request._id}>
-                    <td style={styles.tableCell}>{request.username}</td>
-                    <td style={styles.tableCell}>{request.serviceName}</td>
-                    <td style={styles.tableCell}>
-                      <span style={{
-                        ...styles.statusBadge,
-                        background: getStatusColor(displayStatus) + '20',
-                        color: getStatusColor(displayStatus)
-                      }}>
-                        {displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1)}
-                      </span>
-                    </td>
-                    <td style={styles.tableCell}>{formatDate(request.createdAt)}</td>
-                    <td style={styles.tableCell}>
-                      <button style={styles.textLink}>View</button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {recentRequests.length === 0 ? (
+            <div style={styles.emptyState}>
+              No promotion requests found
+            </div>
+          ) : (
+            <table style={styles.table}>
+              <thead style={styles.tableHeader}>
+                <tr>
+                  <th style={styles.tableHeaderCell}>Customer</th>
+                  <th style={styles.tableHeaderCell}>Service</th>
+                  <th style={styles.tableHeaderCell}>Status</th>
+                  <th style={styles.tableHeaderCell}>Date</th>
+                  {/* <th style={styles.tableHeaderCell}>Action</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {recentRequests.map((request) => {
+                  const displayStatus = getDisplayStatus(request.status);
+                  return (
+                    <tr key={request._id}>
+                      <td style={styles.tableCell}>{request.username}</td>
+                      <td style={styles.tableCell}>{request.serviceName}</td>
+                      <td style={styles.tableCell}>
+                        <span style={{
+                          ...styles.statusBadge,
+                          background: getStatusColor(displayStatus) + '20',
+                          color: getStatusColor(displayStatus)
+                        }}>
+                          {displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1)}
+                        </span>
+                      </td>
+                      <td style={styles.tableCell}>{formatDate(request.createdAt)}</td>
+                      {/* <td style={styles.tableCell}>
+                        <button style={styles.textLink}>View</button>
+                      </td> */}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
         
         <div style={styles.contentCard}>
@@ -719,76 +780,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div style={styles.quickActionsGrid}>
-        <button 
-          style={styles.quickActionBtn}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#4f46e5';
-            e.currentTarget.style.color = 'white';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'white';
-            e.currentTarget.style.color = '#374151';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-          onClick={() => window.location.href = '/admin/promotion-requests'}
-        >
-          <span style={styles.actionIcon}>🚀</span>
-          Manage Requests
-        </button>
-        <button 
-          style={styles.quickActionBtn}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#4f46e5';
-            e.currentTarget.style.color = 'white';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'white';
-            e.currentTarget.style.color = '#374151';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-          onClick={() => window.location.href = '/admin/customers'}
-        >
-          <span style={styles.actionIcon}>👥</span>
-          Customer Management
-        </button>
-        <button 
-          style={styles.quickActionBtn}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#4f46e5';
-            e.currentTarget.style.color = 'white';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'white';
-            e.currentTarget.style.color = '#374151';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-          onClick={() => window.location.href = '/admin/analytics'}
-        >
-          <span style={styles.actionIcon}>📈</span>
-          View Analytics
-        </button>
-        <button 
-          style={styles.quickActionBtn}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#4f46e5';
-            e.currentTarget.style.color = 'white';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'white';
-            e.currentTarget.style.color = '#374151';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-          onClick={() => window.location.href = '/admin/settings'}
-        >
-          <span style={styles.actionIcon}>⚙️</span>
-          Settings
-        </button>
-      </div>
+      
     </div>
   );
 };
