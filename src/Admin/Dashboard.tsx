@@ -3,11 +3,14 @@ import { useState, useEffect } from "react";
 
 // Define types for our data
 interface PromotionRequest {
-  id: number;
-  name: string;
-  service: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'rejected';
-  date: string;
+  _id: string;
+  serviceName: string;
+  username: string;
+  platform: string;
+  status: 'active' | 'inactive' | 'out_of_stock';
+  createdAt: string;
+  email: string;
+  phoneNumber: string;
 }
 
 interface DashboardStats {
@@ -31,6 +34,20 @@ interface Service {
   icon: string;
 }
 
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  pagination?: {
+    current: number;
+    total: number;
+    results: number;
+    totalResults: number;
+  };
+}
+
+// Define the display status type
+type DisplayStatus = 'pending' | 'in-progress' | 'completed' | 'rejected';
+
 const Dashboard = () => {
   const [promotionRequests, setPromotionRequests] = useState<PromotionRequest[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
@@ -39,28 +56,141 @@ const Dashboard = () => {
     completedRequests: 0,
     totalCustomers: 0
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - replace with actual API calls
-  useEffect(() => {
-    // Simulate API call
-    const mockData = {
-      promotionRequests: [
-        { id: 1, name: "John Doe", service: "YouTube Subscribers", status: "pending" as const, date: "2024-01-15" },
-        { id: 2, name: "Jane Smith", service: "Instagram Followers", status: "in-progress" as const, date: "2024-01-14" },
-        { id: 3, name: "Mike Johnson", service: "Facebook Page Likes", status: "completed" as const, date: "2024-01-13" },
-        { id: 4, name: "Sarah Wilson", service: "Twitter Followers", status: "pending" as const, date: "2024-01-12" }
-      ],
-      stats: {
-        totalRequests: 156,
-        pendingRequests: 12,
-        completedRequests: 134,
-        totalCustomers: 89
+  // API base URL - Fixed the env access
+  const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
+
+  // Fetch promotion requests from backend
+  const fetchPromotionRequests = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/services`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch promotion requests');
       }
-    };
+
+      const result: ApiResponse<PromotionRequest[]> = await response.json();
+      
+      if (result.success) {
+        setPromotionRequests(result.data);
+        return result.data;
+      } else {
+        throw new Error('Failed to fetch data');
+      }
+    } catch (err) {
+      console.error('Error fetching promotion requests:', err);
+      setError('Failed to load promotion requests');
+      return [];
+    }
+  };
+
+  // Fetch dashboard statistics
+  const fetchDashboardStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/auth/dashboard-stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return result.data;
+      }
+      return null;
+    } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+      return null;
+    }
+  };
+
+  // Calculate statistics from the data
+  const calculateStats = (requests: PromotionRequest[]) => {
+    const totalRequests = requests.length;
+    const pendingRequests = requests.filter(req => req.status === 'active').length;
+    const completedRequests = requests.filter(req => req.status === 'inactive').length;
     
-    setPromotionRequests(mockData.promotionRequests);
-    setStats(mockData.stats);
+    // For total customers, we'll count unique usernames/emails
+    const uniqueCustomers = new Set(requests.map(req => req.email)).size;
+
+    return {
+      totalRequests,
+      pendingRequests,
+      completedRequests,
+      totalCustomers: uniqueCustomers
+    };
+  };
+
+  // Load all data
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const [requests, dashboardStats] = await Promise.all([
+        fetchPromotionRequests(),
+        fetchDashboardStats()
+      ]);
+
+      // If we have dashboard stats from API, use them, otherwise use calculated stats
+      if (dashboardStats) {
+        setStats({
+          totalRequests: dashboardStats.totalRequests,
+          pendingRequests: dashboardStats.activeRequests,
+          completedRequests: dashboardStats.inactiveRequests,
+          totalCustomers: dashboardStats.totalCustomers
+        });
+      } else {
+        // Calculate stats from requests
+        const calculatedStats = calculateStats(requests);
+        setStats(calculatedStats);
+      }
+    } catch (err) {
+      setError('Failed to load dashboard data');
+      console.error('Error loading dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial data load
+  useEffect(() => {
+    loadData();
   }, []);
+
+  // Refresh data function
+  const refreshData = () => {
+    loadData();
+  };
+
+  // Map service status to display status with proper type assertion
+  const getDisplayStatus = (status: PromotionRequest['status']): DisplayStatus => {
+    const statusMap: Record<PromotionRequest['status'], DisplayStatus> = {
+      'active': 'in-progress',
+      'inactive': 'completed',
+      'out_of_stock': 'pending'
+    };
+    return statusMap[status] || 'pending';
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
   const statsData: StatData[] = [
     { 
@@ -72,7 +202,7 @@ const Dashboard = () => {
     },
     { 
       value: stats.pendingRequests.toString(), 
-      label: "Pending Requests", 
+      label: "Active Requests", 
       change: "+3 new", 
       icon: "⏳", 
       color: "orange" 
@@ -93,17 +223,36 @@ const Dashboard = () => {
     }
   ];
 
-  const services: Service[] = [
-    { name: "YouTube Subscribers", count: 45, icon: "📺" },
-    { name: "Instagram Followers", count: 67, icon: "📷" },
-    { name: "Facebook Page Likes", count: 23, icon: "👍" },
-    { name: "Twitter Followers", count: 34, icon: "🐦" },
-    { name: "TikTok Followers", count: 28, icon: "🎵" },
-    { name: "Website Traffic", count: 15, icon: "🌐" }
-  ];
+  // Calculate popular services from actual data
+  const services: Service[] = promotionRequests.reduce((acc: Service[], request) => {
+    const serviceName = request.serviceName;
+    const existingService = acc.find(s => s.name === serviceName);
+    
+    if (existingService) {
+      existingService.count += 1;
+    } else {
+      const serviceIcons: { [key: string]: string } = {
+        'YouTube': '📺',
+        'Instagram': '📷',
+        'Facebook': '👍',
+        'Twitter': '🐦',
+        'TikTok': '🎵',
+        'LinkedIn': '💼',
+        'Other': '🌐'
+      };
+      
+      acc.push({
+        name: serviceName,
+        count: 1,
+        icon: serviceIcons[request.platform] || '🚀'
+      });
+    }
+    
+    return acc;
+  }, []).sort((a, b) => b.count - a.count).slice(0, 6); // Top 6 services
 
-  const getStatusColor = (status: PromotionRequest['status']): string => {
-    const colors = {
+  const getStatusColor = (status: DisplayStatus): string => {
+    const colors: Record<DisplayStatus, string> = {
       pending: '#f59e0b',
       'in-progress': '#3b82f6',
       completed: '#10b981',
@@ -119,6 +268,34 @@ const Dashboard = () => {
       margin: '0 auto',
       marginLeft: '0px',
       transition: 'margin-left 0.3s ease',
+    },
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '4rem',
+      flexDirection: 'column' as const,
+      gap: '1rem',
+    },
+    errorContainer: {
+      background: '#fee2e2',
+      border: '1px solid #fecaca',
+      color: '#dc2626',
+      padding: '1rem',
+      borderRadius: '8px',
+      marginBottom: '1rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    retryButton: {
+      background: '#dc2626',
+      color: 'white',
+      border: 'none',
+      padding: '0.5rem 1rem',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      fontWeight: '600',
     },
     dashboardHeader: {
       display: 'flex',
@@ -368,8 +545,27 @@ const Dashboard = () => {
     return colors[color] || colors.blue;
   };
 
+  if (loading) {
+    return (
+      <div style={styles.dashboardContainer}>
+        <div style={styles.loadingContainer}>
+          <div>Loading dashboard data...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.dashboardContainer}>
+      {error && (
+        <div style={styles.errorContainer}>
+          <span>{error}</span>
+          <button style={styles.retryButton} onClick={refreshData}>
+            Retry
+          </button>
+        </div>
+      )}
+      
       <div style={styles.dashboardHeader}>
         <div>
           <h1 style={styles.dashboardTitle}>Promotion Dashboard</h1>
@@ -386,7 +582,7 @@ const Dashboard = () => {
               e.currentTarget.style.background = 'white';
               e.currentTarget.style.borderColor = '#e2e8f0';
             }}
-            onClick={() => window.location.reload()}
+            onClick={refreshData}
           >
             <span>↻</span>
             Refresh Data
@@ -454,25 +650,28 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {promotionRequests.map((request) => (
-                <tr key={request.id}>
-                  <td style={styles.tableCell}>{request.name}</td>
-                  <td style={styles.tableCell}>{request.service}</td>
-                  <td style={styles.tableCell}>
-                    <span style={{
-                      ...styles.statusBadge,
-                      background: getStatusColor(request.status) + '20',
-                      color: getStatusColor(request.status)
-                    }}>
-                      {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                    </span>
-                  </td>
-                  <td style={styles.tableCell}>{request.date}</td>
-                  <td style={styles.tableCell}>
-                    <button style={styles.textLink}>View</button>
-                  </td>
-                </tr>
-              ))}
+              {promotionRequests.slice(0, 5).map((request) => {
+                const displayStatus = getDisplayStatus(request.status);
+                return (
+                  <tr key={request._id}>
+                    <td style={styles.tableCell}>{request.username}</td>
+                    <td style={styles.tableCell}>{request.serviceName}</td>
+                    <td style={styles.tableCell}>
+                      <span style={{
+                        ...styles.statusBadge,
+                        background: getStatusColor(displayStatus) + '20',
+                        color: getStatusColor(displayStatus)
+                      }}>
+                        {displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1)}
+                      </span>
+                    </td>
+                    <td style={styles.tableCell}>{formatDate(request.createdAt)}</td>
+                    <td style={styles.tableCell}>
+                      <button style={styles.textLink}>View</button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

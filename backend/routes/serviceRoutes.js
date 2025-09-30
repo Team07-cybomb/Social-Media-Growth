@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Service = require('../models/Service');
+const Service = require("../models/Service");
 
 // Get all services
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { platform, status, category, page = 1, limit = 10 } = req.query;
-    
+
     const filter = {};
     if (platform) filter.platform = platform;
     if (status) filter.status = status;
@@ -26,48 +26,51 @@ router.get('/', async (req, res) => {
         current: parseInt(page),
         total: Math.ceil(total / limit),
         results: services.length,
-        totalResults: total
-      }
+        totalResults: total,
+      },
     });
   } catch (error) {
-    console.error('Get services error:', error);
+    console.error("Get services error:", error);
     res.status(500).json({
       success: false,
-      msg: 'Server error while fetching services'
+      msg: "Server error while fetching services",
     });
   }
 });
 
 // Get service by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
-    
+
     if (!service) {
       return res.status(404).json({
         success: false,
-        msg: 'Service not found'
+        msg: "Service not found",
       });
     }
 
     res.json({
       success: true,
-      data: service
+      data: service,
     });
   } catch (error) {
-    console.error('Get service error:', error);
+    console.error("Get service error:", error);
     res.status(500).json({
       success: false,
-      msg: 'Server error while fetching service'
+      msg: "Server error while fetching service",
     });
   }
 });
 
 // Create new service
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
-      name,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice,
       minQuantity,
@@ -78,14 +81,14 @@ router.post('/', async (req, res) => {
       category,
       quality,
       refill,
-      refillPeriod
+      refillPeriod,
     } = req.body;
 
     // Validation
-    if (!name || !platform || !basePrice || !minQuantity || !maxQuantity || !deliveryTime || !description || !category) {
+    if (!serviceName || !username || !email || !phoneNumber || !platform || !basePrice || !minQuantity || !maxQuantity || !deliveryTime || !description || !category) {
       return res.status(400).json({
         success: false,
-        msg: 'Please provide all required fields'
+        msg: "Please provide all required fields",
       });
     }
 
@@ -96,50 +99,71 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        msg: 'Please provide a valid email address'
+      });
+    }
+
     const service = new Service({
-      name,
+      // serviceName,
+      // username,
+      // email,
+      // phoneNumber,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice: parseFloat(basePrice),
       minQuantity: parseInt(minQuantity),
       maxQuantity: parseInt(maxQuantity),
       deliveryTime,
-      status: status || 'active',
+      status: status || "active",
       description,
       category,
-      quality: quality || 'standard',
+      quality: quality || "standard",
       refill: refill || false,
-      refillPeriod: refill ? refillPeriod : undefined
+      refillPeriod: refill ? refillPeriod : undefined,
     });
 
     await service.save();
 
     res.status(201).json({
       success: true,
-      msg: 'Service created successfully',
-      data: service
+      msg: "Service created successfully",
+      data: service,
     });
   } catch (error) {
-    console.error('Create service error:', error);
-    
-    if (error.name === 'ValidationError') {
+    console.error("Create service error:", error);
+
+    if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
-        msg: Object.values(error.errors).map(val => val.message).join(', ')
+        msg: Object.values(error.errors)
+          .map((val) => val.message)
+          .join(", "),
       });
     }
 
     res.status(500).json({
       success: false,
-      msg: 'Server error while creating service'
+      msg: "Server error while creating service",
     });
   }
 });
 
 // Update service
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const {
-      name,
+      serviceName,
+      username,
+      email,
+      phoneNumber,
       platform,
       basePrice,
       minQuantity,
@@ -150,7 +174,7 @@ router.put('/:id', async (req, res) => {
       category,
       quality,
       refill,
-      refillPeriod
+      refillPeriod,
     } = req.body;
 
     if (minQuantity && maxQuantity && minQuantity >= maxQuantity) {
@@ -160,8 +184,26 @@ router.put('/:id', async (req, res) => {
       });
     }
 
+    // Email validation if email is being updated
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          success: false,
+          msg: 'Please provide a valid email address'
+        });
+      }
+    }
+
     const updateData = {};
-    if (name) updateData.name = name;
+    if (serviceName) updateData.serviceName = serviceName;
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
+    if (serviceName) updateData.serviceName = serviceName;
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
     if (platform) updateData.platform = platform;
     if (basePrice) updateData.basePrice = parseFloat(basePrice);
     if (minQuantity) updateData.minQuantity = parseInt(minQuantity);
@@ -174,75 +216,76 @@ router.put('/:id', async (req, res) => {
     if (refill !== undefined) updateData.refill = refill;
     if (refillPeriod) updateData.refillPeriod = refillPeriod;
 
-    const service = await Service.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const service = await Service.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!service) {
       return res.status(404).json({
         success: false,
-        msg: 'Service not found'
+        msg: "Service not found",
       });
     }
 
     res.json({
       success: true,
-      msg: 'Service updated successfully',
-      data: service
+      msg: "Service updated successfully",
+      data: service,
     });
   } catch (error) {
-    console.error('Update service error:', error);
-    
-    if (error.name === 'ValidationError') {
+    console.error("Update service error:", error);
+
+    if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
-        msg: Object.values(error.errors).map(val => val.message).join(', ')
+        msg: Object.values(error.errors)
+          .map((val) => val.message)
+          .join(", "),
       });
     }
 
     res.status(500).json({
       success: false,
-      msg: 'Server error while updating service'
+      msg: "Server error while updating service",
     });
   }
 });
 
 // Delete service
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const service = await Service.findByIdAndDelete(req.params.id);
 
     if (!service) {
       return res.status(404).json({
         success: false,
-        msg: 'Service not found'
+        msg: "Service not found",
       });
     }
 
     res.json({
       success: true,
-      msg: 'Service deleted successfully'
+      msg: "Service deleted successfully",
     });
   } catch (error) {
-    console.error('Delete service error:', error);
+    console.error("Delete service error:", error);
     res.status(500).json({
       success: false,
-      msg: 'Server error while deleting service'
+      msg: "Server error while deleting service",
     });
   }
 });
 
 // Bulk create services (for initial setup)
-router.post('/bulk', async (req, res) => {
+router.post("/bulk", async (req, res) => {
   try {
     const services = req.body;
 
     if (!Array.isArray(services)) {
       return res.status(400).json({
         success: false,
-        msg: 'Please provide an array of services'
+        msg: "Please provide an array of services",
       });
     }
 
@@ -251,13 +294,13 @@ router.post('/bulk', async (req, res) => {
     res.status(201).json({
       success: true,
       msg: `${createdServices.length} services created successfully`,
-      data: createdServices
+      data: createdServices,
     });
   } catch (error) {
-    console.error('Bulk create services error:', error);
+    console.error("Bulk create services error:", error);
     res.status(500).json({
       success: false,
-      msg: 'Server error while creating services'
+      msg: "Server error while creating services",
     });
   }
 });

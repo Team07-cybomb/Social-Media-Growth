@@ -7,10 +7,11 @@ const Sidebar = () => {
   const menuItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
     { path: "/admin/promotion-requests", label: "Promotion Requests", icon: "🚀" },
-    { path: "/admin/customers", label: "Customers", icon: "👥" },
-    { path: "/admin/services", label: "Services", icon: "🛠️" },
-    { path: "/admin/analytics", label: "Analytics", icon: "📈" },
-    { path: "/admin/settings", label: "Settings", icon: "⚙️" },
+    { path: "/admin/customer", label: "Customers", icon: "👥" },
+    { path: "/admin/user", label: "Users", icon: "👥" },
+
+    // { path: "/admin/analytics", label: "Analytics", icon: "📈" },
+    // { path: "/admin/settings", label: "Settings", icon: "⚙️" },
   ];
 
   const handleLogout = () => {
@@ -209,9 +210,9 @@ const Sidebar = () => {
             >
               <span style={styles.navIcon}>{item.icon}</span>
               <span style={styles.navLabel}>{item.label}</span>
-              {item.path === "/admin/promotion-requests" && (
-                <span style={styles.badge}>12</span>
-              )}
+              {/* {item.path === "/admin/promotion-requests" && (
+                <span style={styles.badge}></span>
+              )} */}
               <div style={{
                 ...styles.navIndicator,
                 ...(location.pathname === item.path ? styles.navIndicatorActive : {})

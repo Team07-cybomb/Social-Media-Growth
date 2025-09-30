@@ -1,4 +1,4 @@
-import { ArrowRight, Play, Star, Shield, Zap } from "lucide-react";
+import { ArrowRight, Play, Star, Shield, Zap, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -104,7 +104,7 @@ export function Hero() {
               {" "}
               {/* Added py-2 for vertical spacing */}
               <button
-                onClick={() => navigate("affiliate")}
+                onClick={() => navigate("/affiliate")}
                 className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group min-h-[60px] leading-relaxed"
                 style={{
                   background:
@@ -132,68 +132,238 @@ export function Hero() {
               </button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-6">
-              {" "}
-              {/* Increased pt-4 to pt-6 */}
-              <div className="flex items-center gap-3">
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#e2e8f0" }}
-                >
-                  Join 500+ successful brands
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4"
-                      style={{ fill: "#fbbf24", color: "#fbbf24" }}
-                    />
+            {/* Trust Indicators and Features Grid */}
+            <div className="pt-6 max-w-md mx-auto lg:mx-0">
+              {/* Mobile View - Single Column Centered */}
+              <div className="block md:hidden">
+                <div className="flex flex-col items-center space-y-6 px-8">
+                  {[
+                    {
+                      icon: (
+                        <Users
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      ),
+                      text: "Join 500+ successful brands",
+                    },
+                    {
+                      icon: (
+                        <Shield
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      ),
+                      text: "100% Organic Growth",
+                    },
+                    {
+                      icon: (
+                        <Star
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      ),
+                      text: "24/7 Expert Support",
+                    },
+                    {
+                      icon: (
+                        <div className="flex items-center justify-center gap-0.5">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Star
+                              key={i}
+                              className="h-3 w-3"
+                              style={{ fill: "#fbbf24", color: "#fbbf24" }}
+                            />
+                          ))}
+                        </div>
+                      ),
+                      text: "4.9/5 Rating",
+                    },
+                    {
+                      icon: (
+                        <Zap className="h-5 w-5" style={{ color: "#60a5fa" }} />
+                      ),
+                      text: "Real Results in 30 Days",
+                    },
+                    {
+                      icon: (
+                        <ArrowRight
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      ),
+                      text: "No Contracts",
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-4 h-12 w-full px-4"
+                    >
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        {item.icon}
+                      </div>
+                      <span
+                        className="text-sm font-medium flex-1 text-center"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        {item.text}
+                      </span>
+                    </div>
                   ))}
                 </div>
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#e2e8f0" }}
-                >
-                  4.9/5 Rating
-                </span>
               </div>
-            </div>
 
-            {/* Features Grid - Reduced top padding */}
-            <div className="grid grid-cols-2 gap-4 pt-8 max-w-md mx-auto lg:mx-0">
-              {" "}
-              {/* Increased pt-4 to pt-8 */}
-              {[
-                { icon: Shield, text: "100% Organic Growth" },
-                { icon: Zap, text: "Real Results in 30 Days" },
-                { icon: Star, text: "24/7 Expert Support" },
-                { icon: ArrowRight, text: "No Contracts" },
-              ].map((feature, index) => (
-                <div key={index} className="flex items-center gap-3 group">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                    style={{
-                      background: "rgba(59, 130, 246, 0.2)",
-                      border: "1px solid rgba(59, 130, 246, 0.3)",
-                    }}
-                  >
-                    <feature.icon
-                      className="h-5 w-5"
-                      style={{ color: "#60a5fa" }}
-                    />
+              {/* Desktop View - Two Columns Side by Side */}
+              <div className="hidden md:block">
+                <div className="flex flex-row gap-8 w-full">
+                  {/* Left Column */}
+                  <div className="flex-1 space-y-6">
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <Users
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        Join 500+ successful brands
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <Shield
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        100% Organic Growth
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <Star
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        24/7 Expert Support
+                      </span>
+                    </div>
                   </div>
-                  <span
-                    className="text-sm font-medium text-left"
-                    style={{ color: "#e2e8f0" }}
-                  >
-                    {feature.text}
-                  </span>
+
+                  {/* Right Column */}
+                  <div className="flex-1 space-y-6">
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <div className="flex items-center justify-center gap-0.5">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Star
+                              key={i}
+                              className="h-3 w-3"
+                              style={{ fill: "#fbbf24", color: "#fbbf24" }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        4.9/5 Rating
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <Zap className="h-5 w-5" style={{ color: "#60a5fa" }} />
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        Real Results in 30 Days
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 h-12 group">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+                        style={{
+                          background: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                        }}
+                      >
+                        <ArrowRight
+                          className="h-5 w-5"
+                          style={{ color: "#60a5fa" }}
+                        />
+                      </div>
+                      <span
+                        className="text-sm font-medium text-left flex-1"
+                        style={{ color: "#e2e8f0" }}
+                      >
+                        No Contracts
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 

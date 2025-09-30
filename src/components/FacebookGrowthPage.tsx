@@ -15,10 +15,9 @@ import {
   MessageCircle,
   Heart,
 } from "lucide-react";
-
-interface FacebookGrowthPageProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { OrderNowModal } from "./OrderNowModal";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -54,7 +53,11 @@ interface Feature {
   text: string;
 }
 
-export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
+export const FacebookGrowthPage = () => {
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
   const facebookServices: Service[] = [
     {
       icon: Users,
@@ -222,6 +225,13 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
     { icon: CheckCircle, text: "Live video strategy development" },
   ];
 
+  const handleOrderNowClick = (
+    serviceTitle: string = "Facebook Growth Service"
+  ) => {
+    setSelectedService(serviceTitle);
+    setIsOrderModalOpen(true);
+  };
+
   return (
     <>
       <style>
@@ -258,7 +268,7 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
           }
 
           .facebook-heading {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -321,7 +331,7 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
           }
 
           .section-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 1rem;
@@ -558,7 +568,7 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
           }
 
           .facebook-cta-heading {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
           }
@@ -879,7 +889,7 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
 
           @media (max-width: 768px) {
             .facebook-heading {
-              font-size: 2.5rem;
+              font-size: 2rem;
             }
             
             .facebook-cta-heading {
@@ -1013,13 +1023,13 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
                       <div className="facebook-service-buttons">
                         <button
                           className="facebook-service-button"
-                          onClick={() => onNavigate("register")}
+                          onClick={() => navigate("/services")}
                         >
-                          Start Growing
+                          View All Services
                         </button>
                         <button
                           className="facebook-service-button-secondary"
-                          onClick={() => onNavigate("order")}
+                          onClick={() => handleOrderNowClick(service.title)}
                         >
                           Order Now
                         </button>
@@ -1167,13 +1177,13 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
             </p>
             <div className="facebook-cta-buttons">
               <button
-                onClick={() => onNavigate("register")}
+                onClick={() => handleOrderNowClick("Facebook Growth Service")}
                 className="facebook-cta-primary"
               >
                 Start Your Facebook Growth
               </button>
               <button
-                onClick={() => onNavigate("services")}
+                onClick={() => navigate("/services")}
                 className="facebook-cta-secondary"
               >
                 View All Services
@@ -1181,7 +1191,15 @@ export function FacebookGrowthPage({ onNavigate }: FacebookGrowthPageProps) {
             </div>
           </div>
         </section>
+
+        {/* Order Now Modal */}
+        <OrderNowModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          defaultPlatform="Facebook"
+          defaultService={selectedService}
+        />
       </div>
     </>
   );
-}
+};

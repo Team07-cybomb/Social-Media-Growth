@@ -150,7 +150,7 @@ const AffiliatePage: React.FC = () => {
   ];
 
   const handleJoinNow = () => {
-    navigate("/register");
+    navigate("/services");
   };
 
   const handleContactSupport = () => {
@@ -293,7 +293,7 @@ const AffiliatePage: React.FC = () => {
 
           @media (min-width: 768px) {
             .section-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -768,7 +768,7 @@ const AffiliatePage: React.FC = () => {
 
           @media (min-width: 768px) {
             .final-cta-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -1180,8 +1180,11 @@ const AffiliatePage: React.FC = () => {
               earning today!
             </p>
             <div className="final-cta-buttons">
-              <button onClick={handleJoinNow} className="final-cta-button">
-                Join Now - Get 30% Commission
+              <button
+                onClick={() => navigate("/about")}
+                className="final-cta-button"
+              >
+                Come & Learn More - About Us
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
