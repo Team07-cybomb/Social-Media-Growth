@@ -33,6 +33,9 @@ import AdminRoutes from "./Admin/AdminRoutes";
 import SettingsPage from "./components/SettingsPage";
 import ProfilePage from "./components/ProfilePage";
 import React from "react";
+import { TermsOfServicePage } from "./components/TermsOfServicePage";
+import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
+import { RefundPolicyPage } from "./components/RefundPolicyPage";
 
 /* Scroll to top on route change */
 function ScrollToTop() {
@@ -156,6 +159,9 @@ export default function App() {
           <Route path="/smm-page" element={<SMMPage />} />
           <Route path="/social-media" element={<SocialMediaPage />} />
           <Route path="/blog-post" element={<BlogPost />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/refund" element={<RefundPolicyPage />} />
 
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
