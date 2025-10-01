@@ -1,28 +1,27 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
- 
+const API_URL = import.meta.env.VITE_API_URL;
 interface LoginPageProps {
   onLogin: (userData: { name: string; email: string }) => void;
 }
- 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
- 
+
   const navigate = useNavigate();
- 
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
- 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
- 
+
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,20 +31,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           password: formData.password,
         }),
       });
- 
+
       const data = await response.json();
- 
+
       if (response.ok) {
         // ✅ Login successful - save token and user data
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));
- 
+
         // ✅ IMPORTANT: Global state update pannikiran
         onLogin({
           name: data.name || data.username || formData.email.split("@")[0],
           email: data.email || formData.email,
         });
- 
+
         alert("Login successful!");
         navigate("/home");
       } else {
@@ -56,7 +55,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       alert("Network error. Please try again.");
     }
   };
- 
+
   return (
     <>
       <style>
@@ -240,14 +239,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           .login-card > *:nth-child(5) { animation-delay: 0.5s; }
         `}
       </style>
- 
+
       <div className="login-page">
         <div className="login-container">
           <div className="login-card">
             <h2 className="section-heading">
               Welcome <span className="gradient-text">Back</span>
             </h2>
- 
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="login-label">
@@ -264,7 +263,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   required
                 />
               </div>
- 
+
               <div>
                 <label htmlFor="password" className="login-label">
                   Password
@@ -280,12 +279,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   required
                 />
               </div>
- 
+
               <button type="submit" className="login-button">
                 Login
               </button>
             </form>
- 
+
             <div className="login-link">
               <p>
                 Don't have an account?{" "}
@@ -303,5 +302,5 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     </>
   );
 };
- 
+
 export default LoginPage;
