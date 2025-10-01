@@ -1,7 +1,7 @@
 // OrderNowModal.tsx
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-
+const API_URL = import.meta.env.VITE_API_URL;
 interface OrderFormData {
   serviceName: string;
   username: string;
@@ -79,7 +79,7 @@ export function OrderNowModal({
     const fetchServices = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/services");
+        const response = await fetch(`${API_URL}/api/services`);
         if (!response.ok) {
           throw new Error("Failed to fetch services");
         }

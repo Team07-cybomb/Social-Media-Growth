@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
-
+const API_URL = import.meta.env.VITE_API_URL;
 export function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -45,10 +45,10 @@ export function ContactPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact/submit', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/api/contact/submit`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -68,7 +68,7 @@ export function ContactPage() {
         toast.error(data.message || "Failed to send message");
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       toast.error("Network error. Please check your connection and try again.");
     } finally {
       setIsSubmitting(false);
@@ -196,8 +196,8 @@ export function ContactPage() {
               disabled={isSubmitting}
               className="w-full font-medium py-2.5 px-4 rounded-md transition-all duration-300 ease-in-out"
               style={{
-                background: isSubmitting 
-                  ? "#9ca3af" 
+                background: isSubmitting
+                  ? "#9ca3af"
                   : "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
                 color: "white",
                 fontSize: "14px",
