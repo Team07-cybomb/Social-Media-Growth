@@ -105,7 +105,7 @@ export function Hero() {
               {/* Added py-2 for vertical spacing */}
               <button
                 onClick={() => navigate("/affiliate")}
-                className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group min-h-[60px] leading-relaxed"
+                className="flex items-center justify-center gap-4 px-8 py-4 rounded-xl font-semibold text-lg border-0 transition-all duration-300 hover:scale-105 group min-h-[60px] leading-relaxed"
                 style={{
                   background:
                     "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
@@ -119,7 +119,7 @@ export function Hero() {
               </button>
               <button
                 onClick={() => navigate("services")}
-                className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg border transition-all duration-300 hover:scale-105"
+                className="flex items-center justify-center gap-4 px-8 py-4 rounded-xl font-semibold text-lg border transition-all duration-300 hover:scale-105"
                 style={{
                   borderColor: "rgba(255, 255, 255, 0.3)",
                   color: "white",
