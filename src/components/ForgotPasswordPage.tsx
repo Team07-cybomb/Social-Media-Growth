@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +23,13 @@ const ForgotPasswordPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Password reset instructions have been sent to your email.");
+        setMessage("OTP sent to your email address.");
+        // Navigate to OTP verification page after a short delay
+        setTimeout(() => {
+          navigate("/verify-otp", { state: { email } });
+        }, 2000);
       } else {
-        setMessage(data.message || "Failed to send reset instructions.");
+        setMessage(data.message || "Failed to send OTP.");
       }
     } catch (error) {
       console.error("Error during password reset request:", error);
@@ -248,9 +253,9 @@ const ForgotPasswordPage: React.FC = () => {
               Forgot <span className="gradient-text">Password</span>
             </h2>
             
-            {/* <p className="section-subheading">
-              Enter your email address and we'll send you instructions to reset your password.
-            </p> */}
+            <p className="section-subheading">
+              Enter your email address and we'll send you an OTP to reset your password.
+            </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
