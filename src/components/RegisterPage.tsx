@@ -1,7 +1,7 @@
 // src/components/RegisterPage.tsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+const API_URL = import.meta.env.VITE_API_URL;
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -21,7 +21,7 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
@@ -41,10 +41,10 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -52,15 +52,15 @@ const RegisterPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Registration successful:', data);
-        alert('Registration successful!');
-        navigate('/login');
+        console.log("Registration successful:", data);
+        alert("Registration successful!");
+        navigate("/login");
       } else {
-        alert(data.message || 'Registration failed!');
+        alert(data.message || "Registration failed!");
       }
     } catch (error) {
-      console.error('Error during registration:', error);
-      alert('Network error. Please try again.');
+      console.error("Error during registration:", error);
+      alert("Network error. Please try again.");
     }
   };
 
@@ -241,7 +241,7 @@ const RegisterPage: React.FC = () => {
                   id="name"
                   name="name"
                   value={formData.name}
-                  onChange={handleChange}  // ✅ Fixed
+                  onChange={handleChange} // ✅ Fixed
                   placeholder="Enter your full name"
                   required
                   className="register-input"
@@ -257,7 +257,7 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange}  // ✅ Fixed
+                  onChange={handleChange} // ✅ Fixed
                   placeholder="Enter your email"
                   required
                   className="register-input"
@@ -291,7 +291,7 @@ const RegisterPage: React.FC = () => {
                   id="password"
                   name="password"
                   value={formData.password}
-                  onChange={handleChange}  // ✅ Fixed
+                  onChange={handleChange} // ✅ Fixed
                   placeholder="Enter password"
                   required
                   className="register-input"
@@ -307,7 +307,7 @@ const RegisterPage: React.FC = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
-                  onChange={handleChange}  // ✅ Fixed
+                  onChange={handleChange} // ✅ Fixed
                   placeholder="Confirm password"
                   required
                   className="register-input"

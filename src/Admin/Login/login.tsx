@@ -1,9 +1,9 @@
 // src/Admin/Login/login.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './login.css';
-
-const API_BASE_URL = "http://localhost:5000/api";
+import "./login.css";
+const API_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = `${API_URL}/api`;
 
 interface LoginResponse {
   success: boolean;
@@ -20,7 +20,7 @@ interface LoginResponse {
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: "",
-    password: ""
+    password: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ const Login = () => {
         if (data.admin) {
           localStorage.setItem("adminData", JSON.stringify(data.admin));
         }
-        
+
         // Redirect to admin dashboard
         navigate("/admin/dashboard");
       } else {
@@ -72,7 +72,9 @@ const Login = () => {
             type="text"
             placeholder="Username"
             value={credentials.username}
-            onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+            onChange={(e) =>
+              setCredentials({ ...credentials, username: e.target.value })
+            }
             required
             disabled={isLoading}
           />
@@ -82,13 +84,15 @@ const Login = () => {
             type="password"
             placeholder="Password"
             value={credentials.password}
-            onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+            onChange={(e) =>
+              setCredentials({ ...credentials, password: e.target.value })
+            }
             required
             disabled={isLoading}
           />
         </div>
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="admin-login-button"
           disabled={isLoading}
         >
