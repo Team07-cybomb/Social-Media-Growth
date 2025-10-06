@@ -18,9 +18,9 @@ import {
   Network,
   Calendar,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { OrderNowModal } from "./OrderNowModal"; // Import the modal
-import { useState } from "react"; // Import useState
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { OrderNowLinkedin } from "./OrderNowLinkedin";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -28,6 +28,7 @@ interface Service {
   description: string;
   features: string[];
   price: string;
+  budget: string;
 }
 
 interface SuccessStory {
@@ -58,19 +59,19 @@ interface Feature {
 
 export const LinkedInGrowthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState("LinkedIn");
   const [selectedService, setSelectedService] = useState("");
+  const [selectedServiceBudget, setSelectedServiceBudget] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
-  const handleOrderNowClick = (serviceTitle: string = "") => {
-    setSelectedService(serviceTitle);
-    setIsOrderModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsOrderModalOpen(false);
-    setSelectedService("");
-  };
+  // ✅ Check if user is authenticated on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    setIsAuthenticated(!!(token && user));
+  }, []);
 
   const linkedinServices: Service[] = [
     {
@@ -85,6 +86,7 @@ export const LinkedInGrowthPage = () => {
         "Growth analytics dashboard",
       ],
       price: "$349/month",
+      budget: "$349/month",
     },
     {
       icon: MessageCircle,
@@ -97,6 +99,7 @@ export const LinkedInGrowthPage = () => {
         "Thought leadership building",
       ],
       price: "$249/month",
+      budget: "$249/month",
     },
     {
       icon: TrendingUp,
@@ -109,6 +112,7 @@ export const LinkedInGrowthPage = () => {
         "Performance analytics",
       ],
       price: "$499/month",
+      budget: "$499/month",
     },
     {
       icon: BarChart3,
@@ -121,6 +125,7 @@ export const LinkedInGrowthPage = () => {
         "Growth recommendations",
       ],
       price: "$199/month",
+      budget: "$199/month",
     },
     {
       icon: Target,
@@ -133,6 +138,7 @@ export const LinkedInGrowthPage = () => {
         "ROI tracking",
       ],
       price: "$599/month",
+      budget: "$599/month",
     },
     {
       icon: Rocket,
@@ -145,6 +151,7 @@ export const LinkedInGrowthPage = () => {
         "Lead generation strategy",
       ],
       price: "$899/month",
+      budget: "$899/month",
     },
   ];
 
@@ -239,12 +246,132 @@ export const LinkedInGrowthPage = () => {
     { icon: CheckCircle, text: "Lead generation strategy" },
   ];
 
+  // ✅ Function to handle Order Now button click with authentication check
+  const handleOrderNowClick = (
+    serviceTitle: string = "",
+    serviceBudget: string = ""
+  ) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // User is authenticated - open order modal
+      setSelectedService(serviceTitle);
+      setSelectedServiceBudget(serviceBudget);
+      setIsOrderModalOpen(true);
+    } else {
+      // User is not authenticated - show auth prompt
+      setShowAuthPrompt(true);
+    }
+  };
+
+  // ✅ Function to handle authentication prompt actions
+  const handleAuthPrompt = (action: "login" | "cancel") => {
+    setShowAuthPrompt(false);
+    if (action === "login") {
+      // ✅ Navigate to register with return URL
+      navigate("/register", {
+        state: {
+          from: location,
+        },
+      });
+    }
+  };
+
   return (
     <>
       <style>
         {`
           .linkedin-page {
             font-family: system-ui, -apple-system, sans-serif;
+          }
+
+          /* Auth Prompt Modal Styles */
+          .auth-prompt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+          }
+
+          .auth-prompt-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          }
+
+          .auth-prompt-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+          }
+
+          .auth-prompt-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+          }
+
+          .auth-prompt-message {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+          }
+
+          .auth-prompt-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+          }
+
+          .auth-prompt-primary {
+            background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
+          }
+
+          .auth-prompt-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-secondary:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
           }
 
           /* Hero Section */
@@ -439,12 +566,6 @@ export const LinkedInGrowthPage = () => {
             text-align: center;
           }
 
-          .linkedin-service-buttons {
-            display: flex;
-            gap: 0.75rem;
-            width: 100%;
-          }
-
           .linkedin-service-button {
             background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
             color: white;
@@ -454,32 +575,13 @@ export const LinkedInGrowthPage = () => {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            flex: 1;
+            width: 100%;
             font-size: 0.9rem;
           }
 
           .linkedin-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
-          }
-
-          .linkedin-service-button-secondary {
-            background: transparent;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            font-size: 0.9rem;
-          }
-
-          .linkedin-service-button-secondary:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -915,15 +1017,41 @@ export const LinkedInGrowthPage = () => {
             .linkedin-process-grid {
               grid-template-columns: 1fr;
             }
-
-            .linkedin-service-buttons {
-              flex-direction: column;
-            }
           }
         `}
       </style>
 
       <div className="linkedin-page">
+        {/* ✅ Authentication Prompt Modal */}
+        {showAuthPrompt && (
+          <div className="auth-prompt-overlay">
+            <div className="auth-prompt-content">
+              <div className="auth-prompt-icon">
+                <Users size={24} />
+              </div>
+              <h3 className="auth-prompt-title">Sign In Required</h3>
+              <p className="auth-prompt-message">
+                Please sign up or log in to place an order and access our
+                services.
+              </p>
+              <div className="auth-prompt-buttons">
+                <button
+                  className="auth-prompt-secondary"
+                  onClick={() => handleAuthPrompt("cancel")}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="auth-prompt-primary"
+                  onClick={() => handleAuthPrompt("login")}
+                >
+                  Sign Up / Log In
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="linkedin-hero">
           <div className="linkedin-hero-container">
@@ -1029,20 +1157,14 @@ export const LinkedInGrowthPage = () => {
                       <div className="linkedin-service-price">
                         {service.price}
                       </div>
-                      <div className="linkedin-service-buttons">
-                        <button
-                          className="linkedin-service-button"
-                          onClick={() => navigate("/services")}
-                        >
-                          View All Services
-                        </button>
-                        <button
-                          className="linkedin-service-button-secondary"
-                          onClick={() => handleOrderNowClick(service.title)}
-                        >
-                          Order Now
-                        </button>
-                      </div>
+                      <button
+                        className="linkedin-service-button"
+                        onClick={() =>
+                          handleOrderNowClick(service.title, service.budget)
+                        }
+                      >
+                        Order Now
+                      </button>
                     </div>
                   </div>
                 );
@@ -1186,16 +1308,16 @@ export const LinkedInGrowthPage = () => {
             </p>
             <div className="linkedin-cta-buttons">
               <button
-                onClick={() => handleOrderNowClick("LinkedIn Growth Package")}
                 className="linkedin-cta-primary"
+                onClick={() => handleOrderNowClick()}
               >
-                Start Your LinkedIn Growth
+                Start Growing Now
               </button>
               <button
-                onClick={() => navigate("/services")}
                 className="linkedin-cta-secondary"
+                onClick={() => (window.location.href = "#contact")}
               >
-                View All Services
+                Book a Consultation
               </button>
             </div>
           </div>
@@ -1203,12 +1325,15 @@ export const LinkedInGrowthPage = () => {
       </div>
 
       {/* Order Now Modal */}
-      <OrderNowModal
-        isOpen={isOrderModalOpen}
-        onClose={handleCloseModal}
-        defaultPlatform="LinkedIn"
-        defaultService={selectedService}
-      />
+      {isOrderModalOpen && (
+        <OrderNowLinkedin
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          service={selectedService}
+          serviceBudget={selectedServiceBudget}
+          platform="LinkedIn"
+        />
+      )}
     </>
   );
 };

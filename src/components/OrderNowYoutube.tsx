@@ -2,11 +2,16 @@ import { useState, useEffect } from "react";
 import {
   X,
   Users,
+  PlayCircle,
   TrendingUp,
-  MessageCircle,
   BarChart3,
   Target,
   Rocket,
+  Youtube,
+  Film,
+  Mic,
+  Edit3,
+  Lightbulb,
 } from "lucide-react";
 
 interface OrderNowModalProps {
@@ -32,12 +37,12 @@ interface UserData {
   phone: string;
 }
 
-export const OrderNowModal = ({
+export const OrderNowYoutube = ({
   isOpen,
   onClose,
   service,
   serviceBudget = "",
-  platform = "Platform",
+  platform = "YouTube",
 }: OrderNowModalProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState({
@@ -108,40 +113,41 @@ export const OrderNowModal = ({
 
   const serviceOptions: ServiceOption[] = [
     {
-      id: "follower-growth",
-      name: "Follower Growth",
-      description: "Organic follower growth with targeted audience acquisition",
-      price: "$299/month",
+      id: "subscriber-growth",
+      name: "Subscriber Growth",
+      description:
+        "Organic subscriber growth with targeted audience acquisition",
+      price: "$399/month",
       features: [
-        "500-1000 real followers per month",
-        "Targeted audience research",
-        "Competitor analysis",
+        "1,000-5,000 real subscribers per month",
+        "Niche audience targeting",
+        "Competitor channel analysis",
         "Growth analytics dashboard",
       ],
       icon: Users,
     },
     {
-      id: "engagement-boost",
-      name: "Engagement Boost",
-      description: "Increase likes, comments, and story interactions",
-      price: "$199/month",
+      id: "video-optimization",
+      name: "Video Optimization",
+      description: "Maximize views and engagement through video SEO",
+      price: "$299/month",
       features: [
-        "200%+ engagement rate increase",
-        "Strategic comment management",
-        "Story engagement tactics",
-        "Community building",
+        "Title & description optimization",
+        "Thumbnail design strategy",
+        "Keyword research implementation",
+        "YouTube SEO audit",
       ],
-      icon: MessageCircle,
+      icon: PlayCircle,
     },
     {
       id: "content-strategy",
       name: "Content Strategy",
-      description: "Complete content planning and optimization",
-      price: "$399/month",
+      description: "Complete content planning and video production guidance",
+      price: "$499/month",
       features: [
         "Monthly content calendar",
-        "Hashtag strategy",
-        "Post optimization",
+        "Video topic research",
+        "Content format optimization",
         "Performance analytics",
       ],
       icon: TrendingUp,
@@ -149,39 +155,39 @@ export const OrderNowModal = ({
     {
       id: "analytics-insights",
       name: "Analytics & Insights",
-      description: "Deep analytics and performance tracking",
-      price: "$149/month",
+      description: "Deep analytics and channel performance tracking",
+      price: "$199/month",
       features: [
         "Weekly performance reports",
-        "Audience insights",
+        "Audience retention analysis",
         "Competitor benchmarking",
         "Growth recommendations",
       ],
       icon: BarChart3,
     },
     {
-      id: "social-ads",
-      name: `${platform} Ads`,
-      description: "Professional ad management and optimization",
-      price: "$499/month",
+      id: "youtube-ads",
+      name: "YouTube Ads Management",
+      description: "Professional ad campaigns for rapid growth",
+      price: "$599/month",
       features: [
         "Ad creative strategy",
-        "Audience targeting",
+        "Audience targeting setup",
         "Budget optimization",
-        "ROI tracking",
+        "ROI tracking & reporting",
       ],
       icon: Target,
     },
     {
       id: "complete-management",
-      name: "Complete Management",
-      description: `Full-service ${platform.toLowerCase()} account management`,
-      price: "$799/month",
+      name: "Complete Channel Management",
+      description: "Full-service YouTube channel management",
+      price: "$899/month",
       features: [
-        "Daily post management",
-        "Story creation",
-        "Engagement management",
-        "Growth strategy",
+        "End-to-end video strategy",
+        "Community management",
+        "Monetization optimization",
+        "Growth strategy execution",
       ],
       icon: Rocket,
     },
@@ -376,7 +382,7 @@ export const OrderNowModal = ({
           }
 
           .step-number.active {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: #c91d1d;
             border-color: transparent;
             color: white;
           }
@@ -419,15 +425,15 @@ export const OrderNowModal = ({
           }
 
           .service-option.selected {
-            border-color: #C13584;
-            background: #fdf2f8;
+            border-color: #c91d1d;
+            background: #fef2f2;
           }
 
           .service-icon {
             width: 3rem;
             height: 3rem;
             border-radius: 0.75rem;
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: #c91d1d;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -450,7 +456,7 @@ export const OrderNowModal = ({
 
           .service-price {
             font-weight: 700;
-            color: #C13584;
+            color: #c91d1d;
             font-size: 1.125rem;
           }
 
@@ -513,8 +519,8 @@ export const OrderNowModal = ({
           .form-select:focus,
           .form-textarea:focus {
             outline: none;
-            border-color: #C13584;
-            box-shadow: 0 0 0 3px rgba(192, 38, 211, 0.1);
+            border-color: #c91d1d;
+            box-shadow: 0 0 0 3px rgba(201, 29, 29, 0.1);
           }
 
           .form-textarea {
@@ -542,13 +548,13 @@ export const OrderNowModal = ({
           }
 
           .btn-primary {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: #c91d1d;
             color: white;
           }
 
           .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
+            box-shadow: 0 10px 20px rgba(201, 29, 29, 0.3);
           }
 
           .btn-primary:disabled {
@@ -588,8 +594,8 @@ export const OrderNowModal = ({
 
           /* Budget Display Styles */
           .budget-display {
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            border: 1px solid #fbcfe8;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
             border-radius: 0.75rem;
             padding: 1.5rem;
             text-align: center;
@@ -606,7 +612,7 @@ export const OrderNowModal = ({
           .budget-amount {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #C13584;
+            color: #c91d1d;
           }
 
           .budget-note {
@@ -917,7 +923,7 @@ export const OrderNowModal = ({
                         value={formData.goals}
                         onChange={handleInputChange}
                         className="form-textarea"
-                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase followers, boost engagement, drive sales, etc.)`}
+                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase subscribers, boost video views, improve engagement, monetize channel, etc.)`}
                         required
                       />
                     </div>
@@ -929,7 +935,7 @@ export const OrderNowModal = ({
                         value={formData.message}
                         onChange={handleInputChange}
                         className="form-textarea"
-                        placeholder="Any specific requirements or questions..."
+                        placeholder="Any specific requirements or questions about your YouTube channel..."
                       />
                     </div>
                   </div>

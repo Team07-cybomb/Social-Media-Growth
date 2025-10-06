@@ -15,9 +15,9 @@ import {
   MessageCircle,
   Heart,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { OrderNowModal } from "./OrderNowModal";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { OrderNowFacebook } from "./OrderNowFacebook";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -25,6 +25,7 @@ interface Service {
   description: string;
   features: string[];
   price: string;
+  budget: string;
 }
 
 interface SuccessStory {
@@ -55,8 +56,19 @@ interface Feature {
 
 export const FacebookGrowthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [selectedServiceBudget, setSelectedServiceBudget] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  // ✅ Check if user is authenticated on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    setIsAuthenticated(!!(token && user));
+  }, []);
 
   const facebookServices: Service[] = [
     {
@@ -71,6 +83,7 @@ export const FacebookGrowthPage = () => {
         "Growth analytics dashboard",
       ],
       price: "$249/month",
+      budget: "$249/month",
     },
     {
       icon: MessageCircle,
@@ -83,6 +96,7 @@ export const FacebookGrowthPage = () => {
         "Community building",
       ],
       price: "$179/month",
+      budget: "$179/month",
     },
     {
       icon: TrendingUp,
@@ -95,6 +109,7 @@ export const FacebookGrowthPage = () => {
         "Viral content strategy",
       ],
       price: "$349/month",
+      budget: "$349/month",
     },
     {
       icon: BarChart3,
@@ -107,6 +122,7 @@ export const FacebookGrowthPage = () => {
         "Growth recommendations",
       ],
       price: "$129/month",
+      budget: "$129/month",
     },
     {
       icon: Target,
@@ -119,6 +135,7 @@ export const FacebookGrowthPage = () => {
         "ROI tracking",
       ],
       price: "$449/month",
+      budget: "$449/month",
     },
     {
       icon: Rocket,
@@ -131,6 +148,7 @@ export const FacebookGrowthPage = () => {
         "Growth strategy",
       ],
       price: "$699/month",
+      budget: "$699/month",
     },
   ];
 
@@ -225,11 +243,36 @@ export const FacebookGrowthPage = () => {
     { icon: CheckCircle, text: "Live video strategy development" },
   ];
 
+  // ✅ Function to handle Order Now button click with authentication check
   const handleOrderNowClick = (
-    serviceTitle: string = "Facebook Growth Service"
+    serviceTitle: string = "",
+    serviceBudget: string = ""
   ) => {
-    setSelectedService(serviceTitle);
-    setIsOrderModalOpen(true);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // User is authenticated - open order modal
+      setSelectedService(serviceTitle);
+      setSelectedServiceBudget(serviceBudget);
+      setIsOrderModalOpen(true);
+    } else {
+      // User is not authenticated - show auth prompt
+      setShowAuthPrompt(true);
+    }
+  };
+
+  // ✅ Function to handle authentication prompt actions
+  const handleAuthPrompt = (action: "login" | "cancel") => {
+    setShowAuthPrompt(false);
+    if (action === "login") {
+      // ✅ Navigate to register with return URL
+      navigate("/register", {
+        state: {
+          from: location,
+        },
+      });
+    }
   };
 
   return (
@@ -238,6 +281,94 @@ export const FacebookGrowthPage = () => {
         {`
           .facebook-page {
             font-family: system-ui, -apple-system, sans-serif;
+          }
+
+          /* Auth Prompt Modal Styles */
+          .auth-prompt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+          }
+
+          .auth-prompt-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          }
+
+          .auth-prompt-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+          }
+
+          .auth-prompt-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+          }
+
+          .auth-prompt-message {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+          }
+
+          .auth-prompt-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+          }
+
+          .auth-prompt-primary {
+            background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(24, 119, 242, 0.3);
+          }
+
+          .auth-prompt-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-secondary:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
           }
 
           /* Hero Section */
@@ -432,12 +563,6 @@ export const FacebookGrowthPage = () => {
             text-align: center;
           }
 
-          .facebook-service-buttons {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: auto;
-          }
-
           .facebook-service-button {
             background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
             color: white;
@@ -447,31 +572,13 @@ export const FacebookGrowthPage = () => {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            flex: 1;
+            width: 100%;
             font-size: 0.9rem;
           }
 
           .facebook-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(24, 119, 242, 0.3);
-          }
-
-          .facebook-service-button-secondary {
-            background: transparent;
-            color: #1877F2;
-            border: 2px solid #1877F2;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            font-size: 0.9rem;
-          }
-
-          .facebook-service-button-secondary:hover {
-            background: rgba(24, 119, 242, 0.1);
-            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -907,15 +1014,41 @@ export const FacebookGrowthPage = () => {
             .facebook-process-grid {
               grid-template-columns: 1fr;
             }
-
-            .facebook-service-buttons {
-              flex-direction: column;
-            }
           }
         `}
       </style>
 
       <div className="facebook-page">
+        {/* ✅ Authentication Prompt Modal */}
+        {showAuthPrompt && (
+          <div className="auth-prompt-overlay">
+            <div className="auth-prompt-content">
+              <div className="auth-prompt-icon">
+                <Users size={24} />
+              </div>
+              <h3 className="auth-prompt-title">Sign In Required</h3>
+              <p className="auth-prompt-message">
+                Please sign up or log in to place an order and access our
+                services.
+              </p>
+              <div className="auth-prompt-buttons">
+                <button
+                  className="auth-prompt-secondary"
+                  onClick={() => handleAuthPrompt("cancel")}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="auth-prompt-primary"
+                  onClick={() => handleAuthPrompt("login")}
+                >
+                  Sign Up / Log In
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="facebook-hero">
           <div className="facebook-hero-container">
@@ -1020,20 +1153,14 @@ export const FacebookGrowthPage = () => {
                       <div className="facebook-service-price">
                         {service.price}
                       </div>
-                      <div className="facebook-service-buttons">
-                        <button
-                          className="facebook-service-button"
-                          onClick={() => navigate("/services")}
-                        >
-                          View All Services
-                        </button>
-                        <button
-                          className="facebook-service-button-secondary"
-                          onClick={() => handleOrderNowClick(service.title)}
-                        >
-                          Order Now
-                        </button>
-                      </div>
+                      <button
+                        className="facebook-service-button"
+                        onClick={() =>
+                          handleOrderNowClick(service.title, service.budget)
+                        }
+                      >
+                        Order Now
+                      </button>
                     </div>
                   </div>
                 );
@@ -1177,8 +1304,8 @@ export const FacebookGrowthPage = () => {
             </p>
             <div className="facebook-cta-buttons">
               <button
-                onClick={() => handleOrderNowClick("Facebook Growth Service")}
                 className="facebook-cta-primary"
+                onClick={() => handleOrderNowClick()}
               >
                 Start Your Facebook Growth
               </button>
@@ -1192,12 +1319,13 @@ export const FacebookGrowthPage = () => {
           </div>
         </section>
 
-        {/* Order Now Modal */}
-        <OrderNowModal
+        {/* ✅ Order Now Modal */}
+        <OrderNowFacebook
           isOpen={isOrderModalOpen}
           onClose={() => setIsOrderModalOpen(false)}
-          defaultPlatform="Facebook"
-          defaultService={selectedService}
+          service={selectedService}
+          serviceBudget={selectedServiceBudget}
+          platform="Facebook"
         />
       </div>
     </>

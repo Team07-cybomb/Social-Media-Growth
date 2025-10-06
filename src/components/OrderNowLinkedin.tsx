@@ -7,6 +7,9 @@ import {
   BarChart3,
   Target,
   Rocket,
+  Briefcase,
+  Building,
+  Network,
 } from "lucide-react";
 
 interface OrderNowModalProps {
@@ -32,12 +35,12 @@ interface UserData {
   phone: string;
 }
 
-export const OrderNowModal = ({
+export const OrderNowLinkedin = ({
   isOpen,
   onClose,
   service,
   serviceBudget = "",
-  platform = "Platform",
+  platform = "LinkedIn",
 }: OrderNowModalProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState({
@@ -110,11 +113,12 @@ export const OrderNowModal = ({
     {
       id: "follower-growth",
       name: "Follower Growth",
-      description: "Organic follower growth with targeted audience acquisition",
-      price: "$299/month",
+      description:
+        "Organic follower growth with targeted professional audience",
+      price: "$349/month",
       features: [
-        "500-1000 real followers per month",
-        "Targeted audience research",
+        "300-600 real followers per month",
+        "Industry-specific targeting",
         "Competitor analysis",
         "Growth analytics dashboard",
       ],
@@ -123,25 +127,25 @@ export const OrderNowModal = ({
     {
       id: "engagement-boost",
       name: "Engagement Boost",
-      description: "Increase likes, comments, and story interactions",
-      price: "$199/month",
+      description: "Increase likes, comments, and post interactions",
+      price: "$249/month",
       features: [
-        "200%+ engagement rate increase",
+        "180%+ engagement rate increase",
         "Strategic comment management",
-        "Story engagement tactics",
-        "Community building",
+        "Industry discussion participation",
+        "Thought leadership building",
       ],
       icon: MessageCircle,
     },
     {
       id: "content-strategy",
       name: "Content Strategy",
-      description: "Complete content planning and optimization",
-      price: "$399/month",
+      description: "Professional content planning and optimization",
+      price: "$499/month",
       features: [
         "Monthly content calendar",
-        "Hashtag strategy",
-        "Post optimization",
+        "Industry insight articles",
+        "Post optimization for professionals",
         "Performance analytics",
       ],
       icon: TrendingUp,
@@ -149,25 +153,25 @@ export const OrderNowModal = ({
     {
       id: "analytics-insights",
       name: "Analytics & Insights",
-      description: "Deep analytics and performance tracking",
-      price: "$149/month",
+      description: "Professional network analytics and performance tracking",
+      price: "$199/month",
       features: [
         "Weekly performance reports",
-        "Audience insights",
-        "Competitor benchmarking",
+        "Audience demographic insights",
+        "Industry benchmarking",
         "Growth recommendations",
       ],
       icon: BarChart3,
     },
     {
-      id: "social-ads",
-      name: `${platform} Ads`,
+      id: "linkedin-ads",
+      name: "LinkedIn Ads",
       description: "Professional ad management and optimization",
-      price: "$499/month",
+      price: "$599/month",
       features: [
         "Ad creative strategy",
-        "Audience targeting",
-        "Budget optimization",
+        "B2B audience targeting",
+        "Lead generation optimization",
         "ROI tracking",
       ],
       icon: Target,
@@ -175,13 +179,13 @@ export const OrderNowModal = ({
     {
       id: "complete-management",
       name: "Complete Management",
-      description: `Full-service ${platform.toLowerCase()} account management`,
-      price: "$799/month",
+      description: "Full-service LinkedIn account management",
+      price: "$899/month",
       features: [
         "Daily post management",
-        "Story creation",
-        "Engagement management",
-        "Growth strategy",
+        "Article creation",
+        "Network engagement",
+        "Lead generation strategy",
       ],
       icon: Rocket,
     },
@@ -376,7 +380,7 @@ export const OrderNowModal = ({
           }
 
           .step-number.active {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
             border-color: transparent;
             color: white;
           }
@@ -419,15 +423,15 @@ export const OrderNowModal = ({
           }
 
           .service-option.selected {
-            border-color: #C13584;
-            background: #fdf2f8;
+            border-color: #0077B5;
+            background: #f0f9ff;
           }
 
           .service-icon {
             width: 3rem;
             height: 3rem;
             border-radius: 0.75rem;
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -450,7 +454,7 @@ export const OrderNowModal = ({
 
           .service-price {
             font-weight: 700;
-            color: #C13584;
+            color: #0077B5;
             font-size: 1.125rem;
           }
 
@@ -513,8 +517,8 @@ export const OrderNowModal = ({
           .form-select:focus,
           .form-textarea:focus {
             outline: none;
-            border-color: #C13584;
-            box-shadow: 0 0 0 3px rgba(192, 38, 211, 0.1);
+            border-color: #0077B5;
+            box-shadow: 0 0 0 3px rgba(0, 119, 181, 0.1);
           }
 
           .form-textarea {
@@ -542,13 +546,13 @@ export const OrderNowModal = ({
           }
 
           .btn-primary {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #0077B5 0%, #00A0DC 100%);
             color: white;
           }
 
           .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 119, 181, 0.3);
           }
 
           .btn-primary:disabled {
@@ -588,8 +592,8 @@ export const OrderNowModal = ({
 
           /* Budget Display Styles */
           .budget-display {
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            border: 1px solid #fbcfe8;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
             border-radius: 0.75rem;
             padding: 1.5rem;
             text-align: center;
@@ -606,7 +610,7 @@ export const OrderNowModal = ({
           .budget-amount {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #C13584;
+            color: #0077B5;
           }
 
           .budget-note {
@@ -917,7 +921,7 @@ export const OrderNowModal = ({
                         value={formData.goals}
                         onChange={handleInputChange}
                         className="form-textarea"
-                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase followers, boost engagement, drive sales, etc.)`}
+                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase connections, boost professional engagement, generate leads, etc.)`}
                         required
                       />
                     </div>

@@ -7,6 +7,8 @@ import {
   BarChart3,
   Target,
   Rocket,
+  Heart,
+  Calendar,
 } from "lucide-react";
 
 interface OrderNowModalProps {
@@ -32,12 +34,12 @@ interface UserData {
   phone: string;
 }
 
-export const OrderNowModal = ({
+export const OrderNowFacebook = ({
   isOpen,
   onClose,
   service,
   serviceBudget = "",
-  platform = "Platform",
+  platform = "Facebook",
 }: OrderNowModalProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [formData, setFormData] = useState({
@@ -108,14 +110,15 @@ export const OrderNowModal = ({
 
   const serviceOptions: ServiceOption[] = [
     {
-      id: "follower-growth",
-      name: "Follower Growth",
-      description: "Organic follower growth with targeted audience acquisition",
-      price: "$299/month",
+      id: "page-likes-growth",
+      name: "Page Likes Growth",
+      description:
+        "Organic page likes growth with targeted audience acquisition",
+      price: "$249/month",
       features: [
-        "500-1000 real followers per month",
+        "500-1000 real page likes per month",
         "Targeted audience research",
-        "Competitor analysis",
+        "Competitor page analysis",
         "Growth analytics dashboard",
       ],
       icon: Users,
@@ -123,12 +126,12 @@ export const OrderNowModal = ({
     {
       id: "engagement-boost",
       name: "Engagement Boost",
-      description: "Increase likes, comments, and story interactions",
-      price: "$199/month",
+      description: "Increase post likes, comments, and shares",
+      price: "$179/month",
       features: [
         "200%+ engagement rate increase",
         "Strategic comment management",
-        "Story engagement tactics",
+        "Post engagement tactics",
         "Community building",
       ],
       icon: MessageCircle,
@@ -136,34 +139,34 @@ export const OrderNowModal = ({
     {
       id: "content-strategy",
       name: "Content Strategy",
-      description: "Complete content planning and optimization",
-      price: "$399/month",
+      description: "Complete Facebook content planning and optimization",
+      price: "$349/month",
       features: [
         "Monthly content calendar",
-        "Hashtag strategy",
-        "Post optimization",
-        "Performance analytics",
+        "Post timing optimization",
+        "Content performance analysis",
+        "Viral content strategy",
       ],
       icon: TrendingUp,
     },
     {
       id: "analytics-insights",
       name: "Analytics & Insights",
-      description: "Deep analytics and performance tracking",
-      price: "$149/month",
+      description: "Deep Facebook analytics and performance tracking",
+      price: "$129/month",
       features: [
         "Weekly performance reports",
-        "Audience insights",
+        "Audience insights analysis",
         "Competitor benchmarking",
         "Growth recommendations",
       ],
       icon: BarChart3,
     },
     {
-      id: "social-ads",
-      name: `${platform} Ads`,
-      description: "Professional ad management and optimization",
-      price: "$499/month",
+      id: "facebook-ads",
+      name: "Facebook Ads Management",
+      description: "Professional Facebook ads management and optimization",
+      price: "$449/month",
       features: [
         "Ad creative strategy",
         "Audience targeting",
@@ -174,12 +177,12 @@ export const OrderNowModal = ({
     },
     {
       id: "complete-management",
-      name: "Complete Management",
-      description: `Full-service ${platform.toLowerCase()} account management`,
-      price: "$799/month",
+      name: "Complete Page Management",
+      description: "Full-service Facebook page management",
+      price: "$699/month",
       features: [
         "Daily post management",
-        "Story creation",
+        "Comment moderation",
         "Engagement management",
         "Growth strategy",
       ],
@@ -376,7 +379,7 @@ export const OrderNowModal = ({
           }
 
           .step-number.active {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
             border-color: transparent;
             color: white;
           }
@@ -419,15 +422,15 @@ export const OrderNowModal = ({
           }
 
           .service-option.selected {
-            border-color: #C13584;
-            background: #fdf2f8;
+            border-color: #1877F2;
+            background: #f0f7ff;
           }
 
           .service-icon {
             width: 3rem;
             height: 3rem;
             border-radius: 0.75rem;
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -450,7 +453,7 @@ export const OrderNowModal = ({
 
           .service-price {
             font-weight: 700;
-            color: #C13584;
+            color: #1877F2;
             font-size: 1.125rem;
           }
 
@@ -513,8 +516,8 @@ export const OrderNowModal = ({
           .form-select:focus,
           .form-textarea:focus {
             outline: none;
-            border-color: #C13584;
-            box-shadow: 0 0 0 3px rgba(192, 38, 211, 0.1);
+            border-color: #1877F2;
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.1);
           }
 
           .form-textarea {
@@ -542,13 +545,13 @@ export const OrderNowModal = ({
           }
 
           .btn-primary {
-            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            background: linear-gradient(135deg, #1877F2 0%, #0A3B75 100%);
             color: white;
           }
 
           .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
+            box-shadow: 0 10px 20px rgba(24, 119, 242, 0.3);
           }
 
           .btn-primary:disabled {
@@ -588,8 +591,8 @@ export const OrderNowModal = ({
 
           /* Budget Display Styles */
           .budget-display {
-            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-            border: 1px solid #fbcfe8;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
             border-radius: 0.75rem;
             padding: 1.5rem;
             text-align: center;
@@ -606,7 +609,7 @@ export const OrderNowModal = ({
           .budget-amount {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #C13584;
+            color: #1877F2;
           }
 
           .budget-note {
@@ -917,7 +920,7 @@ export const OrderNowModal = ({
                         value={formData.goals}
                         onChange={handleInputChange}
                         className="form-textarea"
-                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase followers, boost engagement, drive sales, etc.)`}
+                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase page likes, boost engagement, generate leads, build community, etc.)`}
                         required
                       />
                     </div>

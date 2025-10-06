@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Twitter,
   Star,
@@ -20,8 +20,8 @@ import {
   List,
   Calendar,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { OrderNowModal } from "./OrderNowModal";
+import { useNavigate, useLocation } from "react-router-dom";
+import { OrderNowTwitter } from "./OrderNowTwitter";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -29,6 +29,7 @@ interface Service {
   description: string;
   features: string[];
   price: string;
+  budget: string;
 }
 
 interface SuccessStory {
@@ -59,18 +60,19 @@ interface Feature {
 
 export const TwitterGrowthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
+  const [selectedServiceBudget, setSelectedServiceBudget] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
-  const handleOrderNowClick = (serviceTitle: string = "") => {
-    setSelectedService(serviceTitle);
-    setIsOrderModalOpen(true);
-  };
-
-  const closeOrderModal = () => {
-    setIsOrderModalOpen(false);
-    setSelectedService("");
-  };
+  // ✅ Check if user is authenticated on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    setIsAuthenticated(!!(token && user));
+  }, []);
 
   const twitterServices: Service[] = [
     {
@@ -84,6 +86,7 @@ export const TwitterGrowthPage = () => {
         "Growth analytics dashboard",
       ],
       price: "$249/month",
+      budget: "$249/month",
     },
     {
       icon: MessageCircle,
@@ -96,6 +99,7 @@ export const TwitterGrowthPage = () => {
         "Community building",
       ],
       price: "$179/month",
+      budget: "$179/month",
     },
     {
       icon: TrendingUp,
@@ -108,6 +112,7 @@ export const TwitterGrowthPage = () => {
         "Performance analytics",
       ],
       price: "$349/month",
+      budget: "$349/month",
     },
     {
       icon: BarChart3,
@@ -120,6 +125,7 @@ export const TwitterGrowthPage = () => {
         "Growth recommendations",
       ],
       price: "$129/month",
+      budget: "$129/month",
     },
     {
       icon: Target,
@@ -132,6 +138,7 @@ export const TwitterGrowthPage = () => {
         "ROI tracking",
       ],
       price: "$449/month",
+      budget: "$449/month",
     },
     {
       icon: Rocket,
@@ -144,6 +151,7 @@ export const TwitterGrowthPage = () => {
         "Growth strategy",
       ],
       price: "$699/month",
+      budget: "$699/month",
     },
   ];
 
@@ -238,12 +246,137 @@ export const TwitterGrowthPage = () => {
     { icon: CheckCircle, text: "Twitter Spaces strategy" },
   ];
 
+  // ✅ Function to handle Order Now button click with authentication check
+  const handleOrderNowClick = (
+    serviceTitle: string = "",
+    serviceBudget: string = ""
+  ) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // User is authenticated - open order modal
+      setSelectedService(serviceTitle);
+      setSelectedServiceBudget(serviceBudget);
+      setIsOrderModalOpen(true);
+    } else {
+      // User is not authenticated - show auth prompt
+      setShowAuthPrompt(true);
+    }
+  };
+
+  // ✅ Function to handle authentication prompt actions
+  const handleAuthPrompt = (action: "login" | "cancel") => {
+    setShowAuthPrompt(false);
+    if (action === "login") {
+      // ✅ Navigate to register with return URL
+      navigate("/register", {
+        state: {
+          from: location,
+        },
+      });
+    }
+  };
+
+  const closeOrderModal = () => {
+    setIsOrderModalOpen(false);
+    setSelectedService("");
+    setSelectedServiceBudget("");
+  };
+
   return (
     <>
       <style>
         {`
           .twitter-page {
             font-family: system-ui, -apple-system, sans-serif;
+          }
+
+          /* Auth Prompt Modal Styles */
+          .auth-prompt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+          }
+
+          .auth-prompt-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          }
+
+          .auth-prompt-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #1D9BF0 0%, #00BA7C 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+          }
+
+          .auth-prompt-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+          }
+
+          .auth-prompt-message {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+          }
+
+          .auth-prompt-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+          }
+
+          .auth-prompt-primary {
+            background: linear-gradient(135deg, #1D9BF0 0%, #00BA7C 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(29, 155, 240, 0.3);
+          }
+
+          .auth-prompt-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-secondary:hover {
+            background: #e2e8f0;
           }
 
           /* Hero Section */
@@ -438,12 +571,6 @@ export const TwitterGrowthPage = () => {
             text-align: center;
           }
 
-          .twitter-service-buttons {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: auto;
-          }
-
           .twitter-service-button {
             background: linear-gradient(135deg, #1D9BF0 0%, #00BA7C 100%);
             color: white;
@@ -453,31 +580,13 @@ export const TwitterGrowthPage = () => {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            flex: 1;
+            width: 100%;
             font-size: 0.9rem;
           }
 
           .twitter-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(29, 155, 240, 0.3);
-          }
-
-          .twitter-service-button-secondary {
-            background: transparent;
-            color: #1D9BF0;
-            border: 2px solid #1D9BF0;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            font-size: 0.9rem;
-          }
-
-          .twitter-service-button-secondary:hover {
-            background: rgba(29, 155, 240, 0.1);
-            transform: translateY(-2px);
           }
 
           /* Process Section */
@@ -913,15 +1022,41 @@ export const TwitterGrowthPage = () => {
             .twitter-process-grid {
               grid-template-columns: 1fr;
             }
-
-            .twitter-service-buttons {
-              flex-direction: column;
-            }
           }
         `}
       </style>
 
       <div className="twitter-page">
+        {/* ✅ Authentication Prompt Modal */}
+        {showAuthPrompt && (
+          <div className="auth-prompt-overlay">
+            <div className="auth-prompt-content">
+              <div className="auth-prompt-icon">
+                <Users size={24} />
+              </div>
+              <h3 className="auth-prompt-title">Sign In Required</h3>
+              <p className="auth-prompt-message">
+                Please sign up or log in to place an order and access our
+                services.
+              </p>
+              <div className="auth-prompt-buttons">
+                <button
+                  className="auth-prompt-secondary"
+                  onClick={() => handleAuthPrompt("cancel")}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="auth-prompt-primary"
+                  onClick={() => handleAuthPrompt("login")}
+                >
+                  Sign Up / Log In
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="twitter-hero">
           <div className="twitter-hero-container">
@@ -1023,20 +1158,14 @@ export const TwitterGrowthPage = () => {
                       <div className="twitter-service-price">
                         {service.price}
                       </div>
-                      <div className="twitter-service-buttons">
-                        <button
-                          className="twitter-service-button"
-                          onClick={() => navigate("/services")}
-                        >
-                          View All Services
-                        </button>
-                        <button
-                          className="twitter-service-button-secondary"
-                          onClick={() => handleOrderNowClick(service.title)}
-                        >
-                          Order Now
-                        </button>
-                      </div>
+                      <button
+                        className="twitter-service-button"
+                        onClick={() =>
+                          handleOrderNowClick(service.title, service.budget)
+                        }
+                      >
+                        Order Now
+                      </button>
                     </div>
                   </div>
                 );
@@ -1196,12 +1325,15 @@ export const TwitterGrowthPage = () => {
         </section>
 
         {/* Order Now Modal */}
-        <OrderNowModal
-          isOpen={isOrderModalOpen}
-          onClose={closeOrderModal}
-          defaultPlatform="X (Twitter)"
-          defaultService={selectedService}
-        />
+        {isOrderModalOpen && (
+          <OrderNowTwitter
+            isOpen={isOrderModalOpen}
+            onClose={closeOrderModal}
+            service={selectedService}
+            serviceBudget={selectedServiceBudget}
+            platform="X (Twitter)"
+          />
+        )}
       </div>
     </>
   );

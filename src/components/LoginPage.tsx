@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface LoginPageProps {
-  onLogin: (userData: { name: string; email: string }) => void;
+  onLogin: (userData: { name: string; email: string; phone: string }) => void;
 }
 
 interface LoginResponse {
@@ -29,6 +29,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ Get the redirect path from location state or default to home
+  const from = (location.state as any)?.from?.pathname || "/home";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,7 +47,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
     try {
       console.log("Attempting login with:", { email: formData.email });
-      
+
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -70,14 +74,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         });
 
         setMessage("Login successful! Redirecting...");
-        
+
         // Navigate after a short delay
         setTimeout(() => {
           navigate("/home");
         }, 1000);
-        
       } else {
-        setMessage(data.message || "Login failed. Please check your credentials.");
+        setMessage(
+          data.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -92,7 +97,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       const testEmail = "test@example.com"; // Replace with actual test email
       const testPassword = "newpassword123"; // Replace with actual test password
-      
+
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -103,7 +108,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           password: testPassword,
         }),
       });
-      
+
       const data = await response.json();
       console.log("Test login result:", data);
     } catch (error) {
@@ -373,13 +378,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
 
               {message && (
-                <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+                <div
+                  className={`message ${
+                    message.includes("successful") ? "success" : "error"
+                  }`}
+                >
                   {message}
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="login-button"
                 disabled={isLoading}
               >
@@ -392,6 +401,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 Don't have an account?{" "}
                 <Link
                   to="/register"
+                  state={{ from: location.state?.from }}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   Register
@@ -400,15 +410,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             </div>
 
             {/* Debug button - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <button 
+            {process.env.NODE_ENV === "development" && (
+              <button
                 onClick={testPasswordReset}
-                style={{ 
-                  marginTop: '10px', 
-                  padding: '5px 10px', 
-                  fontSize: '12px',
-                  background: '#f0f0f0',
-                  border: '1px solid #ccc'
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  fontSize: "12px",
+                  background: "#f0f0f0",
+                  border: "1px solid #ccc",
                 }}
               >
                 Test Password Reset
