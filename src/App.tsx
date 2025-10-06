@@ -36,6 +36,7 @@ import React from "react";
 import { TermsOfServicePage } from "./components/TermsOfServicePage";
 import { PrivacyPolicyPage } from "./components/PrivacyPolicyPage";
 import { RefundPolicyPage } from "./components/RefundPolicyPage";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
 
 /* Scroll to top on route change */
 function ScrollToTop() {
@@ -171,6 +172,9 @@ export default function App() {
           />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         </Routes>
       </Layout>
 
