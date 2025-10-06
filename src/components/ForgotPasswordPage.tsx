@@ -1,59 +1,36 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-interface LoginPageProps {
-  onLogin: (userData: { name: string; email: string }) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const navigate = useNavigate();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+const ForgotPasswordPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ Login successful - save token and user data
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
-
-        // ✅ IMPORTANT: Global state update pannikiran
-        onLogin({
-          name: data.name || data.username || formData.email.split("@")[0],
-          email: data.email || formData.email,
-        });
-
-        alert("Login successful!");
-        navigate("/home");
+        setMessage("Password reset instructions have been sent to your email.");
       } else {
-        alert(data.message || "Login failed!");
+        setMessage(data.message || "Failed to send reset instructions.");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      alert("Network error. Please try again.");
+      console.error("Error during password reset request:", error);
+      setMessage("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,7 +38,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     <>
       <style>
         {`
-          .login-page {
+          .forgot-password-page {
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             display: flex;
@@ -70,14 +47,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             padding: 5rem 1rem;
           }
 
-          .login-container {
+          .forgot-password-container {
             max-width: 28rem;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
           }
 
-          .login-card {
+          .forgot-password-card {
             background: white;
             border-radius: 0.5rem;
             padding: 2rem;
@@ -86,7 +63,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             transition: all 0.3s ease;
           }
 
-          .login-card:hover {
+          .forgot-password-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
           }
@@ -95,13 +72,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             font-size: 2.25rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
+          }
+
+          .section-subheading {
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
           }
 
           @media (min-width: 768px) {
             .section-heading {
-              font-size: 3rem;
+              font-size: 2.5rem;
             }
           }
 
@@ -151,36 +135,25 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             margin-top: 1.5rem;
           }
 
-          .login-button:hover {
+          .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          .login-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
           }
 
-          .forgot-password-link {
-            display: block;
-            text-align: right;
-            margin-top: 0.5rem;
-            color: #3b82f6;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            cursor: pointer;
-          }
-
-          .forgot-password-link:hover {
-            color: #2563eb;
-            text-decoration: underline;
-          }
-
-          .login-link {
+          .back-to-login {
             text-align: center;
             margin-top: 1.5rem;
             color: #64748b;
             font-size: 0.875rem;
           }
 
-          .login-link a {
+          .back-to-login a {
             color: #3b82f6;
             text-decoration: none;
             font-weight: 500;
@@ -188,9 +161,29 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             cursor: pointer;
           }
 
-          .login-link a:hover {
+          .back-to-login a:hover {
             color: #2563eb;
             text-decoration: underline;
+          }
+
+          .message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+          }
+
+          .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+          }
+
+          .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
           }
 
           /* Form spacing */
@@ -209,19 +202,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             box-sizing: border-box;
           }
 
-          /* Text Center Utility */
-          .text-center {
-            text-align: center;
-          }
-
-          .mx-auto {
-            margin-left: auto;
-            margin-right: auto;
-          }
-
           /* Responsive Design */
           @media (max-width: 768px) {
-            .login-page {
+            .forgot-password-page {
               padding: 3rem 1rem;
             }
            
@@ -229,7 +212,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               font-size: 2rem;
             }
            
-            .login-card {
+            .forgot-password-card {
               padding: 1.5rem;
             }
           }
@@ -246,25 +229,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             }
           }
 
-          .login-card > * {
+          .forgot-password-card > * {
             animation: fadeInUp 0.6s ease-out;
           }
 
-          .login-card > *:nth-child(1) { animation-delay: 0.1s; }
-          .login-card > *:nth-child(2) { animation-delay: 0.2s; }
-          .login-card > *:nth-child(3) { animation-delay: 0.3s; }
-          .login-card > *:nth-child(4) { animation-delay: 0.4s; }
-          .login-card > *:nth-child(5) { animation-delay: 0.5s; }
-          .login-card > *:nth-child(6) { animation-delay: 0.6s; }
+          .forgot-password-card > *:nth-child(1) { animation-delay: 0.1s; }
+          .forgot-password-card > *:nth-child(2) { animation-delay: 0.2s; }
+          .forgot-password-card > *:nth-child(3) { animation-delay: 0.3s; }
+          .forgot-password-card > *:nth-child(4) { animation-delay: 0.4s; }
+          .forgot-password-card > *:nth-child(5) { animation-delay: 0.5s; }
         `}
       </style>
 
-      <div className="login-page">
-        <div className="login-container">
-          <div className="login-card">
+      <div className="forgot-password-page">
+        <div className="forgot-password-container">
+          <div className="forgot-password-card">
             <h2 className="section-heading">
-              Welcome <span className="gradient-text">Back</span>
+              Forgot <span className="gradient-text">Password</span>
             </h2>
+            
+            {/* <p className="section-subheading">
+              Enter your email address and we'll send you instructions to reset your password.
+            </p> */}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -274,48 +260,34 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <input
                   type="email"
                   id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="login-input"
                   placeholder="Enter your email"
                   required
                 />
               </div>
 
-              <div>
-                <label htmlFor="password" className="login-label">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="login-input"
-                  placeholder="Enter your password"
-                  required
-                />
-                {/* Forgot Password Link */}
-                <Link to="/forgot-password" className="forgot-password-link">
-                  Forgot Password?
-                </Link>
-              </div>
+              {message && (
+                <div className={`message ${message.includes("sent") ? "success" : "error"}`}>
+                  {message}
+                </div>
+              )}
 
-              <button type="submit" className="login-button">
-                Login
+              <button 
+                type="submit" 
+                className="login-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "Sending..." : "Send OTP"}
               </button>
             </form>
 
-            <div className="login-link">
+            <div className="back-to-login">
               <p>
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="text-blue-600 hover:underline font-medium"
-                >
-                  Register
+                Remember your password?{" "}
+                <Link to="/login" className="text-blue-600 hover:underline font-medium">
+                  Back to Login
                 </Link>
               </p>
             </div>
@@ -326,4 +298,4 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;
