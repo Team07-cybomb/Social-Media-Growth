@@ -1,26 +1,49 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL;
+
 interface LoginPageProps {
   onLogin: (userData: { name: string; email: string }) => void;
 }
+
+interface LoginResponse {
+  success: boolean;
+  data?: {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    token: string;
+  };
+  message?: string;
+}
+
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setMessage(""); // Clear message when user starts typing
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
 
     try {
+      console.log("Attempting login with:", { email: formData.email });
+      
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -32,27 +55,59 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         }),
       });
 
-      const data = await response.json();
+      const data: LoginResponse = await response.json();
+      console.log("Login response:", data);
 
-      if (response.ok) {
+      if (response.ok && data.success && data.data) {
         // ✅ Login successful - save token and user data
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data));
 
-        // ✅ IMPORTANT: Global state update pannikiran
+        // ✅ Update global state
         onLogin({
-          name: data.name || data.username || formData.email.split("@")[0],
-          email: data.email || formData.email,
+          name: data.data.name,
+          email: data.data.email,
         });
 
-        alert("Login successful!");
-        navigate("/home");
+        setMessage("Login successful! Redirecting...");
+        
+        // Navigate after a short delay
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
+        
       } else {
-        alert(data.message || "Login failed!");
+        setMessage(data.message || "Login failed. Please check your credentials.");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      alert("Network error. Please try again.");
+      setMessage("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Test function to check if password reset worked
+  const testPasswordReset = async () => {
+    try {
+      const testEmail = "test@example.com"; // Replace with actual test email
+      const testPassword = "newpassword123"; // Replace with actual test password
+      
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: testEmail,
+          password: testPassword,
+        }),
+      });
+      
+      const data = await response.json();
+      console.log("Test login result:", data);
+    } catch (error) {
+      console.error("Test error:", error);
     }
   };
 
@@ -150,7 +205,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             margin-top: 1.5rem;
           }
 
-          .login-button:hover {
+          .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          .login-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
           }
@@ -192,6 +253,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             text-decoration: underline;
           }
 
+          .message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+          }
+
+          .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+          }
+
+          .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+          }
+
           /* Form spacing */
           .space-y-6 > * + * {
             margin-top: 1.5rem;
@@ -206,16 +287,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
           * {
             box-sizing: border-box;
-          }
-
-          /* Text Center Utility */
-          .text-center {
-            text-align: center;
-          }
-
-          .mx-auto {
-            margin-left: auto;
-            margin-right: auto;
           }
 
           /* Responsive Design */
@@ -296,14 +367,23 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   placeholder="Enter your password"
                   required
                 />
-                {/* Forgot Password Link */}
                 <Link to="/forgot-password" className="forgot-password-link">
                   Forgot Password?
                 </Link>
               </div>
 
-              <button type="submit" className="login-button">
-                Login
+              {message && (
+                <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+                  {message}
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                className="login-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "Logging in..." : "Login"}
               </button>
             </form>
 
@@ -318,6 +398,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 </Link>
               </p>
             </div>
+
+            {/* Debug button - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <button 
+                onClick={testPasswordReset}
+                style={{ 
+                  marginTop: '10px', 
+                  padding: '5px 10px', 
+                  fontSize: '12px',
+                  background: '#f0f0f0',
+                  border: '1px solid #ccc'
+                }}
+              >
+                Test Password Reset
+              </button>
+            )}
           </div>
         </div>
       </div>
