@@ -1,9 +1,23 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface LoginPageProps {
   onLogin: (userData: { name: string; email: string; phone: string }) => void;
+}
+
+interface LoginResponse {
+  success: boolean;
+  data?: {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    token: string;
+  };
+  message?: string;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
@@ -11,6 +25,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,12 +37,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setMessage(""); // Clear message when user starts typing
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
 
     try {
+      console.log("Attempting login with:", { email: formData.email });
+
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -38,37 +59,60 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         }),
       });
 
-      const data = await response.json();
+      const data: LoginResponse = await response.json();
+      console.log("Login response:", data);
 
-      if (response.ok) {
+      if (response.ok && data.success && data.data) {
         // ✅ Login successful - save token and user data
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data));
 
-        // ✅ Store complete user data including phone from backend response
-        // Handle multiple possible field names for phone
-        const userDataToStore = {
-          name: data.name || data.username || formData.email.split("@")[0],
-          email: data.email || formData.email,
-          phone: data.phone || data.phoneNumber || data.userPhone || "",
-        };
+        // ✅ Update global state
+        onLogin({
+          name: data.data.name,
+          email: data.data.email,
+        });
 
-        console.log("Storing user data:", userDataToStore); // Debug log
+        setMessage("Login successful! Redirecting...");
 
-        localStorage.setItem("user", JSON.stringify(userDataToStore));
-
-        // ✅ IMPORTANT: Global state update with phone number
-        onLogin(userDataToStore);
-
-        alert("Login successful!");
-
-        // ✅ Redirect to the intended page (order now continuation) or home
-        navigate(from, { replace: true });
+        // Navigate after a short delay
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
       } else {
-        alert(data.message || "Login failed!");
+        setMessage(
+          data.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (error) {
       console.error("Error during login:", error);
-      alert("Network error. Please try again.");
+      setMessage("Network error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Test function to check if password reset worked
+  const testPasswordReset = async () => {
+    try {
+      const testEmail = "test@example.com"; // Replace with actual test email
+      const testPassword = "newpassword123"; // Replace with actual test password
+
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: testEmail,
+          password: testPassword,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Test login result:", data);
+    } catch (error) {
+      console.error("Test error:", error);
     }
   };
 
@@ -84,14 +128,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             justify-content: center;
             padding: 5rem 1rem;
           }
- 
+
           .login-container {
             max-width: 28rem;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
           }
- 
+
           .login-card {
             background: white;
             border-radius: 0.5rem;
@@ -100,12 +144,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
           }
- 
+
           .login-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
           }
- 
+
           .section-heading {
             font-size: 2.25rem;
             font-weight: 700;
@@ -113,20 +157,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             margin-bottom: 2rem;
             text-align: center;
           }
- 
+
           @media (min-width: 768px) {
             .section-heading {
               font-size: 3rem;
             }
           }
- 
+
           .gradient-text {
             background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
           }
- 
+
           .login-label {
             display: block;
             color: #374151;
@@ -134,7 +178,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
           }
- 
+
           .login-input {
             width: 100%;
             padding: 1rem;
@@ -145,13 +189,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             background: white;
             color: #1e293b;
           }
- 
+
           .login-input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
           }
- 
+
           .login-button {
             width: 100%;
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
@@ -165,19 +209,42 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             transition: all 0.3s ease;
             margin-top: 1.5rem;
           }
- 
-          .login-button:hover {
+
+          .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          .login-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
           }
- 
+
+          .forgot-password-link {
+            display: block;
+            text-align: right;
+            margin-top: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+          }
+
+          .forgot-password-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
+          }
+
           .login-link {
             text-align: center;
             margin-top: 1.5rem;
             color: #64748b;
             font-size: 0.875rem;
           }
- 
+
           .login-link a {
             color: #3b82f6;
             text-decoration: none;
@@ -185,38 +252,48 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             transition: color 0.3s ease;
             cursor: pointer;
           }
- 
+
           .login-link a:hover {
             color: #2563eb;
             text-decoration: underline;
           }
- 
+
+          .message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+          }
+
+          .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+          }
+
+          .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+          }
+
           /* Form spacing */
           .space-y-6 > * + * {
             margin-top: 1.5rem;
           }
- 
+
           /* Global Overrides */
           body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           }
- 
+
           * {
             box-sizing: border-box;
           }
- 
-          /* Text Center Utility */
-          .text-center {
-            text-align: center;
-          }
- 
-          .mx-auto {
-            margin-left: auto;
-            margin-right: auto;
-          }
- 
+
           /* Responsive Design */
           @media (max-width: 768px) {
             .login-page {
@@ -231,7 +308,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               padding: 1.5rem;
             }
           }
- 
+
           /* Animation for form elements */
           @keyframes fadeInUp {
             from {
@@ -243,16 +320,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               transform: translateY(0);
             }
           }
- 
+
           .login-card > * {
             animation: fadeInUp 0.6s ease-out;
           }
- 
+
           .login-card > *:nth-child(1) { animation-delay: 0.1s; }
           .login-card > *:nth-child(2) { animation-delay: 0.2s; }
           .login-card > *:nth-child(3) { animation-delay: 0.3s; }
           .login-card > *:nth-child(4) { animation-delay: 0.4s; }
           .login-card > *:nth-child(5) { animation-delay: 0.5s; }
+          .login-card > *:nth-child(6) { animation-delay: 0.6s; }
         `}
       </style>
 
@@ -294,10 +372,27 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   placeholder="Enter your password"
                   required
                 />
+                <Link to="/forgot-password" className="forgot-password-link">
+                  Forgot Password?
+                </Link>
               </div>
 
-              <button type="submit" className="login-button">
-                Login
+              {message && (
+                <div
+                  className={`message ${
+                    message.includes("successful") ? "success" : "error"
+                  }`}
+                >
+                  {message}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="login-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "Logging in..." : "Login"}
               </button>
             </form>
 
@@ -313,6 +408,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 </Link>
               </p>
             </div>
+
+            {/* Debug button - remove in production */}
+            {process.env.NODE_ENV === "development" && (
+              <button
+                onClick={testPasswordReset}
+                style={{
+                  marginTop: "10px",
+                  padding: "5px 10px",
+                  fontSize: "12px",
+                  background: "#f0f0f0",
+                  border: "1px solid #ccc",
+                }}
+              >
+                Test Password Reset
+              </button>
+            )}
           </div>
         </div>
       </div>

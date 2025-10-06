@@ -49,6 +49,15 @@ const userSchema = new mongoose.Schema({
   totalSpent: {
     type: Number,
     default: 0
+  },
+  // Add OTP fields
+  otp: {
+    type: String,
+    default: null
+  },
+  otpExpires: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
