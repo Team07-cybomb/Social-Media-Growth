@@ -2,36 +2,45 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 const API_URL = import.meta.env.VITE_API_URL;
-// Simplified Type definitions for Customer
-interface Customer {
+
+// Type definitions for Order model
+interface Order {
   _id: string;
-  username: string;
+  name: string;
   email: string;
-  phoneNumber: string;
-  status: string;
+  phone: string;
+  service: string;
+  serviceBudget: string;
+  platform: string;
+  timeline: string;
+  goals: string;
+  message: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  source: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 const Services = () => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
 
-  // Fetch customers from API
-  const fetchCustomers = async () => {
+  // Fetch orders from API
+  const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/services`);
+      const response = await fetch(`${API_URL}/api/orders`);
       const result = await response.json();
 
       if (result.success) {
-        setCustomers(result.data);
+        setOrders(result.data);
       } else {
-        setError(result.msg || "Failed to fetch customers");
+        setError(result.msg || "Failed to fetch orders");
       }
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      console.error("Error fetching orders:", error);
       setError("Failed to connect to server");
     } finally {
       setLoading(false);
@@ -39,22 +48,25 @@ const Services = () => {
   };
 
   useEffect(() => {
-    fetchCustomers();
+    fetchOrders();
   }, []);
 
   // Export to Excel function
   const exportToExcel = () => {
     try {
       // Prepare data for export
-      const exportData = customers.map((customer) => ({
-        Username: customer.username,
-        Email: customer.email,
-        "Phone Number": customer.phoneNumber,
-        Status:
-          customer.status.charAt(0).toUpperCase() + customer.status.slice(1),
-        "Created Date": new Date(customer.createdAt).toLocaleDateString(),
-        "Created Time": new Date(customer.createdAt).toLocaleTimeString(),
-        "Account Age": getAccountAge(customer.createdAt),
+      const exportData = orders.map((order) => ({
+        "Customer Name": order.name,
+        "Email": order.email,
+        "Phone": order.phone,
+        "Service": order.service,
+        "Budget": order.serviceBudget,
+        "Platform": order.platform,
+        "Timeline": order.timeline,
+        "Status": order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " "),
+        "Created Date": new Date(order.createdAt).toLocaleDateString(),
+        "Created Time": new Date(order.createdAt).toLocaleTimeString(),
+        "Account Age": getAccountAge(order.createdAt),
       }));
 
       // Create workbook and worksheet
@@ -63,10 +75,14 @@ const Services = () => {
 
       // Set column widths for better formatting
       const colWidths = [
-        { wch: 20 }, // Username
+        { wch: 20 }, // Customer Name
         { wch: 30 }, // Email
-        { wch: 15 }, // Phone Number
-        { wch: 10 }, // Status
+        { wch: 15 }, // Phone
+        { wch: 25 }, // Service
+        { wch: 15 }, // Budget
+        { wch: 15 }, // Platform
+        { wch: 15 }, // Timeline
+        { wch: 12 }, // Status
         { wch: 12 }, // Created Date
         { wch: 12 }, // Created Time
         { wch: 15 }, // Account Age
@@ -74,10 +90,10 @@ const Services = () => {
       ws["!cols"] = colWidths;
 
       // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, "Customers");
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
 
       // Generate Excel file and trigger download
-      const fileName = `customers_export_${
+      const fileName = `orders_export_${
         new Date().toISOString().split("T")[0]
       }.xlsx`;
       XLSX.writeFile(wb, fileName);
@@ -87,21 +103,23 @@ const Services = () => {
     }
   };
 
-  // Export filtered customers to Excel
+  // Export filtered orders to Excel
   const exportFilteredToExcel = () => {
     try {
-      const customersToExport =
-        filter === "all" ? customers : filteredCustomers;
+      const ordersToExport = filter === "all" ? orders : filteredOrders;
 
-      const exportData = customersToExport.map((customer) => ({
-        Username: customer.username,
-        Email: customer.email,
-        "Phone Number": customer.phoneNumber,
-        Status:
-          customer.status.charAt(0).toUpperCase() + customer.status.slice(1),
-        "Created Date": new Date(customer.createdAt).toLocaleDateString(),
-        "Created Time": new Date(customer.createdAt).toLocaleTimeString(),
-        "Account Age": getAccountAge(customer.createdAt),
+      const exportData = ordersToExport.map((order) => ({
+        "Customer Name": order.name,
+        "Email": order.email,
+        "Phone": order.phone,
+        "Service": order.service,
+        "Budget": order.serviceBudget,
+        "Platform": order.platform,
+        "Timeline": order.timeline,
+        "Status": order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " "),
+        "Created Date": new Date(order.createdAt).toLocaleDateString(),
+        "Created Time": new Date(order.createdAt).toLocaleTimeString(),
+        "Account Age": getAccountAge(order.createdAt),
       }));
 
       const wb = XLSX.utils.book_new();
@@ -109,19 +127,23 @@ const Services = () => {
 
       // Set column widths
       const colWidths = [
-        { wch: 20 }, // Username
+        { wch: 20 }, // Customer Name
         { wch: 30 }, // Email
-        { wch: 15 }, // Phone Number
-        { wch: 10 }, // Status
+        { wch: 15 }, // Phone
+        { wch: 25 }, // Service
+        { wch: 15 }, // Budget
+        { wch: 15 }, // Platform
+        { wch: 15 }, // Timeline
+        { wch: 12 }, // Status
         { wch: 12 }, // Created Date
         { wch: 12 }, // Created Time
         { wch: 15 }, // Account Age
       ];
       ws["!cols"] = colWidths;
 
-      XLSX.utils.book_append_sheet(wb, ws, "Customers");
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
 
-      const fileName = `customers_${filter}_${
+      const fileName = `orders_${filter}_${
         new Date().toISOString().split("T")[0]
       }.xlsx`;
       XLSX.writeFile(wb, fileName);
@@ -146,14 +168,42 @@ const Services = () => {
     return `${months} months`;
   };
 
-  const filteredCustomers = customers.filter(
-    (customer) => filter === "all" || customer.status === filter
+  // Filter orders based on status
+  const filteredOrders = orders.filter(
+    (order) => filter === "all" || order.status === filter
   );
+
+  // Get status color
+  const getStatusColor = (status: string) => {
+    const colors = {
+      pending: { bg: "#fef3c7", text: "#92400e" },
+      confirmed: { bg: "#dbeafe", text: "#1e40af" },
+      in_progress: { bg: "#f0f9ff", text: "#0c4a6e" },
+      completed: { bg: "#d1fae5", text: "#065f46" },
+      cancelled: { bg: "#fee2e2", text: "#991b1b" },
+    };
+    return colors[status as keyof typeof colors] || colors.pending;
+  };
+
+  // Get platform color
+  const getPlatformColor = (platform: string) => {
+    const colors = {
+      Facebook: { bg: "#dbeafe", text: "#1e40af" },
+      Instagram: { bg: "#fce7f3", text: "#be185d" },
+      Twitter: { bg: "#e0f2fe", text: "#0369a1" },
+      "X (Twitter)": { bg: "#e0f2fe", text: "#0369a1" },
+      YouTube: { bg: "#fef2f2", text: "#dc2626" },
+      LinkedIn: { bg: "#f0f9ff", text: "#0c4a6e" },
+      TikTok: { bg: "#f5f3ff", text: "#7c3aed" },
+      Other: { bg: "#f3f4f6", text: "#374151" },
+    };
+    return colors[platform as keyof typeof colors] || colors.Other;
+  };
 
   const styles = {
     pageContainer: {
       padding: "2rem",
-      maxWidth: "1200px",
+      maxWidth: "1400px",
       margin: "0 auto",
       background: "#f8fafc",
       minHeight: "100vh",
@@ -284,6 +334,13 @@ const Services = () => {
       fontWeight: "600",
       display: "inline-block",
     },
+    platformBadge: {
+      padding: "0.25rem 0.5rem",
+      borderRadius: "6px",
+      fontSize: "0.75rem",
+      fontWeight: "600",
+      display: "inline-block",
+    },
     loadingState: {
       textAlign: "center" as const,
       padding: "3rem",
@@ -304,9 +361,9 @@ const Services = () => {
     <div style={styles.pageContainer}>
       <div style={styles.pageHeader}>
         <div>
-          <h1 style={styles.pageTitle}>Customer Management</h1>
+          <h1 style={styles.pageTitle}>Order Management</h1>
           <p style={styles.pageSubtitle}>
-            View customer accounts and information
+            View and manage customer orders and services
           </p>
         </div>
 
@@ -314,7 +371,7 @@ const Services = () => {
           <button
             style={styles.exportBtn}
             onClick={exportToExcel}
-            title="Export all customers to Excel"
+            title="Export all orders to Excel"
             onMouseOver={(e) => {
               e.currentTarget.style.background =
                 styles.exportBtnHover.background;
@@ -347,7 +404,7 @@ const Services = () => {
                 background: "#f59e0b",
               }}
               onClick={exportFilteredToExcel}
-              title={`Export ${filter} customers to Excel`}
+              title={`Export ${filter} orders to Excel`}
               onMouseOver={(e) => {
                 e.currentTarget.style.background = "#d97706";
                 e.currentTarget.style.transform =
@@ -370,7 +427,7 @@ const Services = () => {
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              Export {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              Export {filter.charAt(0).toUpperCase() + filter.slice(1).replace("_", " ")}
             </button>
           )}
         </div>
@@ -397,21 +454,27 @@ const Services = () => {
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
           <div style={{ ...styles.statValue, color: "#3b82f6" }}>
-            {customers.length}
+            {orders.length}
           </div>
-          <div style={styles.statLabel}>Total Customers</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={{ ...styles.statValue, color: "#10b981" }}>
-            {customers.filter((c) => c.status === "active").length}
-          </div>
-          <div style={styles.statLabel}>Active Customers</div>
+          <div style={styles.statLabel}>Total Orders</div>
         </div>
         <div style={styles.statCard}>
           <div style={{ ...styles.statValue, color: "#f59e0b" }}>
-            {customers.filter((c) => c.status === "inactive").length}
+            {orders.filter((o) => o.status === "pending").length}
           </div>
-          <div style={styles.statLabel}>Inactive Customers</div>
+          <div style={styles.statLabel}>Pending Orders</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.statValue, color: "#10b981" }}>
+            {orders.filter((o) => o.status === "completed").length}
+          </div>
+          <div style={styles.statLabel}>Completed</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.statValue, color: "#8b5cf6" }}>
+            {orders.filter((o) => o.status === "in_progress").length}
+          </div>
+          <div style={styles.statLabel}>In Progress</div>
         </div>
       </div>
 
@@ -423,82 +486,136 @@ const Services = () => {
           }}
           onClick={() => setFilter("all")}
         >
-          All Customers
+          All Orders
         </button>
         <button
           style={{
             ...styles.filterBtn,
-            ...(filter === "active" ? styles.filterBtnActive : {}),
+            ...(filter === "pending" ? styles.filterBtnActive : {}),
           }}
-          onClick={() => setFilter("active")}
+          onClick={() => setFilter("pending")}
         >
-          Active
+          Pending
         </button>
         <button
           style={{
             ...styles.filterBtn,
-            ...(filter === "inactive" ? styles.filterBtnActive : {}),
+            ...(filter === "confirmed" ? styles.filterBtnActive : {}),
           }}
-          onClick={() => setFilter("inactive")}
+          onClick={() => setFilter("confirmed")}
         >
-          Inactive
+          Confirmed
+        </button>
+        <button
+          style={{
+            ...styles.filterBtn,
+            ...(filter === "in_progress" ? styles.filterBtnActive : {}),
+          }}
+          onClick={() => setFilter("in_progress")}
+        >
+          In Progress
+        </button>
+        <button
+          style={{
+            ...styles.filterBtn,
+            ...(filter === "completed" ? styles.filterBtnActive : {}),
+          }}
+          onClick={() => setFilter("completed")}
+        >
+          Completed
         </button>
       </div>
 
       {loading ? (
         <div style={styles.loadingState}>
-          <div>Loading customers...</div>
+          <div>Loading orders...</div>
         </div>
       ) : (
         <div style={styles.tableContainer}>
           <table style={styles.table}>
             <thead style={styles.tableHeader}>
               <tr>
-                <th style={styles.tableHeaderCell}>Username</th>
-                <th style={styles.tableHeaderCell}>Email</th>
-                <th style={styles.tableHeaderCell}>Phone Number</th>
+                <th style={styles.tableHeaderCell}>Customer</th>
+                <th style={styles.tableHeaderCell}>Service</th>
+                <th style={styles.tableHeaderCell}>Platform</th>
+                {/* <th style={styles.tableHeaderCell}>Budget</th> */}
+                <th style={styles.tableHeaderCell}>Timeline</th>
                 <th style={styles.tableHeaderCell}>Status</th>
                 <th style={styles.tableHeaderCell}>Created At</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCustomers.map((customer) => (
-                <tr
-                  key={customer._id}
-                  style={styles.tableRow}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.background =
-                      styles.tableRowHover.background)
-                  }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.background = "transparent")
-                  }
-                >
-                  <td style={styles.tableCell}>
-                    <strong style={{ color: "#1a202c" }}>
-                      {customer.username}
-                    </strong>
-                  </td>
-                  <td style={styles.tableCell}>{customer.email}</td>
-                  <td style={styles.tableCell}>{customer.phoneNumber}</td>
-                  <td style={styles.tableCell}>
-                    <span
-                      style={{
-                        ...styles.statusBadge,
-                        background:
-                          customer.status === "active" ? "#d1fae5" : "#fef3c7",
-                        color:
-                          customer.status === "active" ? "#065f46" : "#92400e",
-                      }}
-                    >
-                      {customer.status}
-                    </span>
-                  </td>
-                  <td style={styles.tableCell}>
-                    {new Date(customer.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
+              {filteredOrders.map((order) => {
+                const statusColor = getStatusColor(order.status);
+                const platformColor = getPlatformColor(order.platform);
+                
+                return (
+                  <tr
+                    key={order._id}
+                    style={styles.tableRow}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.background =
+                        styles.tableRowHover.background)
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    <td style={styles.tableCell}>
+                      <div>
+                        <strong style={{ color: "#1a202c", display: "block" }}>
+                          {order.name}
+                        </strong>
+                        <div style={{ fontSize: "0.75rem", color: "#6b7280" }}>
+                          {order.email}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "#9ca3af" }}>
+                          {order.phone}
+                        </div>
+                      </div>
+                    </td>
+                    <td style={styles.tableCell}>
+                      <strong style={{ color: "#1a202c" }}>
+                        {order.service}
+                      </strong>
+                    </td>
+                    <td style={styles.tableCell}>
+                      <span
+                        style={{
+                          ...styles.platformBadge,
+                          background: platformColor.bg,
+                          color: platformColor.text,
+                        }}
+                      >
+                        {order.platform}
+                      </span>
+                    </td>
+                    {/* <td style={styles.tableCell}>
+                      <strong style={{ color: "#059669" }}>
+                        {order.serviceBudget}
+                      </strong>
+                    </td> */}
+                    <td style={styles.tableCell}>{order.timeline}</td>
+                    <td style={styles.tableCell}>
+                      <span
+                        style={{
+                          ...styles.statusBadge,
+                          background: statusColor.bg,
+                          color: statusColor.text,
+                        }}
+                      >
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " ")}
+                      </span>
+                    </td>
+                    <td style={styles.tableCell}>
+                      {new Date(order.createdAt).toLocaleDateString()}
+                      <div style={{ fontSize: "0.75rem", color: "#9ca3af" }}>
+                        {new Date(order.createdAt).toLocaleTimeString()}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

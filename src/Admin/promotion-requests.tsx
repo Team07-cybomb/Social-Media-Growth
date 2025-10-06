@@ -3,24 +3,20 @@ import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Type definitions - Updated to match your Service model
-interface Service {
+// Type definitions - Updated to match your Order model
+interface Order {
   _id: string;
-  serviceName: string;
-  username: string;
+  name: string;
   email: string;
-  phoneNumber: string;
+  phone: string;
+  service: string;
+  serviceBudget: string;
   platform: string;
-  basePrice: number;
-  minQuantity: number;
-  maxQuantity: number;
-  deliveryTime: string;
-  status: string;
-  description: string;
-  category: string;
-  quality: string;
-  refill: boolean;
-  refillPeriod?: string;
+  timeline: string;
+  goals: string;
+  message: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  source: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,90 +24,98 @@ interface Service {
 // Type for status colors
 interface StatusColors {
   [key: string]: { bg: string; text: string };
-  active: { bg: string; text: string };
-  inactive: { bg: string; text: string };
+  pending: { bg: string; text: string };
+  confirmed: { bg: string; text: string };
+  in_progress: { bg: string; text: string };
+  completed: { bg: string; text: string };
+  cancelled: { bg: string; text: string };
 }
 
-// Type for urgency colors (we'll derive this from delivery time)
-interface UrgencyColors {
-  [key: string]: string;
-  high: string;
-  medium: string;
-  low: string;
+// Type for platform colors
+interface PlatformColors {
+  [key: string]: { bg: string; text: string };
+  Facebook: { bg: string; text: string };
+  Instagram: { bg: string; text: string };
+  Twitter: { bg: string; text: string };
+  "X (Twitter)": { bg: string; text: string };
+  YouTube: { bg: string; text: string };
+  LinkedIn: { bg: string; text: string };
+  TikTok: { bg: string; text: string };
+  Other: { bg: string; text: string };
 }
 
 const PromotionRequests = () => {
-  const [services, setServices] = useState<Service[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [filter, setFilter] = useState<string>("all");
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Fetch services from API
-  const fetchServices = async () => {
+  // Fetch orders from API
+  const fetchOrders = async (page: number = 1, statusFilter: string = "all") => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/api/services`);
+      let url = `${API_URL}/api/orders?page=${page}&limit=10`;
+      
+      if (statusFilter !== "all") {
+        url += `&status=${statusFilter}`;
+      }
+
+      const response = await fetch(url);
       const result = await response.json();
 
       if (result.success) {
-        setServices(result.data);
+        setOrders(result.data);
+        setTotalPages(result.pagination?.total || 1);
       } else {
-        setError("Failed to fetch services");
+        setError("Failed to fetch orders");
       }
     } catch (err) {
       setError("Error connecting to server");
-      console.error("Fetch services error:", err);
+      console.error("Fetch orders error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchServices();
-  }, []);
+    fetchOrders(currentPage, filter);
+  }, [currentPage, filter]);
 
-  // Filter services based on status
-  const filteredServices = services.filter(
-    (service) => filter === "all" || service.status === filter
+  // Filter orders based on search term
+  const filteredOrders = orders.filter(order =>
+    order.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.platform.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Export to Excel function
   const exportToExcel = () => {
     try {
-      // Prepare data for export
-      const exportData = services.map((service) => ({
-        "Service Name": service.serviceName,
-        Provider: service.username,
-        Email: service.email,
-        Phone: service.phoneNumber,
-        Platform: service.platform,
-        Category: service.category,
-        "Base Price": service.basePrice,
-        "Min Quantity": service.minQuantity,
-        "Max Quantity": service.maxQuantity,
-        "Delivery Time": service.deliveryTime,
-        Status:
-          service.status.charAt(0).toUpperCase() + service.status.slice(1),
-        Quality: service.quality,
-        "Refill Available": service.refill ? "Yes" : "No",
-        "Refill Period": service.refillPeriod || "N/A",
-        Description: service.description,
-        "Created At": new Date(service.createdAt).toLocaleDateString(),
-        "Updated At": new Date(service.updatedAt).toLocaleDateString(),
+      const exportData = orders.map((order) => ({
+        "Customer Name": order.name,
+        "Email": order.email,
+        "Phone": order.phone,
+        "Service": order.service,
+        "Budget": order.serviceBudget,
+        "Platform": order.platform,
+        "Timeline": order.timeline,
+        "Goals": order.goals,
+        "Status": order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " "),
+        "Source": order.source,
+        "Created At": new Date(order.createdAt).toLocaleDateString(),
+        "Updated At": new Date(order.updatedAt).toLocaleDateString(),
       }));
 
-      // Create workbook and worksheet
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
 
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, "Services");
-
-      // Generate Excel file and trigger download
-      const fileName = `services_export_${
-        new Date().toISOString().split("T")[0]
-      }.xlsx`;
+      const fileName = `orders_export_${new Date().toISOString().split("T")[0]}.xlsx`;
       XLSX.writeFile(wb, fileName);
     } catch (err) {
       console.error("Export error:", err);
@@ -119,39 +123,31 @@ const PromotionRequests = () => {
     }
   };
 
-  // Export filtered services to Excel
+  // Export filtered orders to Excel
   const exportFilteredToExcel = () => {
     try {
-      const servicesToExport = filter === "all" ? services : filteredServices;
+      const ordersToExport = filter === "all" ? orders : filteredOrders;
 
-      const exportData = servicesToExport.map((service) => ({
-        "Service Name": service.serviceName,
-        Provider: service.username,
-        Email: service.email,
-        Phone: service.phoneNumber,
-        Platform: service.platform,
-        Category: service.category,
-        "Base Price": service.basePrice,
-        "Min Quantity": service.minQuantity,
-        "Max Quantity": service.maxQuantity,
-        "Delivery Time": service.deliveryTime,
-        Status:
-          service.status.charAt(0).toUpperCase() + service.status.slice(1),
-        Quality: service.quality,
-        "Refill Available": service.refill ? "Yes" : "No",
-        "Refill Period": service.refillPeriod || "N/A",
-        Description: service.description,
-        "Created At": new Date(service.createdAt).toLocaleDateString(),
-        "Updated At": new Date(service.updatedAt).toLocaleDateString(),
+      const exportData = ordersToExport.map((order) => ({
+        "Customer Name": order.name,
+        "Email": order.email,
+        "Phone": order.phone,
+        "Service": order.service,
+        "Budget": order.serviceBudget,
+        "Platform": order.platform,
+        "Timeline": order.timeline,
+        "Goals": order.goals,
+        "Status": order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " "),
+        "Source": order.source,
+        "Created At": new Date(order.createdAt).toLocaleDateString(),
+        "Updated At": new Date(order.updatedAt).toLocaleDateString(),
       }));
 
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(exportData);
-      XLSX.utils.book_append_sheet(wb, ws, "Services");
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
 
-      const fileName = `services_${filter}_${
-        new Date().toISOString().split("T")[0]
-      }.xlsx`;
+      const fileName = `orders_${filter}_${new Date().toISOString().split("T")[0]}.xlsx`;
       XLSX.writeFile(wb, fileName);
     } catch (err) {
       console.error("Export error:", err);
@@ -159,47 +155,37 @@ const PromotionRequests = () => {
     }
   };
 
-  // Determine urgency based on delivery time
-  const getUrgency = (deliveryTime: string): string => {
-    const time = deliveryTime.toLowerCase();
-    if (
-      time.includes("instant") ||
-      time.includes("immediate") ||
-      time.includes("1 hour") ||
-      time.includes("fast")
-    ) {
-      return "high";
-    } else if (
-      time.includes("day") ||
-      time.includes("24") ||
-      time.includes("48")
-    ) {
-      return "medium";
-    } else {
-      return "low";
-    }
-  };
-
+  // Status colors
   const getStatusColor = (status: string) => {
     const colors: StatusColors = {
-      active: { bg: "#d1fae5", text: "#065f46" },
-      inactive: { bg: "#fef3c7", text: "#92400e" },
+      pending: { bg: "#fef3c7", text: "#92400e" },
+      confirmed: { bg: "#dbeafe", text: "#1e40af" },
+      in_progress: { bg: "#f0f9ff", text: "#0c4a6e" },
+      completed: { bg: "#d1fae5", text: "#065f46" },
+      cancelled: { bg: "#fee2e2", text: "#991b1b" },
     };
-    return colors[status] || colors.inactive;
+    return colors[status] || colors.pending;
   };
 
-  const getUrgencyColor = (urgency: string) => {
-    const colors: UrgencyColors = {
-      high: "#ef4444",
-      medium: "#f59e0b",
-      low: "#10b981",
+  // Platform colors
+  const getPlatformColor = (platform: string) => {
+    const colors: PlatformColors = {
+      Facebook: { bg: "#dbeafe", text: "#1e40af" },
+      Instagram: { bg: "#fce7f3", text: "#be185d" },
+      Twitter: { bg: "#e0f2fe", text: "#0369a1" },
+      "X (Twitter)": { bg: "#e0f2fe", text: "#0369a1" },
+      YouTube: { bg: "#fef2f2", text: "#dc2626" },
+      LinkedIn: { bg: "#f0f9ff", text: "#0c4a6e" },
+      TikTok: { bg: "#f5f3ff", text: "#7c3aed" },
+      Other: { bg: "#f3f4f6", text: "#374151" },
     };
-    return colors[urgency] || "#6b7280";
+    return colors[platform] || colors.Other;
   };
 
-  const updateServiceStatus = async (id: string, newStatus: string) => {
+  // Update order status
+  const updateOrderStatus = async (id: string, newStatus: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/services/${id}`, {
+      const response = await fetch(`${API_URL}/api/orders/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -210,40 +196,61 @@ const PromotionRequests = () => {
       const result = await response.json();
 
       if (result.success) {
-        // Update local state
-        setServices(
-          services.map((service) =>
-            service._id === id ? { ...service, status: newStatus } : service
-          )
-        );
+        setOrders(orders.map((order) =>
+          order._id === id ? { ...order, status: newStatus as any } : order
+        ));
       } else {
-        alert("Failed to update service status");
+        alert("Failed to update order status");
       }
     } catch (err) {
-      console.error("Update service error:", err);
-      alert("Error updating service status");
+      console.error("Update order error:", err);
+      alert("Error updating order status");
     }
   };
 
-  const deleteService = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this service?")) {
+  // Delete order
+  const deleteOrder = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
       try {
-        const response = await fetch(`${API_URL}/api/services/${id}`, {
+        const response = await fetch(`${API_URL}/api/orders/${id}`, {
           method: "DELETE",
         });
 
         const result = await response.json();
 
         if (result.success) {
-          // Remove from local state
-          setServices(services.filter((service) => service._id !== id));
+          setOrders(orders.filter((order) => order._id !== id));
         } else {
-          alert("Failed to delete service");
+          alert("Failed to delete order");
         }
       } catch (err) {
-        console.error("Delete service error:", err);
-        alert("Error deleting service");
+        console.error("Delete order error:", err);
+        alert("Error deleting order");
       }
+    }
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -274,6 +281,14 @@ const PromotionRequests = () => {
       marginBottom: "2rem",
       flexWrap: "wrap" as const,
       gap: "1rem",
+    } as React.CSSProperties,
+    searchBox: {
+      padding: "0.75rem 1rem",
+      border: "1px solid #e2e8f0",
+      borderRadius: "8px",
+      fontSize: "0.875rem",
+      width: "300px",
+      marginBottom: "1rem",
     } as React.CSSProperties,
     exportBtn: {
       background: "#10b981",
@@ -361,6 +376,13 @@ const PromotionRequests = () => {
       fontWeight: "600",
       display: "inline-block",
     } as React.CSSProperties,
+    platformBadge: {
+      padding: "0.25rem 0.5rem",
+      borderRadius: "6px",
+      fontSize: "0.75rem",
+      fontWeight: "600",
+      display: "inline-block",
+    } as React.CSSProperties,
     actionBtn: {
       padding: "0.25rem 0.75rem",
       border: "none",
@@ -373,10 +395,6 @@ const PromotionRequests = () => {
     viewBtn: {
       background: "#dbeafe",
       color: "#1e40af",
-    } as React.CSSProperties,
-    editBtn: {
-      background: "#fef3c7",
-      color: "#92400e",
     } as React.CSSProperties,
     deleteBtn: {
       background: "#fee2e2",
@@ -425,6 +443,7 @@ const PromotionRequests = () => {
       padding: "1rem",
       borderRadius: "8px",
       marginTop: "1rem",
+      whiteSpace: "pre-wrap" as const,
     } as React.CSSProperties,
     loading: {
       textAlign: "center" as const,
@@ -439,12 +458,32 @@ const PromotionRequests = () => {
       borderRadius: "8px",
       marginBottom: "2rem",
     } as React.CSSProperties,
+    pagination: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "1rem",
+      background: "#f8fafc",
+      borderTop: "1px solid #e2e8f0",
+    } as React.CSSProperties,
+    paginationBtn: {
+      padding: "0.5rem 1rem",
+      border: "1px solid #e2e8f0",
+      background: "white",
+      borderRadius: "6px",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+    } as React.CSSProperties,
+    paginationInfo: {
+      color: "#6b7280",
+      fontSize: "0.875rem",
+    } as React.CSSProperties,
   };
 
   if (loading) {
     return (
       <div style={styles.pageContainer}>
-        <div style={styles.loading}>Loading services...</div>
+        <div style={styles.loading}>Loading orders...</div>
       </div>
     );
   }
@@ -456,7 +495,7 @@ const PromotionRequests = () => {
           <h3>Error</h3>
           <p>{error}</p>
           <button
-            onClick={fetchServices}
+            onClick={() => fetchOrders(currentPage, filter)}
             style={
               {
                 background: "#4f46e5",
@@ -480,9 +519,9 @@ const PromotionRequests = () => {
     <div style={styles.pageContainer}>
       <div style={styles.headerActions}>
         <div style={styles.pageHeader}>
-          <h1 style={styles.pageTitle}>Service Management</h1>
+          <h1 style={styles.pageTitle}>Order Management</h1>
           <p style={styles.pageSubtitle}>
-            Manage and track all social media services
+            Manage and track all customer orders
           </p>
         </div>
 
@@ -490,7 +529,7 @@ const PromotionRequests = () => {
           <button
             style={styles.exportBtn}
             onClick={exportToExcel}
-            title="Export all services to Excel"
+            title="Export all orders to Excel"
           >
             <svg
               width="16"
@@ -516,7 +555,7 @@ const PromotionRequests = () => {
                 } as React.CSSProperties
               }
               onClick={exportFilteredToExcel}
-              title={`Export ${filter} services to Excel`}
+              title={`Export ${filter} orders to Excel`}
             >
               <svg
                 width="16"
@@ -536,24 +575,45 @@ const PromotionRequests = () => {
         </div>
       </div>
 
+      {/* Search Box */}
+      <input
+        type="text"
+        placeholder="Search orders by name, email, service, or platform..."
+        style={styles.searchBox}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
           <div style={{ ...styles.statValue, color: "#3b82f6" }}>
-            {services.length}
+            {orders.length}
           </div>
-          <div style={styles.statLabel}>Total Services</div>
-        </div>
-        <div style={styles.statCard}>
-          <div style={{ ...styles.statValue, color: "#10b981" }}>
-            {services.filter((s) => s.status === "active").length}
-          </div>
-          <div style={styles.statLabel}>Active</div>
+          <div style={styles.statLabel}>Total Orders</div>
         </div>
         <div style={styles.statCard}>
           <div style={{ ...styles.statValue, color: "#f59e0b" }}>
-            {services.filter((s) => s.status === "inactive").length}
+            {orders.filter((o) => o.status === "pending").length}
           </div>
-          <div style={styles.statLabel}>Inactive</div>
+          <div style={styles.statLabel}>Pending</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.statValue, color: "#10b981" }}>
+            {orders.filter((o) => o.status === "confirmed").length}
+          </div>
+          <div style={styles.statLabel}>Confirmed</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.statValue, color: "#8b5cf6" }}>
+            {orders.filter((o) => o.status === "in_progress").length}
+          </div>
+          <div style={styles.statLabel}>In Progress</div>
+        </div>
+        <div style={styles.statCard}>
+          <div style={{ ...styles.statValue, color: "#06b6d4" }}>
+            {orders.filter((o) => o.status === "completed").length}
+          </div>
+          <div style={styles.statLabel}>Completed</div>
         </div>
       </div>
 
@@ -567,29 +627,51 @@ const PromotionRequests = () => {
           }
           onClick={() => setFilter("all")}
         >
-          All Services
+          All Orders
         </button>
         <button
           style={
             {
               ...styles.filterBtn,
-              ...(filter === "active" ? styles.filterBtnActive : {}),
+              ...(filter === "pending" ? styles.filterBtnActive : {}),
             } as React.CSSProperties
           }
-          onClick={() => setFilter("active")}
+          onClick={() => setFilter("pending")}
         >
-          Active
+          Pending
         </button>
         <button
           style={
             {
               ...styles.filterBtn,
-              ...(filter === "inactive" ? styles.filterBtnActive : {}),
+              ...(filter === "confirmed" ? styles.filterBtnActive : {}),
             } as React.CSSProperties
           }
-          onClick={() => setFilter("inactive")}
+          onClick={() => setFilter("confirmed")}
         >
-          Inactive
+          Confirmed
+        </button>
+        <button
+          style={
+            {
+              ...styles.filterBtn,
+              ...(filter === "in_progress" ? styles.filterBtnActive : {}),
+            } as React.CSSProperties
+          }
+          onClick={() => setFilter("in_progress")}
+        >
+          In Progress
+        </button>
+        <button
+          style={
+            {
+              ...styles.filterBtn,
+              ...(filter === "completed" ? styles.filterBtnActive : {}),
+            } as React.CSSProperties
+          }
+          onClick={() => setFilter("completed")}
+        >
+          Completed
         </button>
       </div>
 
@@ -597,28 +679,27 @@ const PromotionRequests = () => {
         <table style={styles.table}>
           <thead style={styles.tableHeader}>
             <tr>
-              <th style={styles.tableHeaderCell}>Service Name</th>
-              <th style={styles.tableHeaderCell}>Provider</th>
+              <th style={styles.tableHeaderCell}>Customer</th>
+              <th style={styles.tableHeaderCell}>Service</th>
               <th style={styles.tableHeaderCell}>Platform</th>
-              <th style={styles.tableHeaderCell}>Price</th>
-              <th style={styles.tableHeaderCell}>Quantity Range</th>
-              <th style={styles.tableHeaderCell}>Delivery Time</th>
+              <th style={styles.tableHeaderCell}>Budget</th>
+              <th style={styles.tableHeaderCell}>Timeline</th>
               <th style={styles.tableHeaderCell}>Status</th>
+              <th style={styles.tableHeaderCell}>Created</th>
               <th style={styles.tableHeaderCell}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredServices.map((service) => {
-              const statusColor = getStatusColor(service.status);
-              const urgency = getUrgency(service.deliveryTime);
-              const urgencyColor = getUrgencyColor(urgency);
+            {filteredOrders.map((order) => {
+              const statusColor = getStatusColor(order.status);
+              const platformColor = getPlatformColor(order.platform);
 
               return (
-                <tr key={service._id}>
+                <tr key={order._id}>
                   <td style={styles.tableCell}>
                     <div>
                       <div style={{ fontWeight: "600" } as React.CSSProperties}>
-                        {service.serviceName}
+                        {order.name}
                       </div>
                       <div
                         style={
@@ -628,55 +709,40 @@ const PromotionRequests = () => {
                           } as React.CSSProperties
                         }
                       >
-                        {service.category}
-                      </div>
-                    </div>
-                  </td>
-                  <td style={styles.tableCell}>
-                    <div>
-                      <div style={{ fontWeight: "600" } as React.CSSProperties}>
-                        {service.username}
+                        {order.email}
                       </div>
                       <div
                         style={
                           {
-                            fontSize: "0.875rem",
-                            color: "#6b7280",
+                            fontSize: "0.75rem",
+                            color: "#9ca3af",
                           } as React.CSSProperties
                         }
                       >
-                        {service.email}
+                        {order.phone}
                       </div>
                     </div>
                   </td>
-                  <td style={styles.tableCell}>{service.platform}</td>
-                  <td style={styles.tableCell}>${service.basePrice}</td>
                   <td style={styles.tableCell}>
-                    {service.minQuantity} - {service.maxQuantity}
+                    <div style={{ fontWeight: "600" } as React.CSSProperties}>
+                      {order.service}
+                    </div>
                   </td>
                   <td style={styles.tableCell}>
-                    <div
+                    <span
                       style={
                         {
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
+                          ...styles.platformBadge,
+                          background: platformColor.bg,
+                          color: platformColor.text,
                         } as React.CSSProperties
                       }
                     >
-                      <div
-                        style={
-                          {
-                            width: "8px",
-                            height: "8px",
-                            borderRadius: "50%",
-                            backgroundColor: urgencyColor,
-                          } as React.CSSProperties
-                        }
-                      />
-                      {service.deliveryTime}
-                    </div>
+                      {order.platform}
+                    </span>
                   </td>
+                  <td style={styles.tableCell}>{order.serviceBudget}</td>
+                  <td style={styles.tableCell}>{order.timeline}</td>
                   <td style={styles.tableCell}>
                     <span
                       style={
@@ -687,9 +753,21 @@ const PromotionRequests = () => {
                         } as React.CSSProperties
                       }
                     >
-                      {service.status.charAt(0).toUpperCase() +
-                        service.status.slice(1).replace("_", " ")}
+                      {order.status.charAt(0).toUpperCase() +
+                        order.status.slice(1).replace("_", " ")}
                     </span>
+                  </td>
+                  <td style={styles.tableCell}>
+                    <div
+                      style={
+                        {
+                          fontSize: "0.875rem",
+                          color: "#6b7280",
+                        } as React.CSSProperties
+                      }
+                    >
+                      {formatDate(order.createdAt)}
+                    </div>
                   </td>
                   <td style={styles.tableCell}>
                     <button
@@ -699,14 +777,14 @@ const PromotionRequests = () => {
                           ...styles.viewBtn,
                         } as React.CSSProperties
                       }
-                      onClick={() => setSelectedService(service)}
+                      onClick={() => setSelectedOrder(order)}
                     >
                       View
                     </button>
                     <select
-                      value={service.status}
+                      value={order.status}
                       onChange={(e) =>
-                        updateServiceStatus(service._id, e.target.value)
+                        updateOrderStatus(order._id, e.target.value)
                       }
                       style={
                         {
@@ -718,8 +796,11 @@ const PromotionRequests = () => {
                         } as React.CSSProperties
                       }
                     >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
                     </select>
                     <button
                       style={
@@ -728,7 +809,7 @@ const PromotionRequests = () => {
                           ...styles.deleteBtn,
                         } as React.CSSProperties
                       }
-                      onClick={() => deleteService(service._id)}
+                      onClick={() => deleteOrder(order._id)}
                     >
                       Delete
                     </button>
@@ -738,82 +819,79 @@ const PromotionRequests = () => {
             })}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div style={styles.pagination}>
+          <button
+            style={styles.paginationBtn}
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <div style={styles.paginationInfo}>
+            Page {currentPage} of {totalPages}
+          </div>
+          <button
+            style={styles.paginationBtn}
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
-      {selectedService && (
+      {selectedOrder && (
         <div
           style={styles.modalOverlay}
-          onClick={() => setSelectedService(null)}
+          onClick={() => setSelectedOrder(null)}
         >
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h2 style={{ marginBottom: "1rem" } as React.CSSProperties}>
-              Service Details
+              Order Details
             </h2>
             <div style={styles.detailGrid}>
               <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Service Name</div>
-                <div style={styles.detailValue}>
-                  {selectedService.serviceName}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Provider</div>
-                <div style={styles.detailValue}>{selectedService.username}</div>
+                <div style={styles.detailLabel}>Customer Name</div>
+                <div style={styles.detailValue}>{selectedOrder.name}</div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Email</div>
-                <div style={styles.detailValue}>{selectedService.email}</div>
+                <div style={styles.detailValue}>{selectedOrder.email}</div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Phone</div>
-                <div style={styles.detailValue}>
-                  {selectedService.phoneNumber}
-                </div>
+                <div style={styles.detailValue}>{selectedOrder.phone}</div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Service</div>
+                <div style={styles.detailValue}>{selectedOrder.service}</div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Budget</div>
+                <div style={styles.detailValue}>{selectedOrder.serviceBudget}</div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Platform</div>
-                <div style={styles.detailValue}>{selectedService.platform}</div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Category</div>
-                <div style={styles.detailValue}>{selectedService.category}</div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Base Price</div>
                 <div style={styles.detailValue}>
-                  ${selectedService.basePrice}
+                  <span
+                    style={
+                      {
+                        ...styles.platformBadge,
+                        background: getPlatformColor(selectedOrder.platform).bg,
+                        color: getPlatformColor(selectedOrder.platform).text,
+                      } as React.CSSProperties
+                    }
+                  >
+                    {selectedOrder.platform}
+                  </span>
                 </div>
               </div>
               <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Quantity Range</div>
-                <div style={styles.detailValue}>
-                  {selectedService.minQuantity} - {selectedService.maxQuantity}
-                </div>
+                <div style={styles.detailLabel}>Timeline</div>
+                <div style={styles.detailValue}>{selectedOrder.timeline}</div>
               </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Delivery Time</div>
-                <div style={styles.detailValue}>
-                  {selectedService.deliveryTime}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Quality</div>
-                <div style={styles.detailValue}>{selectedService.quality}</div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Refill Available</div>
-                <div style={styles.detailValue}>
-                  {selectedService.refill ? "Yes" : "No"}
-                </div>
-              </div>
-              {selectedService.refillPeriod && (
-                <div style={styles.detailItem}>
-                  <div style={styles.detailLabel}>Refill Period</div>
-                  <div style={styles.detailValue}>
-                    {selectedService.refillPeriod}
-                  </div>
-                </div>
-              )}
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Status</div>
                 <div style={styles.detailValue}>
@@ -821,21 +899,43 @@ const PromotionRequests = () => {
                     style={
                       {
                         ...styles.statusBadge,
-                        background: getStatusColor(selectedService.status).bg,
-                        color: getStatusColor(selectedService.status).text,
+                        background: getStatusColor(selectedOrder.status).bg,
+                        color: getStatusColor(selectedOrder.status).text,
                       } as React.CSSProperties
                     }
                   >
-                    {selectedService.status.charAt(0).toUpperCase() +
-                      selectedService.status.slice(1).replace("_", " ")}
+                    {selectedOrder.status.charAt(0).toUpperCase() +
+                      selectedOrder.status.slice(1).replace("_", " ")}
                   </span>
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Source</div>
+                <div style={styles.detailValue}>{selectedOrder.source}</div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Created</div>
+                <div style={styles.detailValue}>
+                  {formatDate(selectedOrder.createdAt)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Last Updated</div>
+                <div style={styles.detailValue}>
+                  {formatDate(selectedOrder.updatedAt)}
                 </div>
               </div>
             </div>
             <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Description</div>
-              <div style={styles.messageBox}>{selectedService.description}</div>
+              <div style={styles.detailLabel}>Goals</div>
+              <div style={styles.messageBox}>{selectedOrder.goals}</div>
             </div>
+            {selectedOrder.message && (
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Additional Message</div>
+                <div style={styles.messageBox}>{selectedOrder.message}</div>
+              </div>
+            )}
             <button
               style={
                 {
@@ -848,7 +948,7 @@ const PromotionRequests = () => {
                   marginTop: "1rem",
                 } as React.CSSProperties
               }
-              onClick={() => setSelectedService(null)}
+              onClick={() => setSelectedOrder(null)}
             >
               Close
             </button>

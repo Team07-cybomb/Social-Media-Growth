@@ -22,24 +22,13 @@ const serviceSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true
-  },
-  phoneNumber: {
-    type: String,
-    required: true,
-    trim: true,
-  },
   platform: {
     type: String,
     required: true,
     enum: [
       "Facebook",
       "Instagram",
-      "Twitter",
+      "Twitter", 
       "YouTube",
       "TikTok",
       "LinkedIn",
