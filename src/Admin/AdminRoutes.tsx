@@ -6,9 +6,10 @@ import Dashboard from "./Dashboard";
 import PromotionRequests from "./promotion-requests";
 import Customers from "./Customers";
 import Services from "./Services";
-import Analytics from "./Analytics";
-import Settings from "./settings";
+// import Analytics from "./Analytics";
+// import Settings from "./settings";
 import Sidebar from "./Sidebar";
+import ContactMessages from "./ContactMessages";
 
 const AdminRoutes = () => {
   const styles = {
@@ -76,6 +77,7 @@ const AdminRoutes = () => {
                     <Route path="/promotion-requests" element={<PromotionRequests/>} />
                     <Route path="/user" element={<Customers/>} />
                     <Route path="/customer" element={<Services/>} />
+                    <Route path="/contact-messages" element={<ContactMessages/>}/>
                     {/* <Route path="/analytics" element={<Analytics/>} />
                     <Route path="/settings" element={<Settings/>} /> */}
                   </Routes>
