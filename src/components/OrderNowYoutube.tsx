@@ -59,6 +59,7 @@ export const OrderNowYoutube = ({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // ✅ Fetch user data from localStorage when modal opens
   useEffect(() => {
@@ -211,6 +212,8 @@ export const OrderNowYoutube = ({
       ...prev,
       [name]: value,
     }));
+    // Clear error when user starts typing
+    if (submitError) setSubmitError("");
   };
 
   const handleServiceSelect = (serviceName: string, servicePrice: string) => {
@@ -226,32 +229,69 @@ export const OrderNowYoutube = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Order submitted:", formData);
-      alert("Thank you for your order! We will contact you within 24 hours.");
-      onClose();
-      setFormData({
-        name: userData?.name || "",
-        email: userData?.email || "",
-        phone: userData?.phone || "",
-        service: "",
-        serviceBudget: "",
-        budget: "",
-        timeline: "",
-        goals: "",
-        message: "",
+      const token = localStorage.getItem("token");
+      
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: formData.service,
+          serviceBudget: formData.serviceBudget,
+          platform: platform,
+          timeline: formData.timeline,
+          goals: formData.goals,
+          message: formData.message
+        }),
       });
-      setCurrentStep(1);
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.msg || "Failed to submit order");
+      }
+
+      console.log("YouTube order submitted successfully:", result.data);
+      
+      // Show success message
+      alert(result.msg || "Thank you for your YouTube service order! We will contact you within 24 hours.");
+      
+      // Reset form and close modal
+      resetForm();
+      onClose();
+      
     } catch (error) {
-      console.error("Error submitting order:", error);
-      alert("There was an error submitting your order. Please try again.");
+      console.error("Error submitting YouTube order:", error);
+      const errorMessage = error instanceof Error ? error.message : "There was an error submitting your order. Please try again.";
+      setSubmitError(errorMessage);
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: userData?.name || "",
+      email: userData?.email || "",
+      phone: userData?.phone || "",
+      service: "",
+      serviceBudget: "",
+      budget: "",
+      timeline: "",
+      goals: "",
+      message: "",
+    });
+    setCurrentStep(1);
+    setSubmitError("");
   };
 
   const nextStep = () => {
@@ -260,6 +300,11 @@ export const OrderNowYoutube = ({
 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -592,6 +637,16 @@ export const OrderNowYoutube = ({
             margin-top: 0.25rem;
           }
 
+          .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+          }
+
           /* Budget Display Styles */
           .budget-display {
             background: #fef2f2;
@@ -643,13 +698,13 @@ export const OrderNowYoutube = ({
         `}
       </style>
 
-      <div className="order-modal-overlay" onClick={onClose}>
+      <div className="order-modal-overlay" onClick={handleClose}>
         <div
           className="order-modal-content"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="order-modal-header">
-            <button className="order-modal-close" onClick={onClose}>
+            <button className="order-modal-close" onClick={handleClose}>
               <X size={20} />
             </button>
             <h2 className="order-modal-title">
@@ -704,6 +759,12 @@ export const OrderNowYoutube = ({
           </div>
 
           <div className="order-modal-body">
+            {submitError && (
+              <div className="error-message">
+                {submitError}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit}>
               {/* Step 1: Service Selection */}
               {currentStep === 1 && (
@@ -712,7 +773,7 @@ export const OrderNowYoutube = ({
                     className="form-label"
                     style={{ fontSize: "1.125rem", marginBottom: "1rem" }}
                   >
-                    Choose a Service
+                    Choose a YouTube Service
                   </h3>
                   <div className="service-grid">
                     {serviceOptions.map((option) => {
@@ -823,8 +884,7 @@ export const OrderNowYoutube = ({
                         </div>
                       ) : (
                         <div className="phone-warning">
-                          Please provide your phone number for better
-                          communication
+                          Please provide your phone number for better communication
                         </div>
                       )}
                     </div>
@@ -885,7 +945,7 @@ export const OrderNowYoutube = ({
                   </h3>
 
                   <div className="form-grid">
-                    {/* Service Budget Display - No Dropdown */}
+                    {/* Service Budget Display */}
                     <div className="form-group full-width">
                       <div className="budget-display">
                         <div className="budget-label">Service Budget</div>
@@ -893,7 +953,7 @@ export const OrderNowYoutube = ({
                           {formData.serviceBudget}
                         </div>
                         <div className="budget-note">
-                          This is the price for your selected service
+                          This is the price for your selected YouTube service
                         </div>
                       </div>
                     </div>
@@ -923,7 +983,7 @@ export const OrderNowYoutube = ({
                         value={formData.goals}
                         onChange={handleInputChange}
                         className="form-textarea"
-                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase subscribers, boost video views, improve engagement, monetize channel, etc.)`}
+                        placeholder={`What are your main objectives for ${platform} growth? (e.g., increase subscribers, boost video views, improve engagement, monetize channel, build community, etc.)`}
                         required
                       />
                     </div>
@@ -957,7 +1017,7 @@ export const OrderNowYoutube = ({
                           isSubmitting || !formData.timeline || !formData.goals
                         }
                       >
-                        {isSubmitting ? "Submitting..." : "Complete Order"}
+                        {isSubmitting ? "Submitting..." : "Complete YouTube Order"}
                       </button>
                     </div>
                   </div>

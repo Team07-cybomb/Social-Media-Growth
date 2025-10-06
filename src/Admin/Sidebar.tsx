@@ -9,7 +9,7 @@ const Sidebar = () => {
     { path: "/admin/promotion-requests", label: "Promotion Requests", icon: "🚀" },
     { path: "/admin/customer", label: "Customers", icon: "👥" },
     { path: "/admin/user", label: "Users", icon: "👥" },
-     { path: "/admin/contact-messages", label: "Contact Messages", icon: "✉️" },
+     { path: "/admin/contact-messages", label: "Contact Details", icon: "✉️" },
 
     // { path: "/admin/analytics", label: "Analytics", icon: "📈" },
     // { path: "/admin/settings", label: "Settings", icon: "⚙️" },

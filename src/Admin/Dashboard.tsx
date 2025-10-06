@@ -2,23 +2,31 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
-// Define types for our data
-interface PromotionRequest {
+
+// Define types for our data - Updated to match Order model
+interface Order {
   _id: string;
-  serviceName: string;
-  username: string;
-  platform: string;
-  status: "active" | "inactive" | "out_of_stock";
-  createdAt: string;
+  name: string;
   email: string;
-  phoneNumber: string;
+  phone: string;
+  service: string;
+  serviceBudget: string;
+  platform: string;
+  timeline: string;
+  goals: string;
+  message: string;
+  status: "pending" | "confirmed" | "in_progress" | "completed" | "cancelled";
+  source: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface DashboardStats {
-  totalRequests: number;
-  pendingRequests: number;
-  completedRequests: number;
+  totalOrders: number;
+  pendingOrders: number;
+  completedOrders: number;
   totalUsers: number;
+  revenue: number;
 }
 
 interface StatData {
@@ -33,6 +41,7 @@ interface Service {
   name: string;
   count: number;
   icon: string;
+  platform: string;
 }
 
 interface ApiResponse<T> {
@@ -58,32 +67,27 @@ interface User {
 }
 
 // Define the display status type
-type DisplayStatus = "pending" | "in-progress" | "completed" | "rejected";
+type DisplayStatus = "pending" | "confirmed" | "in-progress" | "completed" | "cancelled";
 
 const Dashboard = () => {
-  const [promotionRequests, setPromotionRequests] = useState<
-    PromotionRequest[]
-  >([]);
-  const [recentRequests, setRecentRequests] = useState<PromotionRequest[]>([]); // Added state for recent requests
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
-    totalRequests: 0,
-    pendingRequests: 0,
-    completedRequests: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    completedOrders: 0,
     totalUsers: 0,
+    revenue: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API base URL - Fixed the env access
-  // const API_BASE_URL =
-  //   (import.meta as any).env?.VITE_API_URL || `${API_URL}/api`;
-
-  // Fetch promotion requests from backend
-  const fetchPromotionRequests = async () => {
+  // Fetch orders from backend
+  const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_URL}/api/services`, {
+      const response = await fetch(`${API_URL}/api/orders?limit=100`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -91,28 +95,28 @@ const Dashboard = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch promotion requests");
+        throw new Error("Failed to fetch orders");
       }
 
-      const result: ApiResponse<PromotionRequest[]> = await response.json();
+      const result: ApiResponse<Order[]> = await response.json();
 
       if (result.success) {
-        setPromotionRequests(result.data);
+        setOrders(result.data);
 
-        // Get the 8 most recent requests by sorting by createdAt date
-        const sortedRequests = [...result.data].sort(
+        // Get the 8 most recent orders by sorting by createdAt date
+        const sortedOrders = [...result.data].sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
-        setRecentRequests(sortedRequests.slice(0, 8)); // Store only first 8
+        setRecentOrders(sortedOrders.slice(0, 8));
 
         return result.data;
       } else {
         throw new Error("Failed to fetch data");
       }
     } catch (err) {
-      console.error("Error fetching promotion requests:", err);
-      setError("Failed to load promotion requests");
+      console.error("Error fetching orders:", err);
+      setError("Failed to load orders");
       return [];
     }
   };
@@ -121,7 +125,7 @@ const Dashboard = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+      const response = await fetch(`${API_URL}/api/auth/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -146,44 +150,32 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch dashboard statistics
-  const fetchDashboardStats = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/auth/dashboard-stats`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        return result.data;
-      }
-      return null;
-    } catch (err) {
-      console.error("Error fetching dashboard stats:", err);
-      return null;
-    }
-  };
-
   // Calculate statistics from the data
-  const calculateStats = (requests: PromotionRequest[], users: User[]) => {
-    const totalRequests = requests.length;
-    const pendingRequests = requests.filter(
-      (req) => req.status === "active"
+  const calculateStats = (orders: Order[], users: User[]) => {
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter(
+      (order) => order.status === "pending"
     ).length;
-    const completedRequests = requests.filter(
-      (req) => req.status === "inactive"
+    const completedOrders = orders.filter(
+      (order) => order.status === "completed"
     ).length;
     const totalUsers = users.length;
 
+    // Calculate revenue from serviceBudget (extract numbers from strings like "$299/month")
+    const revenue = orders.reduce((total, order) => {
+      const priceMatch = order.serviceBudget.match(/\$(\d+)/);
+      if (priceMatch) {
+        return total + parseInt(priceMatch[1]);
+      }
+      return total;
+    }, 0);
+
     return {
-      totalRequests,
-      pendingRequests,
-      completedRequests,
+      totalOrders,
+      pendingOrders,
+      completedOrders,
       totalUsers,
+      revenue,
     };
   };
 
@@ -193,25 +185,14 @@ const Dashboard = () => {
     setError(null);
 
     try {
-      const [requests, usersData, dashboardStats] = await Promise.all([
-        fetchPromotionRequests(),
+      const [ordersData, usersData] = await Promise.all([
+        fetchOrders(),
         fetchUsers(),
-        fetchDashboardStats(),
       ]);
 
-      // If we have dashboard stats from API, use them, otherwise use calculated stats
-      if (dashboardStats) {
-        setStats({
-          totalRequests: dashboardStats.totalRequests,
-          pendingRequests: dashboardStats.activeRequests,
-          completedRequests: dashboardStats.inactiveRequests,
-          totalUsers: dashboardStats.totalUsers || usersData.length,
-        });
-      } else {
-        // Calculate stats from requests and users
-        const calculatedStats = calculateStats(requests, usersData);
-        setStats(calculatedStats);
-      }
+      // Calculate stats from orders and users
+      const calculatedStats = calculateStats(ordersData, usersData);
+      setStats(calculatedStats);
     } catch (err) {
       setError("Failed to load dashboard data");
       console.error("Error loading dashboard data:", err);
@@ -230,14 +211,14 @@ const Dashboard = () => {
     loadData();
   };
 
-  // Map service status to display status with proper type assertion
-  const getDisplayStatus = (
-    status: PromotionRequest["status"]
-  ): DisplayStatus => {
-    const statusMap: Record<PromotionRequest["status"], DisplayStatus> = {
-      active: "in-progress",
-      inactive: "completed",
-      out_of_stock: "pending",
+  // Map order status to display status
+  const getDisplayStatus = (status: Order["status"]): DisplayStatus => {
+    const statusMap: Record<Order["status"], DisplayStatus> = {
+      pending: "pending",
+      confirmed: "confirmed",
+      in_progress: "in-progress",
+      completed: "completed",
+      cancelled: "cancelled",
     };
     return statusMap[status] || "pending";
   };
@@ -251,60 +232,36 @@ const Dashboard = () => {
     });
   };
 
-  const statsData: StatData[] = [
-    {
-      value: stats.totalRequests.toString(),
-      label: "Total Requests",
-      change: "+8%",
-      icon: "📨",
-      color: "blue",
-    },
-    {
-      value: stats.pendingRequests.toString(),
-      label: "Active Requests",
-      change: "+3 new",
-      icon: "⏳",
-      color: "orange",
-    },
-    {
-      value: stats.completedRequests.toString(),
-      label: "Completed",
-      change: "+12%",
-      icon: "✅",
-      color: "green",
-    },
-    {
-      value: stats.totalUsers.toString(),
-      label: "Total Users",
-      change: "+5 new",
-      icon: "👥",
-      color: "purple",
-    },
-  ];
-
-  // Calculate popular services from actual data
-  const services: Service[] = promotionRequests
-    .reduce((acc: Service[], request) => {
-      const serviceName = request.serviceName;
+  // Calculate popular services from actual order data
+  const services: Service[] = orders
+    .reduce((acc: Service[], order) => {
+      const serviceName = order.service;
       const existingService = acc.find((s) => s.name === serviceName);
 
       if (existingService) {
         existingService.count += 1;
       } else {
         const serviceIcons: { [key: string]: string } = {
-          YouTube: "📺",
-          Instagram: "📷",
-          Facebook: "👍",
-          Twitter: "🐦",
-          TikTok: "🎵",
-          LinkedIn: "💼",
-          Other: "🌐",
+          "Follower Growth": "👥",
+          "Engagement Boost": "💬",
+          "Content Strategy": "📊",
+          "Analytics & Insights": "📈",
+          "Social Ads": "🎯",
+          "Complete Management": "🚀",
+          "Page Likes Growth": "👍",
+          "Facebook Ads Management": "📱",
+          "LinkedIn Ads": "💼",
+          "Twitter Ads": "🐦",
+          "YouTube Ads Management": "📺",
+          "Subscriber Growth": "📹",
+          "Video Optimization": "🎬",
         };
 
         acc.push({
           name: serviceName,
           count: 1,
-          icon: serviceIcons[request.platform] || "🚀",
+          icon: serviceIcons[serviceName] || "🌟",
+          platform: order.platform,
         });
       }
 
@@ -313,12 +270,44 @@ const Dashboard = () => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
 
+  const statsData: StatData[] = [
+    {
+      value: stats.totalOrders.toString(),
+      label: "Total Orders",
+      change: "+12%",
+      icon: "📦",
+      color: "blue",
+    },
+    {
+      value: stats.pendingOrders.toString(),
+      label: "Pending Orders",
+      change: "+3 new",
+      icon: "⏳",
+      color: "orange",
+    },
+    {
+      value: stats.completedOrders.toString(),
+      label: "Completed",
+      change: "+8%",
+      icon: "✅",
+      color: "green",
+    },
+    // {
+    //   value: `$${stats.revenue}`,
+    //   label: "Total Revenue",
+    //   change: "+15%",
+    //   icon: "💰",
+    //   color: "purple",
+    // },
+  ];
+
   const getStatusColor = (status: DisplayStatus): string => {
     const colors: Record<DisplayStatus, string> = {
       pending: "#f59e0b",
-      "in-progress": "#3b82f6",
+      confirmed: "#3b82f6",
+      "in-progress": "#8b5cf6",
       completed: "#10b981",
-      rejected: "#ef4444",
+      cancelled: "#ef4444",
     };
     return colors[status] || "#6b7280";
   };
@@ -538,6 +527,13 @@ const Dashboard = () => {
       fontWeight: "500",
       color: "#374151",
     },
+    servicePlatform: {
+      fontSize: "0.75rem",
+      color: "#6b7280",
+      background: "#e5e7eb",
+      padding: "0.2rem 0.5rem",
+      borderRadius: "6px",
+    },
     serviceCount: {
       background: "#4f46e5",
       color: "white",
@@ -635,9 +631,9 @@ const Dashboard = () => {
 
       <div style={styles.dashboardHeader}>
         <div>
-          <h1 style={styles.dashboardTitle}>Promotion Dashboard</h1>
+          <h1 style={styles.dashboardTitle}>Order Dashboard</h1>
           <p style={styles.dashboardSubtitle}>
-            Manage social media promotion requests and services
+            Manage customer orders and service requests
           </p>
         </div>
         <div style={styles.headerActions}>
@@ -656,24 +652,25 @@ const Dashboard = () => {
             <span>↻</span>
             Refresh Data
           </button>
-          <button
-            style={styles.btnPrimary}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#4338ca";
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow =
-                "0 4px 12px rgba(79, 70, 229, 0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#4f46e5";
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-            onClick={() => (window.location.href = "/admin/promotion-requests")}
-          >
-            <span>+</span>
-            View All Requests
-          </button>
+          <Link to="/admin/orders" style={{ textDecoration: 'none' }}>
+            <button
+              style={styles.btnPrimary}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#4338ca";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(79, 70, 229, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#4f46e5";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <span>+</span>
+              View All Orders
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -699,11 +696,11 @@ const Dashboard = () => {
                 >
                   {stat.value}
                 </p>
-                <span
+                {/* <span
                   style={{ ...styles.statChange, ...styles.statChangePositive }}
                 >
                   {stat.change}
-                </span>
+                </span> */}
               </div>
               <div style={styles.statIcon}>{stat.icon}</div>
             </div>
@@ -714,31 +711,39 @@ const Dashboard = () => {
       <div style={styles.dashboardContent}>
         <div style={styles.contentCard}>
           <div style={styles.cardHeader}>
-            <h2 style={styles.cardTitle}>Recent Promotion Requests</h2>
-            <Link to="/admin/promotion-requests">
+            <h2 style={styles.cardTitle}>Recent Orders</h2>
+            <Link to="/admin/orders">
               <button style={styles.textLink}>View All</button>
             </Link>
           </div>
-          {recentRequests.length === 0 ? (
-            <div style={styles.emptyState}>No promotion requests found</div>
+          {recentOrders.length === 0 ? (
+            <div style={styles.emptyState}>No orders found</div>
           ) : (
             <table style={styles.table}>
               <thead style={styles.tableHeader}>
                 <tr>
                   <th style={styles.tableHeaderCell}>Customer</th>
                   <th style={styles.tableHeaderCell}>Service</th>
+                  <th style={styles.tableHeaderCell}>Platform</th>
                   <th style={styles.tableHeaderCell}>Status</th>
                   <th style={styles.tableHeaderCell}>Date</th>
-                  {/* <th style={styles.tableHeaderCell}>Action</th> */}
                 </tr>
               </thead>
               <tbody>
-                {recentRequests.map((request) => {
-                  const displayStatus = getDisplayStatus(request.status);
+                {recentOrders.map((order) => {
+                  const displayStatus = getDisplayStatus(order.status);
                   return (
-                    <tr key={request._id}>
-                      <td style={styles.tableCell}>{request.username}</td>
-                      <td style={styles.tableCell}>{request.serviceName}</td>
+                    <tr key={order._id}>
+                      <td style={styles.tableCell}>
+                        <div>
+                          <div style={{ fontWeight: "600" }}>{order.name}</div>
+                          <div style={{ fontSize: "0.875rem", color: "#6b7280" }}>
+                            {order.email}
+                          </div>
+                        </div>
+                      </td>
+                      <td style={styles.tableCell}>{order.service}</td>
+                      <td style={styles.tableCell}>{order.platform}</td>
                       <td style={styles.tableCell}>
                         <span
                           style={{
@@ -752,11 +757,8 @@ const Dashboard = () => {
                         </span>
                       </td>
                       <td style={styles.tableCell}>
-                        {formatDate(request.createdAt)}
+                        {formatDate(order.createdAt)}
                       </td>
-                      {/* <td style={styles.tableCell}>
-                        <button style={styles.textLink}>View</button>
-                      </td> */}
                     </tr>
                   );
                 })}
@@ -780,11 +782,16 @@ const Dashboard = () => {
                   const name = e.currentTarget.querySelector(
                     ".service-name"
                   ) as HTMLElement;
+                  const platform = e.currentTarget.querySelector(
+                    ".service-platform"
+                  ) as HTMLElement;
                   const count = e.currentTarget.querySelector(
                     ".service-count"
                   ) as HTMLElement;
-                  if (name && count) {
+                  if (name && platform && count) {
                     name.style.color = "white";
+                    platform.style.background = "white";
+                    platform.style.color = "#4f46e5";
                     count.style.background = "white";
                     count.style.color = "#4f46e5";
                   }
@@ -795,11 +802,16 @@ const Dashboard = () => {
                   const name = e.currentTarget.querySelector(
                     ".service-name"
                   ) as HTMLElement;
+                  const platform = e.currentTarget.querySelector(
+                    ".service-platform"
+                  ) as HTMLElement;
                   const count = e.currentTarget.querySelector(
                     ".service-count"
                   ) as HTMLElement;
-                  if (name && count) {
+                  if (name && platform && count) {
                     name.style.color = "#374151";
+                    platform.style.background = "#e5e7eb";
+                    platform.style.color = "#6b7280";
                     count.style.background = "#4f46e5";
                     count.style.color = "white";
                   }
@@ -807,9 +819,14 @@ const Dashboard = () => {
               >
                 <div style={styles.serviceInfo}>
                   <span style={styles.serviceIcon}>{service.icon}</span>
-                  <span style={styles.serviceName} className="service-name">
-                    {service.name}
-                  </span>
+                  <div>
+                    <div style={styles.serviceName} className="service-name">
+                      {service.name}
+                    </div>
+                    <span style={styles.servicePlatform} className="service-platform">
+                      {service.platform}
+                    </span>
+                  </div>
                 </div>
                 <span style={styles.serviceCount} className="service-count">
                   {service.count}
