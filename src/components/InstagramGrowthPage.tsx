@@ -15,9 +15,9 @@ import {
   MessageCircle,
   Heart,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react"; // ✅ added
-import { OrderNowModal } from "./OrderNowModal"; // ✅ added
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { OrderNowModal } from "./OrderNowModal";
 
 interface Service {
   icon: React.ComponentType<any>;
@@ -25,6 +25,7 @@ interface Service {
   description: string;
   features: string[];
   price: string;
+  budget: string;
 }
 
 interface SuccessStory {
@@ -55,8 +56,19 @@ interface Feature {
 
 export const InstagramGrowthPage = () => {
   const navigate = useNavigate();
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false); // ✅ added
-  const [selectedService, setSelectedService] = useState(""); // ✅ added
+  const location = useLocation();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+  const [selectedServiceBudget, setSelectedServiceBudget] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  // ✅ Check if user is authenticated on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    setIsAuthenticated(!!(token && user));
+  }, []);
 
   const instagramServices: Service[] = [
     {
@@ -70,6 +82,7 @@ export const InstagramGrowthPage = () => {
         "Growth analytics dashboard",
       ],
       price: "$299/month",
+      budget: "$299/month",
     },
     {
       icon: MessageCircle,
@@ -82,6 +95,7 @@ export const InstagramGrowthPage = () => {
         "Community building",
       ],
       price: "$199/month",
+      budget: "$199/month",
     },
     {
       icon: TrendingUp,
@@ -94,6 +108,7 @@ export const InstagramGrowthPage = () => {
         "Performance analytics",
       ],
       price: "$399/month",
+      budget: "$399/month",
     },
     {
       icon: BarChart3,
@@ -106,6 +121,7 @@ export const InstagramGrowthPage = () => {
         "Growth recommendations",
       ],
       price: "$149/month",
+      budget: "$149/month",
     },
     {
       icon: Target,
@@ -118,6 +134,7 @@ export const InstagramGrowthPage = () => {
         "ROI tracking",
       ],
       price: "$499/month",
+      budget: "$499/month",
     },
     {
       icon: Rocket,
@@ -130,6 +147,7 @@ export const InstagramGrowthPage = () => {
         "Growth strategy",
       ],
       price: "$799/month",
+      budget: "$799/month",
     },
   ];
 
@@ -224,10 +242,36 @@ export const InstagramGrowthPage = () => {
     { icon: CheckCircle, text: "IGTV strategy development" },
   ];
 
-  // ✅ added function to handle Order Now button click
-  const handleOrderNowClick = (serviceTitle: string = "") => {
-    setSelectedService(serviceTitle);
-    setIsOrderModalOpen(true);
+  // ✅ Function to handle Order Now button click with authentication check
+  const handleOrderNowClick = (
+    serviceTitle: string = "",
+    serviceBudget: string = ""
+  ) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // User is authenticated - open order modal
+      setSelectedService(serviceTitle);
+      setSelectedServiceBudget(serviceBudget);
+      setIsOrderModalOpen(true);
+    } else {
+      // User is not authenticated - show auth prompt
+      setShowAuthPrompt(true);
+    }
+  };
+
+  // ✅ Function to handle authentication prompt actions
+  const handleAuthPrompt = (action: "login" | "cancel") => {
+    setShowAuthPrompt(false);
+    if (action === "login") {
+      // ✅ Navigate to register with return URL
+      navigate("/register", {
+        state: {
+          from: location,
+        },
+      });
+    }
   };
 
   return (
@@ -236,6 +280,94 @@ export const InstagramGrowthPage = () => {
         {`
           .instagram-page {
             font-family: system-ui, -apple-system, sans-serif;
+          }
+
+          /* Auth Prompt Modal Styles */
+          .auth-prompt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+          }
+
+          .auth-prompt-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          }
+
+          .auth-prompt-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+          }
+
+          .auth-prompt-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+          }
+
+          .auth-prompt-message {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+          }
+
+          .auth-prompt-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+          }
+
+          .auth-prompt-primary {
+            background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
+          }
+
+          .auth-prompt-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+
+          .auth-prompt-secondary:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
           }
 
           /* Hero Section */
@@ -430,12 +562,6 @@ export const InstagramGrowthPage = () => {
             text-align: center;
           }
 
-          .instagram-service-buttons {
-            display: flex;
-            gap: 0.75rem;
-            width: 100%;
-          }
-
           .instagram-service-button {
             background: linear-gradient(135deg, #405DE6 0%, #C13584 100%);
             color: white;
@@ -445,32 +571,13 @@ export const InstagramGrowthPage = () => {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            flex: 1;
+            width: 100%;
             font-size: 0.9rem;
           }
 
           .instagram-service-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(192, 38, 211, 0.3);
-          }
-
-          .instagram-service-button-secondary {
-            background: transparent;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            font-size: 0.9rem;
-          }
-
-          .instagram-service-button-secondary:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
           }
 
           /* Process Section - Updated with box design */
@@ -906,15 +1013,41 @@ export const InstagramGrowthPage = () => {
             .instagram-process-grid {
               grid-template-columns: 1fr;
             }
-
-            .instagram-service-buttons {
-              flex-direction: column;
-            }
           }
         `}
       </style>
 
       <div className="instagram-page">
+        {/* ✅ Authentication Prompt Modal */}
+        {showAuthPrompt && (
+          <div className="auth-prompt-overlay">
+            <div className="auth-prompt-content">
+              <div className="auth-prompt-icon">
+                <Users size={24} />
+              </div>
+              <h3 className="auth-prompt-title">Sign In Required</h3>
+              <p className="auth-prompt-message">
+                Please sign up or log in to place an order and access our
+                services.
+              </p>
+              <div className="auth-prompt-buttons">
+                <button
+                  className="auth-prompt-secondary"
+                  onClick={() => handleAuthPrompt("cancel")}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="auth-prompt-primary"
+                  onClick={() => handleAuthPrompt("login")}
+                >
+                  Sign Up / Log In
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <section className="instagram-hero">
           <div className="instagram-hero-container">
@@ -1018,20 +1151,14 @@ export const InstagramGrowthPage = () => {
                       <div className="instagram-service-price">
                         {service.price}
                       </div>
-                      <div className="instagram-service-buttons">
-                        <button
-                          className="instagram-service-button"
-                          onClick={() => navigate("/services")}
-                        >
-                          View All Services
-                        </button>
-                        <button
-                          className="instagram-service-button-secondary"
-                          onClick={() => handleOrderNowClick(service.title)} // ✅ updated
-                        >
-                          Order Now
-                        </button>
-                      </div>
+                      <button
+                        className="instagram-service-button"
+                        onClick={() =>
+                          handleOrderNowClick(service.title, service.budget)
+                        }
+                      >
+                        Order Now
+                      </button>
                     </div>
                   </div>
                 );
@@ -1114,50 +1241,53 @@ export const InstagramGrowthPage = () => {
             <div className="text-center mb-16">
               <div className="section-badge">OUR PROCESS</div>
               <h2 className="section-heading">
-                Our Instagram Growth{" "}
-                <span className="gradient-heading">Process</span>
+                How We Drive Your{" "}
+                <span className="gradient-heading">Instagram Growth</span>
               </h2>
               <p className="section-subtitle">
-                A strategic approach that delivers measurable Instagram growth
-                and engagement
+                A proven 4-step process that delivers consistent, measurable
+                results
               </p>
             </div>
 
             <div className="instagram-process-grid">
-              {[
-                {
-                  step: "1",
-                  title: "Audit & Analysis",
-                  description:
-                    "Comprehensive profile audit, competitor analysis, and audience research to identify growth opportunities.",
-                },
-                {
-                  step: "2",
-                  title: "Strategy Development",
-                  description:
-                    "Customized content strategy, posting schedule, and engagement plan tailored to your brand.",
-                },
-                {
-                  step: "3",
-                  title: "Content Creation",
-                  description:
-                    "High-quality visual content, captions, and Stories designed to maximize engagement.",
-                },
-                {
-                  step: "4",
-                  title: "Growth & Optimization",
-                  description:
-                    "Continuous monitoring, A/B testing, and strategy refinement for optimal results.",
-                },
-              ].map((process, index: number) => (
-                <div key={index} className="instagram-process-card">
-                  <div className="instagram-process-step">{process.step}</div>
-                  <h3 className="instagram-process-title">{process.title}</h3>
-                  <p className="instagram-process-description">
-                    {process.description}
-                  </p>
-                </div>
-              ))}
+              <div className="instagram-process-card">
+                <div className="instagram-process-step">1</div>
+                <h3 className="instagram-process-title">Strategy & Analysis</h3>
+                <p className="instagram-process-description">
+                  We analyze your current Instagram presence, target audience,
+                  and competitors to create a customized growth strategy.
+                </p>
+              </div>
+
+              <div className="instagram-process-card">
+                <div className="instagram-process-step">2</div>
+                <h3 className="instagram-process-title">
+                  Content Optimization
+                </h3>
+                <p className="instagram-process-description">
+                  Our team optimizes your content strategy, hashtags, and post
+                  timing to maximize reach and engagement.
+                </p>
+              </div>
+
+              <div className="instagram-process-card">
+                <div className="instagram-process-step">3</div>
+                <h3 className="instagram-process-title">Audience Engagement</h3>
+                <p className="instagram-process-description">
+                  We actively engage with your target audience, build
+                  communities, and create authentic connections.
+                </p>
+              </div>
+
+              <div className="instagram-process-card">
+                <div className="instagram-process-step">4</div>
+                <h3 className="instagram-process-title">Growth & Analytics</h3>
+                <p className="instagram-process-description">
+                  Continuous monitoring, optimization, and detailed analytics to
+                  ensure your account keeps growing.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -1166,37 +1296,40 @@ export const InstagramGrowthPage = () => {
         <section className="instagram-cta">
           <div className="instagram-cta-container">
             <h2 className="instagram-cta-heading">
-              Ready to Dominate Instagram?
+              Ready to Transform Your Instagram?
             </h2>
             <p className="instagram-cta-subtitle">
-              Join hundreds of successful brands that have transformed their
-              Instagram presence with our expert growth services.
+              Join 500+ successful brands and creators who have scaled their
+              Instagram presence with our proven growth strategies.
             </p>
             <div className="instagram-cta-buttons">
               <button
-                onClick={() => handleOrderNowClick("Instagram Growth Package")} // ✅ updated
                 className="instagram-cta-primary"
+                onClick={() => handleOrderNowClick()}
               >
-                Start Your Instagram Growth
+                Start Growing Now
               </button>
               <button
-                onClick={() => navigate("/services")}
                 className="instagram-cta-secondary"
+                onClick={() => (window.location.href = "#contact")}
               >
-                View All Services
+                Book a Consultation
               </button>
             </div>
           </div>
         </section>
+      </div>
 
-        {/* ✅ Order Now Modal */}
+      {/* Order Now Modal */}
+      {isOrderModalOpen && (
         <OrderNowModal
           isOpen={isOrderModalOpen}
           onClose={() => setIsOrderModalOpen(false)}
-          defaultPlatform="Instagram"
-          defaultService={selectedService}
+          service={selectedService}
+          serviceBudget={selectedServiceBudget}
+          platform="Instagram"
         />
-      </div>
+      )}
     </>
   );
 };

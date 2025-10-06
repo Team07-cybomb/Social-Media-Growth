@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
+
 interface LoginPageProps {
-  onLogin: (userData: { name: string; email: string }) => void;
+  onLogin: (userData: { name: string; email: string; phone: string }) => void;
 }
+
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -11,6 +13,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ Get the redirect path from location state or default to home
+  const from = (location.state as any)?.from?.pathname || "/home";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,16 +43,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       if (response.ok) {
         // ✅ Login successful - save token and user data
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
 
-        // ✅ IMPORTANT: Global state update pannikiran
-        onLogin({
+        // ✅ Store complete user data including phone from backend response
+        // Handle multiple possible field names for phone
+        const userDataToStore = {
           name: data.name || data.username || formData.email.split("@")[0],
           email: data.email || formData.email,
-        });
+          phone: data.phone || data.phoneNumber || data.userPhone || "",
+        };
+
+        console.log("Storing user data:", userDataToStore); // Debug log
+
+        localStorage.setItem("user", JSON.stringify(userDataToStore));
+
+        // ✅ IMPORTANT: Global state update with phone number
+        onLogin(userDataToStore);
 
         alert("Login successful!");
-        navigate("/home");
+
+        // ✅ Redirect to the intended page (order now continuation) or home
+        navigate(from, { replace: true });
       } else {
         alert(data.message || "Login failed!");
       }
@@ -290,6 +306,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 Don't have an account?{" "}
                 <Link
                   to="/register"
+                  state={{ from: location.state?.from }}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   Register

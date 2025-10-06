@@ -1,7 +1,7 @@
-// src/components/RegisterPage.tsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
+
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -11,7 +11,11 @@ const RegisterPage: React.FC = () => {
     confirmPassword: "",
   });
 
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ Get the redirect path from location state or default to login
+  const from = (location.state as any)?.from?.pathname || "/login";
 
   // ✅ Universal input handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,8 +57,14 @@ const RegisterPage: React.FC = () => {
 
       if (response.ok) {
         console.log("Registration successful:", data);
-        alert("Registration successful!");
-        navigate("/login");
+        alert("Registration successful! Please login to continue.");
+
+        // ✅ Redirect to login page with the return URL
+        navigate("/login", {
+          state: {
+            from: location.state?.from,
+          },
+        });
       } else {
         alert(data.message || "Registration failed!");
       }
@@ -64,9 +74,6 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
   return (
     <>
       <style>
@@ -230,7 +237,6 @@ const RegisterPage: React.FC = () => {
               Create <span className="gradient-text">Account</span>
             </h2>
 
-            {/* ✅ Use correct handler names */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="register-label">
@@ -241,7 +247,7 @@ const RegisterPage: React.FC = () => {
                   id="name"
                   name="name"
                   value={formData.name}
-                  onChange={handleChange} // ✅ Fixed
+                  onChange={handleChange}
                   placeholder="Enter your full name"
                   required
                   className="register-input"
@@ -257,14 +263,13 @@ const RegisterPage: React.FC = () => {
                   id="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange} // ✅ Fixed
+                  onChange={handleChange}
                   placeholder="Enter your email"
                   required
                   className="register-input"
                 />
               </div>
 
-              {/* Phone Number */}
               <div>
                 <label htmlFor="phone" className="register-label">
                   Phone Number
@@ -281,7 +286,6 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label htmlFor="password" className="register-label">
                   Password
@@ -291,7 +295,7 @@ const RegisterPage: React.FC = () => {
                   id="password"
                   name="password"
                   value={formData.password}
-                  onChange={handleChange} // ✅ Fixed
+                  onChange={handleChange}
                   placeholder="Enter password"
                   required
                   className="register-input"
@@ -307,7 +311,7 @@ const RegisterPage: React.FC = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
-                  onChange={handleChange} // ✅ Fixed
+                  onChange={handleChange}
                   placeholder="Confirm password"
                   required
                   className="register-input"
@@ -322,7 +326,7 @@ const RegisterPage: React.FC = () => {
             <div className="register-link">
               <p>
                 Already have an account?{" "}
-                <Link to="/login" onClick={handleLoginRedirect}>
+                <Link to="/login" state={{ from: location.state?.from }}>
                   Login
                 </Link>
               </p>
