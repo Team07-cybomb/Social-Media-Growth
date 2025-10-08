@@ -13,6 +13,7 @@ import {
   List,
   Calendar,
 } from "lucide-react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface OrderNowModalProps {
   isOpen: boolean;
@@ -232,25 +233,29 @@ export const OrderNowTwitter = ({
 
     try {
       const token = localStorage.getItem("token");
-      
-      const response = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          service: formData.service,
-          serviceBudget: formData.serviceBudget,
-          platform: platform,
-          timeline: formData.timeline,
-          goals: formData.goals,
-          message: formData.message
-        }),
-      });
+
+      const response = await fetch(
+        `${API_URL}
+/api/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            service: formData.service,
+            serviceBudget: formData.serviceBudget,
+            platform: platform,
+            timeline: formData.timeline,
+            goals: formData.goals,
+            message: formData.message,
+          }),
+        }
+      );
 
       const result = await response.json();
 
@@ -259,17 +264,22 @@ export const OrderNowTwitter = ({
       }
 
       console.log("Twitter order submitted successfully:", result.data);
-      
+
       // Show success message
-      alert(result.msg || "Thank you for your Twitter service order! We will contact you within 24 hours.");
-      
+      alert(
+        result.msg ||
+          "Thank you for your Twitter service order! We will contact you within 24 hours."
+      );
+
       // Reset form and close modal
       resetForm();
       onClose();
-      
     } catch (error) {
       console.error("Error submitting Twitter order:", error);
-      const errorMessage = error instanceof Error ? error.message : "There was an error submitting your order. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "There was an error submitting your order. Please try again.";
       setSubmitError(errorMessage);
       alert(errorMessage);
     } finally {
@@ -758,12 +768,8 @@ export const OrderNowTwitter = ({
           </div>
 
           <div className="order-modal-body">
-            {submitError && (
-              <div className="error-message">
-                {submitError}
-              </div>
-            )}
-            
+            {submitError && <div className="error-message">{submitError}</div>}
+
             <form onSubmit={handleSubmit}>
               {/* Step 1: Service Selection */}
               {currentStep === 1 && (
@@ -883,7 +889,8 @@ export const OrderNowTwitter = ({
                         </div>
                       ) : (
                         <div className="phone-warning">
-                          Please provide your phone number for better communication
+                          Please provide your phone number for better
+                          communication
                         </div>
                       )}
                     </div>
@@ -1016,7 +1023,9 @@ export const OrderNowTwitter = ({
                           isSubmitting || !formData.timeline || !formData.goals
                         }
                       >
-                        {isSubmitting ? "Submitting..." : "Complete Twitter Order"}
+                        {isSubmitting
+                          ? "Submitting..."
+                          : "Complete Twitter Order"}
                       </button>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -9,7 +10,7 @@ const ResetPasswordPage: React.FC = () => {
   const [passwordStrength, setPasswordStrength] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { email, otp } = location.state || {};
 
   useEffect(() => {
@@ -30,7 +31,11 @@ const ResetPasswordPage: React.FC = () => {
   const checkPasswordStrength = (pass: string) => {
     if (pass.length < 6) return "weak";
     if (pass.length < 8) return "medium";
-    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(pass)) {
+    if (
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
+        pass
+      )
+    ) {
       return "strong";
     }
     return "medium";
@@ -38,19 +43,27 @@ const ResetPasswordPage: React.FC = () => {
 
   const getPasswordStrengthColor = () => {
     switch (passwordStrength) {
-      case "weak": return "#ef4444";
-      case "medium": return "#f59e0b";
-      case "strong": return "#10b981";
-      default: return "#6b7280";
+      case "weak":
+        return "#ef4444";
+      case "medium":
+        return "#f59e0b";
+      case "strong":
+        return "#10b981";
+      default:
+        return "#6b7280";
     }
   };
 
   const getPasswordStrengthText = () => {
     switch (passwordStrength) {
-      case "weak": return "Weak";
-      case "medium": return "Medium";
-      case "strong": return "Strong";
-      default: return "";
+      case "weak":
+        return "Weak";
+      case "medium":
+        return "Medium";
+      case "strong":
+        return "Strong";
+      default:
+        return "";
     }
   };
 
@@ -71,16 +84,16 @@ const ResetPasswordPage: React.FC = () => {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/reset-password", {
+      const response = await fetch(`${API_URL}/api/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          email, 
+        body: JSON.stringify({
+          email,
           otp,
           newPassword: password,
-          confirmPassword 
+          confirmPassword,
         }),
       });
 
@@ -92,7 +105,9 @@ const ResetPasswordPage: React.FC = () => {
           navigate("/login");
         }, 2000);
       } else {
-        setMessage(data.message || "Failed to reset password. Please try again.");
+        setMessage(
+          data.message || "Failed to reset password. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error during password reset:", error);
@@ -311,10 +326,8 @@ const ResetPasswordPage: React.FC = () => {
             <h2 className="section-heading">
               Reset <span className="gradient-text">Password</span>
             </h2>
-            
-            <p className="section-subheading">
-              Enter your new password below
-            </p>
+
+            <p className="section-subheading">Enter your new password below</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -334,16 +347,20 @@ const ResetPasswordPage: React.FC = () => {
                 {password && (
                   <>
                     <div className="password-strength">
-                      <div 
+                      <div
                         className="password-strength-bar"
                         style={{
-                          width: passwordStrength === "weak" ? "33%" : 
-                                 passwordStrength === "medium" ? "66%" : "100%",
-                          backgroundColor: getPasswordStrengthColor()
+                          width:
+                            passwordStrength === "weak"
+                              ? "33%"
+                              : passwordStrength === "medium"
+                              ? "66%"
+                              : "100%",
+                          backgroundColor: getPasswordStrengthColor(),
                         }}
                       />
                     </div>
-                    <div 
+                    <div
                       className="password-strength-text"
                       style={{ color: getPasswordStrengthColor() }}
                     >
@@ -368,22 +385,36 @@ const ResetPasswordPage: React.FC = () => {
                   minLength={6}
                 />
                 {confirmPassword && password !== confirmPassword && (
-                  <div style={{ color: "#ef4444", fontSize: "0.75rem", marginTop: "0.25rem" }}>
+                  <div
+                    style={{
+                      color: "#ef4444",
+                      fontSize: "0.75rem",
+                      marginTop: "0.25rem",
+                    }}
+                  >
                     Passwords do not match
                   </div>
                 )}
               </div>
 
               {message && (
-                <div className={`message ${message.includes("successfully") ? "success" : "error"}`}>
+                <div
+                  className={`message ${
+                    message.includes("successfully") ? "success" : "error"
+                  }`}
+                >
                   {message}
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="login-button"
-                disabled={isLoading || password !== confirmPassword || password.length < 6}
+                disabled={
+                  isLoading ||
+                  password !== confirmPassword ||
+                  password.length < 6
+                }
               >
                 {isLoading ? "Resetting..." : "Reset Password"}
               </button>
@@ -392,7 +423,10 @@ const ResetPasswordPage: React.FC = () => {
             <div className="back-to-login">
               <p>
                 Remember your password?{" "}
-                <Link to="/login" className="text-blue-600 hover:underline font-medium">
+                <Link
+                  to="/login"
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   Back to Login
                 </Link>
               </p>

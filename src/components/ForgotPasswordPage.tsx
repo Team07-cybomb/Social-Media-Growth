@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const ForgotPasswordPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -252,9 +253,10 @@ const ForgotPasswordPage: React.FC = () => {
             <h2 className="section-heading">
               Forgot <span className="gradient-text">Password</span>
             </h2>
-            
+
             <p className="section-subheading">
-              Enter your email address and we'll send you an OTP to reset your password.
+              Enter your email address and we'll send you an OTP to reset your
+              password.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -274,13 +276,17 @@ const ForgotPasswordPage: React.FC = () => {
               </div>
 
               {message && (
-                <div className={`message ${message.includes("sent") ? "success" : "error"}`}>
+                <div
+                  className={`message ${
+                    message.includes("sent") ? "success" : "error"
+                  }`}
+                >
                   {message}
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="login-button"
                 disabled={isLoading}
               >
@@ -291,7 +297,10 @@ const ForgotPasswordPage: React.FC = () => {
             <div className="back-to-login">
               <p>
                 Remember your password?{" "}
-                <Link to="/login" className="text-blue-600 hover:underline font-medium">
+                <Link
+                  to="/login"
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   Back to Login
                 </Link>
               </p>

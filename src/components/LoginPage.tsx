@@ -31,8 +31,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Get the redirect path from location state or default to home
+  // ✅ Enhanced redirect logic - check for order flow
   const from = (location.state as any)?.from?.pathname || "/home";
+  const isOrderFlow = (location.state as any)?.isOrderFlow || false;
+  const serviceData = (location.state as any)?.serviceData || null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,13 +73,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         onLogin({
           name: data.data.name,
           email: data.data.email,
+          phone: data.data.phone || "",
         });
 
         setMessage("Login successful! Redirecting...");
 
-        // Navigate after a short delay
+        // ✅ Enhanced redirect logic
         setTimeout(() => {
-          navigate("/home");
+          if (isOrderFlow && serviceData) {
+            // If this was an order flow, navigate back to the service page
+            // The OrderNowModal will automatically open due to the state
+            navigate(serviceData.returnPath || "/instagram-growth", {
+              state: {
+                openOrderModal: true,
+                service: serviceData.service,
+                serviceBudget: serviceData.serviceBudget,
+                platform: serviceData.platform,
+              },
+            });
+          } else {
+            // Normal login flow
+            navigate(from);
+          }
         }, 1000);
       } else {
         setMessage(
@@ -401,7 +418,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 Don't have an account?{" "}
                 <Link
                   to="/register"
-                  state={{ from: location.state?.from }}
+                  state={{
+                    from: location.state?.from,
+                    isOrderFlow: isOrderFlow,
+                    serviceData: serviceData,
+                  }}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   Register

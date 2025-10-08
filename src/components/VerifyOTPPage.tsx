@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const VerifyOTPPage: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -10,7 +11,7 @@ const VerifyOTPPage: React.FC = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const email = location.state?.email;
 
   useEffect(() => {
@@ -40,7 +41,10 @@ const VerifyOTPPage: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -48,10 +52,10 @@ const VerifyOTPPage: React.FC = () => {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text/plain').slice(0, 6);
+    const pastedData = e.clipboardData.getData("text/plain").slice(0, 6);
     if (/^\d+$/.test(pastedData)) {
       const newOtp = [...otp];
-      pastedData.split('').forEach((char, index) => {
+      pastedData.split("").forEach((char, index) => {
         if (index < 6) {
           newOtp[index] = char;
         }
@@ -63,8 +67,8 @@ const VerifyOTPPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const otpString = otp.join('');
-    
+    const otpString = otp.join("");
+
     if (otpString.length !== 6) {
       setMessage("Please enter the complete 6-digit OTP");
       return;
@@ -75,14 +79,14 @@ const VerifyOTPPage: React.FC = () => {
 
     try {
       // Use the new verify-otp endpoint
-      const response = await fetch("http://localhost:5000/api/auth/verify-otp", {
+      const response = await fetch("${API_URL}/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          email, 
-          otp: otpString
+        body: JSON.stringify({
+          email,
+          otp: otpString,
         }),
       });
 
@@ -92,11 +96,11 @@ const VerifyOTPPage: React.FC = () => {
         setMessage("OTP verified successfully!");
         // Navigate to reset password page
         setTimeout(() => {
-          navigate("/reset-password", { 
-            state: { 
-              email, 
-              otp: otpString 
-            } 
+          navigate("/reset-password", {
+            state: {
+              email,
+              otp: otpString,
+            },
           });
         }, 1000);
       } else {
@@ -115,13 +119,17 @@ const VerifyOTPPage: React.FC = () => {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/resend-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        `${API_URL}
+/api/auth/resend-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
 
@@ -376,14 +384,12 @@ const VerifyOTPPage: React.FC = () => {
             <h2 className="section-heading">
               Verify <span className="gradient-text">OTP</span>
             </h2>
-            
+
             <p className="section-subheading">
               Enter the 6-digit OTP sent to your email address
             </p>
 
-            <div className="email-display">
-              {email}
-            </div>
+            <div className="email-display">{email}</div>
 
             <form onSubmit={handleSubmit}>
               <div className="otp-container">
@@ -399,22 +405,26 @@ const VerifyOTPPage: React.FC = () => {
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     onPaste={index === 0 ? handlePaste : undefined}
-                    className={`otp-input ${digit ? 'filled' : ''}`}
+                    className={`otp-input ${digit ? "filled" : ""}`}
                     autoFocus={index === 0}
                   />
                 ))}
               </div>
 
               {message && (
-                <div className={`message ${message.includes("successfully") ? "success" : "error"}`}>
+                <div
+                  className={`message ${
+                    message.includes("successfully") ? "success" : "error"
+                  }`}
+                >
                   {message}
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="login-button"
-                disabled={isLoading || otp.join('').length !== 6}
+                disabled={isLoading || otp.join("").length !== 6}
               >
                 {isLoading ? "Verifying..." : "Verify OTP"}
               </button>
@@ -428,12 +438,11 @@ const VerifyOTPPage: React.FC = () => {
                   disabled={isResending || countdown > 0}
                   className="resend-button"
                 >
-                  {isResending 
-                    ? "Sending..." 
-                    : countdown > 0 
-                    ? `Resend in ${countdown}s` 
-                    : "Resend OTP"
-                  }
+                  {isResending
+                    ? "Sending..."
+                    : countdown > 0
+                    ? `Resend in ${countdown}s`
+                    : "Resend OTP"}
                 </button>
               </p>
             </div>
@@ -441,7 +450,10 @@ const VerifyOTPPage: React.FC = () => {
             <div className="back-to-login">
               <p>
                 Remember your password?{" "}
-                <Link to="/login" className="text-blue-600 hover:underline font-medium">
+                <Link
+                  to="/login"
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   Back to Login
                 </Link>
               </p>
