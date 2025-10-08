@@ -14,8 +14,9 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Get the redirect path from location state or default to login
-  const from = (location.state as any)?.from?.pathname || "/login";
+  // ✅ Enhanced redirect logic
+  const isOrderFlow = (location.state as any)?.isOrderFlow || false;
+  const serviceData = (location.state as any)?.serviceData || null;
 
   // ✅ Universal input handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,12 +60,24 @@ const RegisterPage: React.FC = () => {
         console.log("Registration successful:", data);
         alert("Registration successful! Please login to continue.");
 
-        // ✅ Redirect to login page with the return URL
-        navigate("/login", {
-          state: {
-            from: location.state?.from,
-          },
-        });
+        // ✅ Enhanced redirect logic
+        if (isOrderFlow && serviceData) {
+          // Redirect to login with order flow context
+          navigate("/login", {
+            state: {
+              isOrderFlow: true,
+              serviceData: serviceData,
+              from: location.state?.from,
+            },
+          });
+        } else {
+          // Normal registration flow
+          navigate("/login", {
+            state: {
+              from: location.state?.from,
+            },
+          });
+        }
       } else {
         alert(data.message || "Registration failed!");
       }
@@ -326,7 +339,14 @@ const RegisterPage: React.FC = () => {
             <div className="register-link">
               <p>
                 Already have an account?{" "}
-                <Link to="/login" state={{ from: location.state?.from }}>
+                <Link
+                  to="/login"
+                  state={{
+                    from: location.state?.from,
+                    isOrderFlow: isOrderFlow,
+                    serviceData: serviceData,
+                  }}
+                >
                   Login
                 </Link>
               </p>

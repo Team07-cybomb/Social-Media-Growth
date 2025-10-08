@@ -66,12 +66,25 @@ export const LinkedInGrowthPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
-  // ✅ Check if user is authenticated on component mount
+  // ✅ Check if user is authenticated on component mount/update
   useEffect(() => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     setIsAuthenticated(!!(token && user));
-  }, []);
+  }, [location]);
+
+  // ✅ Check for order modal state on component mount/update
+  useEffect(() => {
+    const locationState = location.state as any;
+    if (locationState?.openOrderModal) {
+      setSelectedService(locationState.service || "");
+      setSelectedServiceBudget(locationState.serviceBudget || "");
+      setIsOrderModalOpen(true);
+
+      // Clear the state to prevent reopening on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const linkedinServices: Service[] = [
     {
@@ -246,7 +259,7 @@ export const LinkedInGrowthPage = () => {
     { icon: CheckCircle, text: "Lead generation strategy" },
   ];
 
-  // ✅ Function to handle Order Now button click with authentication check
+  // ✅ Enhanced function to handle Order Now button click
   const handleOrderNowClick = (
     serviceTitle: string = "",
     serviceBudget: string = ""
@@ -261,20 +274,47 @@ export const LinkedInGrowthPage = () => {
       setIsOrderModalOpen(true);
     } else {
       // User is not authenticated - show auth prompt
+      setSelectedService(serviceTitle);
+      setSelectedServiceBudget(serviceBudget);
       setShowAuthPrompt(true);
     }
   };
 
-  // ✅ Function to handle authentication prompt actions
+  // ✅ Enhanced function to handle authentication prompt actions
   const handleAuthPrompt = (action: "login" | "cancel") => {
     setShowAuthPrompt(false);
     if (action === "login") {
-      // ✅ Navigate to register with return URL
+      // ✅ Navigate to register with order flow context
       navigate("/register", {
         state: {
+          isOrderFlow: true,
+          serviceData: {
+            service: selectedService,
+            serviceBudget: selectedServiceBudget,
+            platform: "LinkedIn",
+            returnPath: location.pathname,
+          },
           from: location,
         },
       });
+    }
+  };
+
+  // ✅ Enhanced function for CTA button (when no specific service is selected)
+  const handleCTAClick = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      // Open modal without pre-selected service
+      setSelectedService("");
+      setSelectedServiceBudget("");
+      setIsOrderModalOpen(true);
+    } else {
+      // Show auth prompt for general order
+      setSelectedService("");
+      setSelectedServiceBudget("");
+      setShowAuthPrompt(true);
     }
   };
 
@@ -1307,10 +1347,7 @@ export const LinkedInGrowthPage = () => {
               services and established industry authority.
             </p>
             <div className="linkedin-cta-buttons">
-              <button
-                className="linkedin-cta-primary"
-                onClick={() => handleOrderNowClick()}
-              >
+              <button className="linkedin-cta-primary" onClick={handleCTAClick}>
                 Start Growing Now
               </button>
               <button

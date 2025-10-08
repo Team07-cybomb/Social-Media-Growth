@@ -1,4 +1,15 @@
-import { Target, Users, Award, TrendingUp } from "lucide-react";
+import {
+  Target,
+  Users,
+  Award,
+  TrendingUp,
+  Star,
+  Shield,
+  Zap,
+  CheckCircle,
+  Clock,
+  ThumbsUp,
+} from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Rocket, Eye, Headphones } from "lucide-react";
@@ -6,29 +17,6 @@ import { useNavigate } from "react-router-dom";
 
 export function AboutPage() {
   const navigate = useNavigate();
-  const teamMembers = [
-    {
-      name: "Alex Johnson",
-      role: "Founder & CEO",
-      bio: "10+ years in digital marketing with expertise in social media growth strategies.",
-      image:
-        "https://i.pinimg.com/1200x/45/17/9d/45179d43379464798e63c5006815ac41.jpg",
-    },
-    {
-      name: "Sarah Chen",
-      role: "Head of Strategy",
-      bio: "Former social media manager for Fortune 500 companies, specializing in B2B growth.",
-      image:
-        "https://i.pinimg.com/1200x/6e/d0/f3/6ed0f34f94a2ef29b776c99938468378.jpg",
-    },
-    {
-      name: "Eve Rodriguez",
-      role: "Content Director",
-      bio: "Award-winning content creator with experience across all major social platforms.",
-      image:
-        "https://i.pinimg.com/736x/0a/d1/93/0ad19309a59be71b028548801ac38353.jpg",
-    },
-  ];
 
   const values = [
     {
@@ -62,6 +50,51 @@ export function AboutPage() {
     { number: "2M+", label: "Followers Generated" },
     { number: "95%", label: "Client Retention Rate" },
     { number: "5", label: "Years Experience" },
+  ];
+
+  const trustIndicators = [
+    {
+      icon: <Users className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "Trusted by 500+ businesses worldwide",
+    },
+    {
+      icon: <Shield className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "100% Organic Growth Guarantee",
+    },
+    {
+      icon: <Clock className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "24/7 Expert Support Team",
+    },
+    {
+      icon: <ThumbsUp className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "4.9/5 Customer Rating",
+    },
+    {
+      icon: <Zap className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "Real Results in 30 Days",
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" style={{ color: "#60a5fa" }} />,
+      text: "No Contracts, Cancel Anytime",
+    },
+  ];
+
+  const growthMetrics = [
+    {
+      metric: "Average Follower Growth",
+      value: "+285%",
+      color: "#10b981",
+    },
+    {
+      metric: "Engagement Rate Increase",
+      value: "+150%",
+      color: "#3b82f6",
+    },
+    {
+      metric: "Content Reach Expansion",
+      value: "+200%",
+      color: "#f59e0b",
+    },
   ];
 
   return (
@@ -381,93 +414,147 @@ export function AboutPage() {
             line-height: 1.5;
           }
 
-          /* Team Section - UPDATED: White background */
-          .about-team {
+          /* Trust Indicators Section - WHITE BACKGROUND */
+          .about-trust {
             padding: 5rem 1rem;
             background: white;
           }
 
-          .about-team-container {
+          .about-trust-container {
             max-width: 72rem;
             margin-left: auto;
             margin-right: auto;
           }
 
-          .about-team-heading {
+          .about-trust-heading {
             text-align: center;
             margin-bottom: 4rem;
           }
 
-          .about-team-grid {
+          .about-trust-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
+            max-width: 48rem;
+            margin: 0 auto;
           }
 
           @media (min-width: 768px) {
-            .about-team-grid {
+            .about-trust-grid {
               grid-template-columns: repeat(2, 1fr);
             }
           }
 
-          @media (min-width: 1024px) {
-            .about-team-grid {
-              grid-template-columns: repeat(3, 1fr);
-            }
-          }
-
-          .about-team-card {
-            text-align: center;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            background: white;
+          .about-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
             border: 1px solid #e2e8f0;
           }
 
-          .about-team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+          .about-trust-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateX(5px);
           }
 
-          .about-team-image-container {
-            aspect-ratio: 1;
-            overflow: hidden;
+          .dark .about-trust-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #374151;
           }
 
-          .about-team-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+          .dark .about-trust-item:hover {
+            background: rgba(255, 255, 255, 0.1);
           }
 
-          .about-team-card:hover .about-team-image {
-            transform: scale(1.1);
+          .about-trust-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
           }
 
-          .about-team-content {
-            padding: 1.5rem;
-          }
-
-          .about-team-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: #1e293b;
-          }
-
-          .about-team-role {
-            color: #3b82f6;
-            margin-bottom: 0.75rem;
-            font-weight: 500;
-          }
-
-          .about-team-bio {
-            color: #64748b;
+          .about-trust-text {
             font-size: 0.875rem;
-            line-height: 1.5;
+            font-weight: 500;
+            color: #374151;
+            flex: 1;
+          }
+
+          /* Growth Metrics Section - #f9fafb BACKGROUND */
+          .about-growth {
+            padding: 5rem 1rem;
+            background: #f9fafb;
+          }
+
+          .about-growth-container {
+            max-width: 72rem;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .about-growth-heading {
+            text-align: center;
+            margin-bottom: 4rem;
+          }
+
+          .about-growth-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            max-width: 36rem;
+            margin: 0 auto;
+          }
+
+          .about-growth-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2rem;
+            text-align: center;
+          }
+
+          .about-growth-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+          }
+
+          .about-growth-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+          }
+
+          .about-growth-metric:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+          }
+
+          .about-growth-metric-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #64748b;
+          }
+
+          .about-growth-metric-value {
+            font-size: 1.25rem;
+            font-weight: bold;
           }
 
           /* CTA Section */
@@ -569,8 +656,25 @@ export function AboutPage() {
             border-color: #4b5563;
           }
 
-          .dark .about-team {
+          .dark .about-trust {
             background: #1f2937;
+          }
+
+          .dark .about-growth {
+            background: #111827;
+          }
+
+          .dark .about-growth-card {
+            background: #374151;
+            border-color: #4b5563;
+          }
+
+          .dark .about-growth-metric {
+            background: #4b5563;
+          }
+
+          .dark .about-growth-metric:hover {
+            background: #6b7280;
           }
 
           /* Animations */
@@ -620,7 +724,8 @@ export function AboutPage() {
             .about-hero,
             .about-mission,
             .about-values,
-            .about-team,
+            .about-trust,
+            .about-growth,
             .about-cta {
               padding: 3rem 1rem;
             }
@@ -637,6 +742,10 @@ export function AboutPage() {
             
             .about-cards-grid {
               grid-template-columns: 1fr;
+            }
+
+            .about-growth-card {
+              padding: 2rem 1.5rem;
             }
           }
         `}
@@ -786,40 +895,68 @@ export function AboutPage() {
           </div>
         </section>
 
-        {/* Team Section - UPDATED: White background */}
+        {/* Trust Indicators Section - WHITE BACKGROUND */}
         <section
-          className="about-team animate-fade-in"
+          className="about-trust animate-fade-in"
           style={{ animationDelay: "1.2s" }}
         >
-          <div className="about-team-container">
-            <div className="about-team-heading">
-              <h2 className="section-heading">Meet Our Team</h2>
+          <div className="about-trust-container">
+            <div className="about-trust-heading">
+              <h2 className="section-heading">Why Businesses Trust Us</h2>
               <p className="section-subtitle">
-                The experts behind your social media success
+                Proven results and exceptional service that sets us apart
               </p>
             </div>
 
-            <div className="about-team-grid">
-              {teamMembers.map((member, index) => (
+            <div className="about-trust-grid">
+              {trustIndicators.map((item, index) => (
                 <div
                   key={index}
-                  className="about-team-card animate-fade-in"
+                  className="about-trust-item animate-fade-in"
                   style={{ animationDelay: `${1.4 + index * 0.1}s` }}
                 >
-                  <div className="about-team-image-container">
-                    <ImageWithFallback
-                      src={member.image}
-                      alt={member.name}
-                      className="about-team-image"
-                    />
-                  </div>
-                  <div className="about-team-content">
-                    <h3 className="about-team-name">{member.name}</h3>
-                    <p className="about-team-role">{member.role}</p>
-                    <p className="about-team-bio">{member.bio}</p>
-                  </div>
+                  <div className="about-trust-icon">{item.icon}</div>
+                  <span className="about-trust-text">{item.text}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Growth Metrics Section - #f9fafb BACKGROUND */}
+        <section
+          className="about-growth animate-fade-in"
+          style={{ animationDelay: "1.6s" }}
+        >
+          <div className="about-growth-container">
+            <div className="about-growth-heading">
+              <h2 className="section-heading">Proven Growth Metrics</h2>
+              <p className="section-subtitle">
+                Real results from our client success stories
+              </p>
+            </div>
+
+            <div className="about-growth-card">
+              <h3 className="about-growth-title">Average Client Results</h3>
+              <div className="about-growth-metrics">
+                {growthMetrics.map((metric, index) => (
+                  <div
+                    key={index}
+                    className="about-growth-metric"
+                    style={{ animationDelay: `${1.8 + index * 0.1}s` }}
+                  >
+                    <span className="about-growth-metric-name">
+                      {metric.metric}
+                    </span>
+                    <span
+                      className="about-growth-metric-value"
+                      style={{ color: metric.color }}
+                    >
+                      {metric.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -827,7 +964,7 @@ export function AboutPage() {
         {/* CTA Section */}
         <section
           className="about-cta animate-fade-in"
-          style={{ animationDelay: "1.8s" }}
+          style={{ animationDelay: "2s" }}
         >
           <div className="about-cta-container">
             <h2 className="final-cta-heading">Ready to Work With Us?</h2>
