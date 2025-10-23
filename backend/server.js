@@ -7,6 +7,8 @@ const app = express();
 
 // Middleware
 app.use(cors());
+
+
 app.use(express.json());
 
 // Routes
@@ -69,6 +71,11 @@ app.listen(PORT, () => {
     `📊 Dashboard API available at http://localhost:${PORT}/api/auth/dashboard-stats`
   );
 });
+
+
+
+
+
 // const express = require("express");
 // const mongoose = require("mongoose");
 // const cors = require("cors");
@@ -79,7 +86,7 @@ app.listen(PORT, () => {
 // // Middleware
 // app.use(
 //   cors({
-//     origin: ["https://aitals.com"], // replace with your frontend domain
+//     origin: ["https://cybotechnologies.com/"], // replace with your frontend domain
 //     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 //     credentials: true,
 //   })
@@ -133,7 +140,7 @@ app.listen(PORT, () => {
 //   res.status(404).json({ success: false, message: "API endpoint not found" });
 // });
 
-// const PORT = process.env.PORT || 5002;
+// const PORT = process.env.PORT || 5005;
 // app.listen(PORT, "0.0.0.0", () => {
 //   console.log(`🚀 Server running on port ${PORT}`);
 // });
