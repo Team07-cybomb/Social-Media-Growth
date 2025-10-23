@@ -6,11 +6,11 @@ const createAdmin = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     
-    const adminExists = await Admin.findOne({ username: 'admin2' });
+    const adminExists = await Admin.findOne({ username: 'admin' });
     
     if (!adminExists) {
       const admin = new Admin({
-        username: 'admin2',
+        username: 'admin',
         password: 'admin123'
       });
       
