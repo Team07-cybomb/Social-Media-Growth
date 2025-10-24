@@ -26,6 +26,16 @@ export function HomePage() {
     "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201009/Zoho-logo_ggtqnk.png",
     "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201062/aws-2_whii9k.svg",
     "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201134/djit-trading-DY90WfDK_kbwf1d.png",
+    "https://res.cloudinary.com/dcfjt8shw/image/upload/c_crop,ar_4:3/v1761221135/klmewbshocakvtcys6iv.png",
+    "https://res.cloudinary.com/duomzq5mm/image/upload/v1761220634/cybomb_logo_cf2edt.jpg",
+    "https://res.cloudinary.com/dcfjt8shw/image/upload/v1761288318/wn8m8g8skdpl6iz2rwoa.svg",
+    "https://res.cloudinary.com/duomzq5mm/image/upload/v1761200939/microsoft-5_z1f1q9.svg",
+    "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201009/Zoho-logo_ggtqnk.png",
+    "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201062/aws-2_whii9k.svg",
+    "https://res.cloudinary.com/duomzq5mm/image/upload/v1761201134/djit-trading-DY90WfDK_kbwf1d.png",
+    "https://res.cloudinary.com/dcfjt8shw/image/upload/c_crop,ar_4:3/v1761221135/klmewbshocakvtcys6iv.png",
+     "https://res.cloudinary.com/duomzq5mm/image/upload/v1761220634/cybomb_logo_cf2edt.jpg",
+     "https://res.cloudinary.com/dcfjt8shw/image/upload/v1761288318/wn8m8g8skdpl6iz2rwoa.svg"
   ];
 
   const navigate = useNavigate();
@@ -884,7 +894,7 @@ export function HomePage() {
           font-size: 2.5rem;
           font-weight: 800;
           font-family: 'Poppins', sans-serif;
-          background: linear-gradient(to right, #4a7dff, #3a6df0, #4a7dff);
+          background: linear-gradient(to right, #4a7dff, #385ebfff, #4a7dff);
           -webkit-background-clip: text;
           color: transparent;
           display: inline-block;
@@ -924,6 +934,9 @@ export function HomePage() {
           justify-content: center;
           width: 180px;
           margin-right: 1rem;
+          margin-bottom: 10px;
+          margin-top: 10px;
+
         }
         .partner-card img {
           width: 100px;

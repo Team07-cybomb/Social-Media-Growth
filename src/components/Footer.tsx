@@ -27,11 +27,11 @@ export const Footer: React.FC = () => {
   const handleSocialClick = (platform: string) => {
     // Add your actual social media URLs here
     const socialUrls: { [key: string]: string } = {
-      facebook: "https://facebook.com/yourpage",
-      instagram: "https://instagram.com/yourprofile",
-      linkedin: "https://linkedin.com/company/yourcompany",
-      twitter: "https://twitter.com/yourhandle",
-      youtube: "https://youtube.com/yourchannel",
+      //facebook: "https://facebook.com/yourpage",
+      instagram: "https://www.instagram.com/cybomb_tech/",
+      linkedin: "https://www.linkedin.com/company/cybomb/",
+      twitter: "https://x.com/CybombTech",
+      //youtube: "https://youtube.com/yourchannel",
     };
 
     if (socialUrls[platform]) {
@@ -177,7 +177,7 @@ export const Footer: React.FC = () => {
             strategies and authentic engagement across all major platforms.
           </p>
           <div style={styles.socialRow}>
-            <Facebook
+            {/* <Facebook
               style={{
                 ...styles.socialIcon,
                 ...(hoverStates.facebook ? styles.socialIconHover : {}),
@@ -185,7 +185,7 @@ export const Footer: React.FC = () => {
               onMouseEnter={() => handleMouseEnter("facebook")}
               onMouseLeave={() => handleMouseLeave("facebook")}
               onClick={() => handleSocialClick("facebook")}
-            />
+            /> */}
             <Instagram
               style={{
                 ...styles.socialIcon,
@@ -204,7 +204,7 @@ export const Footer: React.FC = () => {
               onMouseLeave={() => handleMouseLeave("linkedin")}
               onClick={() => handleSocialClick("linkedin")}
             />
-            <Twitter
+            <svg
               style={{
                 ...styles.socialIcon,
                 ...(hoverStates.twitter ? styles.socialIconHover : {}),
@@ -212,8 +212,18 @@ export const Footer: React.FC = () => {
               onMouseEnter={() => handleMouseEnter("twitter")}
               onMouseLeave={() => handleMouseLeave("twitter")}
               onClick={() => handleSocialClick("twitter")}
-            />
-            <Youtube
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                fill="currentColor"
+              />
+            </svg>
+            {/* <Youtube
               style={{
                 ...styles.socialIcon,
                 ...(hoverStates.youtube ? styles.socialIconHover : {}),
@@ -221,7 +231,7 @@ export const Footer: React.FC = () => {
               onMouseEnter={() => handleMouseEnter("youtube")}
               onMouseLeave={() => handleMouseLeave("youtube")}
               onClick={() => handleSocialClick("youtube")}
-            />
+            /> */}
           </div>
         </div>
 
@@ -276,6 +286,7 @@ export const Footer: React.FC = () => {
           >
             Contact
           </button>
+
         </div>
 
         {/* Services */}
